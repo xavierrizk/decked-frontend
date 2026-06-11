@@ -98,16 +98,6 @@ export default function DJProfile() {
         </div>
       </div>
 
-      {/* Standalone follow CTA below hero (for logged-out or extra visibility) */}
-      {!isOwnDj && (
-        <div className="flex items-center justify-between mb-6 px-1">
-          <p className="text-gray-500 text-sm">
-            {follow.following ? `You follow ${dj.name}` : `Follow ${dj.name} to get their new sets in your feed`}
-          </p>
-          <FollowButton follow={follow} followLoading={followLoading} isLoggedIn={isLoggedIn} isOwnDj={isOwnDj} djName={dj.name} onFollow={handleFollow} />
-        </div>
-      )}
-
       {/* Top sets */}
       {stats?.top_sets?.length > 0 && (
         <div className="mb-6">
