@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { StarDisplay } from '../components/StarRating';
 import { getCurrentUserId } from '../utils/auth';
+import Toast, { useToast } from '../components/Toast';
 
 export default function DJProfile() {
   const { id } = useParams();
@@ -13,6 +14,7 @@ export default function DJProfile() {
   const [follow, setFollow] = useState({ count: 0, following: false });
   const [loading, setLoading] = useState(true);
   const [followLoading, setFollowLoading] = useState(false);
+  const [toast, showToast] = useToast();
   const currentUserId = getCurrentUserId();
   const isLoggedIn = !!localStorage.getItem('token');
 
@@ -35,6 +37,9 @@ export default function DJProfile() {
 
   const handleFollow = async () => {
     if (!isLoggedIn) return;
+    if (follow.following) {
+      if (!window.confirm(`Unfollow ${dj?.name}?`)) return;
+    }
     setFollowLoading(true);
     const token = localStorage.getItem('token');
     const headers = { Authorization: `Bearer ${token}` };
@@ -42,9 +47,11 @@ export default function DJProfile() {
       if (follow.following) {
         const res = await axios.delete(`${API_URL}/api/follows/${id}`, { headers });
         setFollow(res.data);
+        showToast(`Unfollowed ${dj?.name}`);
       } else {
         const res = await axios.post(`${API_URL}/api/follows/${id}`, {}, { headers });
         setFollow(res.data);
+        showToast(`You're now following ${dj?.name}! 🎵`);
       }
     } catch (err) { console.error(err); }
     setFollowLoading(false);
@@ -57,6 +64,8 @@ export default function DJProfile() {
 
   return (
     <div className="max-w-4xl mx-auto px-5 py-10">
+      <Toast message={toast} />
+
       {/* Hero */}
       <div className="relative overflow-hidden bg-gradient-to-br from-brand-900/60 to-black border border-white/[0.07] rounded-2xl p-8 mb-6">
         <div className="absolute inset-0 bg-gradient-to-r from-brand-600/10 to-indigo-600/10 pointer-events-none" />
@@ -67,9 +76,10 @@ export default function DJProfile() {
           <div className="flex-1 text-center sm:text-left">
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1">
               <h1 className="text-3xl font-extrabold text-white">{dj.name}</h1>
+              <span className="text-lg" title="DJ">🎵</span>
               {stats?.verified && (
                 <span className="flex items-center gap-1 bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold px-2.5 py-1 rounded-full">
-                  ✓ Verified
+                  ✅ Verified
                 </span>
               )}
             </div>
@@ -86,13 +96,19 @@ export default function DJProfile() {
           {/* Follow button */}
           {isLoggedIn && !isOwnDj && (
             <button onClick={handleFollow} disabled={followLoading}
-              className={`flex-shrink-0 px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 ${
+              className={`flex-shrink-0 px-7 py-3 rounded-xl text-sm font-bold transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 ${
                 follow.following
                   ? 'bg-white/10 border border-white/20 text-white hover:bg-red-500/20 hover:border-red-400/30 hover:text-red-300'
-                  : 'bg-brand-600 hover:bg-brand-500 text-white shadow-glow'
+                  : 'bg-brand-600 hover:bg-brand-500 text-white shadow-glow text-base'
               }`}>
-              {followLoading ? '…' : follow.following ? 'Following ✓' : '+ Follow'}
+              {followLoading ? '…' : follow.following ? '✓ Following' : '+ Follow'}
             </button>
+          )}
+          {!isLoggedIn && (
+            <Link to="/login"
+              className="flex-shrink-0 px-7 py-3 rounded-xl text-sm font-bold bg-brand-600 hover:bg-brand-500 text-white shadow-glow transition-all duration-200 hover:scale-105">
+              Follow
+            </Link>
           )}
         </div>
       </div>

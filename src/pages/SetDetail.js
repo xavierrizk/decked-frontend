@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { StarDisplay } from '../components/StarRating';
 import { getCurrentUserId } from '../utils/auth';
+import Toast, { useToast } from '../components/Toast';
 
 export default function SetDetail() {
   const { id } = useParams();
@@ -12,11 +13,14 @@ export default function SetDetail() {
   const [stats, setStats]           = useState(null);
   const [comments, setComments]     = useState([]);
   const [likes, setLikes]           = useState({ count: 0, liked: false });
+  const [follow, setFollow]         = useState({ count: 0, following: false });
   const [commentText, setCommentText] = useState('');
   const [loading, setLoading]       = useState(true);
   const [deletingId, setDeletingId] = useState(null);
   const [deletingComment, setDeletingComment] = useState(null);
   const [submittingComment, setSubmittingComment] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
+  const [toast, showToast] = useToast();
   const isLoggedIn    = !!localStorage.getItem('token');
   const currentUserId = getCurrentUserId();
 
@@ -30,27 +34,28 @@ export default function SetDetail() {
     axios.get(`${API_URL}/api/comments/set/${id}`)
       .then(r => setComments(r.data));
 
-  const fetchLikes = () => {
+  useEffect(() => {
     const token = localStorage.getItem('token');
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    return axios.get(`${API_URL}/api/likes/set/${id}`, { headers })
-      .then(r => setLikes(r.data));
-  };
 
-  useEffect(() => {
-    Promise.all([
-      axios.get(`${API_URL}/api/sets/${id}`),
-      axios.get(`${API_URL}/api/ratings/set/${id}`),
-      axios.get(`${API_URL}/api/comments/set/${id}`),
-      (() => { const t = localStorage.getItem('token'); return axios.get(`${API_URL}/api/likes/set/${id}`, t ? { headers: { Authorization: `Bearer ${t}` } } : {}); })(),
-    ]).then(([setRes, ratingsRes, commentsRes, likesRes]) => {
-      setSet(setRes.data);
-      setRatings(ratingsRes.data.ratings || []);
-      setStats(ratingsRes.data.stats || null);
-      setComments(commentsRes.data);
-      setLikes(likesRes.data);
-      setLoading(false);
-    }).catch(() => setLoading(false));
+    axios.get(`${API_URL}/api/sets/${id}`)
+      .then(async (setRes) => {
+        const s = setRes.data;
+        setSet(s);
+        const [ratingsRes, commentsRes, likesRes, followRes] = await Promise.all([
+          axios.get(`${API_URL}/api/ratings/set/${id}`),
+          axios.get(`${API_URL}/api/comments/set/${id}`),
+          axios.get(`${API_URL}/api/likes/set/${id}`, { headers }),
+          s.dj_id ? axios.get(`${API_URL}/api/follows/${s.dj_id}`, { headers }) : Promise.resolve({ data: { count: 0, following: false } }),
+        ]);
+        setRatings(ratingsRes.data.ratings || []);
+        setStats(ratingsRes.data.stats || null);
+        setComments(commentsRes.data);
+        setLikes(likesRes.data);
+        setFollow(followRes.data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, [id]);
 
   const handleToggleLike = async () => {
@@ -64,6 +69,24 @@ export default function SetDetail() {
         setLikes(res.data);
       }
     } catch (err) { console.error(err); }
+  };
+
+  const handleFollow = async () => {
+    if (!isLoggedIn || !set?.dj_id) return;
+    setFollowLoading(true);
+    try {
+      if (follow.following) {
+        if (!window.confirm(`Unfollow ${set.dj_name}?`)) { setFollowLoading(false); return; }
+        const res = await axios.delete(`${API_URL}/api/follows/${set.dj_id}`, { headers: authHeaders() });
+        setFollow(res.data);
+        showToast(`Unfollowed ${set.dj_name}`);
+      } else {
+        const res = await axios.post(`${API_URL}/api/follows/${set.dj_id}`, {}, { headers: authHeaders() });
+        setFollow(res.data);
+        showToast(`You're now following ${set.dj_name}! 🎵`);
+      }
+    } catch (err) { console.error(err); }
+    setFollowLoading(false);
   };
 
   const handleDeleteRating = async (ratingId) => {
@@ -110,6 +133,11 @@ export default function SetDetail() {
     window.open(twitterUrl, '_blank');
   };
 
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    showToast('Link copied! 🔗');
+  };
+
   if (loading) return <Spinner />;
   if (!set)    return <div className="text-center py-20 text-gray-600">Set not found</div>;
 
@@ -119,17 +147,37 @@ export default function SetDetail() {
 
   return (
     <div className="max-w-3xl mx-auto px-5 py-10">
-      {/* Breadcrumb */}
+      <Toast message={toast} />
+
+      {/* Breadcrumb + Follow */}
       {set.dj_name && (
-        <Link to={`/dj/${set.dj_id}`} className="text-gray-500 hover:text-brand-400 text-sm transition-colors mb-3 inline-block">
-          ← {set.dj_name}
-        </Link>
+        <div className="flex items-center justify-between mb-3">
+          <Link to={`/dj/${set.dj_id}`} className="text-gray-500 hover:text-brand-400 text-sm transition-colors">
+            ← 🎵 {set.dj_name}
+          </Link>
+          {isLoggedIn && set.dj_id && (
+            <button onClick={handleFollow} disabled={followLoading}
+              className={`text-xs font-semibold px-4 py-1.5 rounded-lg border transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 ${
+                follow.following
+                  ? 'bg-white/[0.06] border-white/10 text-gray-300 hover:bg-red-500/10 hover:border-red-400/30 hover:text-red-300'
+                  : 'bg-brand-600/20 border-brand-500/30 text-brand-300 hover:bg-brand-600 hover:text-white'
+              }`}>
+              {followLoading ? '…' : follow.following ? '✓ Following' : `+ Follow ${set.dj_name}`}
+            </button>
+          )}
+        </div>
       )}
 
-      {/* Title + Like + Share */}
+      {/* Title + Like + Share + Copy */}
       <div className="flex items-start justify-between gap-3 mb-3">
         <h1 className="text-3xl font-extrabold text-white">{set.title}</h1>
         <div className="flex items-center gap-2 flex-shrink-0 mt-1">
+          {/* Copy link */}
+          <button onClick={handleCopyLink}
+            className="text-gray-500 hover:text-white text-sm px-3 py-1.5 rounded-lg border border-white/[0.07] hover:border-white/20 transition-all duration-200"
+            title="Copy link">
+            🔗
+          </button>
           {/* Share */}
           <button onClick={handleShare}
             className="text-gray-500 hover:text-white text-sm px-3 py-1.5 rounded-lg border border-white/[0.07] hover:border-white/20 transition-all duration-200"
@@ -216,7 +264,7 @@ export default function SetDetail() {
                 </Link>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2 mb-1">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5">
                       <Link to={`/profile/${r.user_id}`} className="text-white font-semibold text-sm hover:text-brand-400 transition-colors">{r.username}</Link>
                       {r.user_id === currentUserId && <span className="text-xs bg-brand-700/30 text-brand-300 px-2 py-0.5 rounded-full">You</span>}
                     </div>
@@ -235,7 +283,7 @@ export default function SetDetail() {
         Comments <span className="text-gray-700 font-normal normal-case">({comments.length})</span>
       </p>
 
-      {isLoggedIn && (
+      {isLoggedIn ? (
         <form onSubmit={handleSubmitComment} className="flex gap-2 mb-5">
           <input
             value={commentText} onChange={e => setCommentText(e.target.value)}
@@ -247,6 +295,10 @@ export default function SetDetail() {
             {submittingComment ? '…' : 'Post'}
           </button>
         </form>
+      ) : (
+        <div className="mb-5 text-center py-4 border border-white/[0.05] rounded-xl text-gray-600 text-sm">
+          <Link to="/login" className="text-brand-400 hover:text-brand-300 font-medium transition-colors">Log in</Link> to leave a comment
+        </div>
       )}
 
       {comments.length === 0 ? (

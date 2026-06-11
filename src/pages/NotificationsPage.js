@@ -9,6 +9,7 @@ const TYPE_ICON = {
   new_comment: '💬',
   new_like:    '❤️',
   new_follow:  '👤',
+  new_friend:  '🤝',
 };
 
 export default function NotificationsPage() {
@@ -55,7 +56,8 @@ export default function NotificationsPage() {
       {notifications.length === 0 ? (
         <div className="text-center py-20 border border-white/[0.05] rounded-2xl text-gray-600">
           <p className="text-4xl mb-3">🔔</p>
-          <p>No notifications yet</p>
+          <p className="font-medium text-gray-500">You're all caught up!</p>
+          <p className="text-sm mt-1">Notifications appear here when someone rates, comments, likes, or follows.</p>
         </div>
       ) : (
         <div className="space-y-2">

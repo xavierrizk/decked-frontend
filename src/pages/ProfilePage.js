@@ -4,27 +4,63 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { StarDisplay } from '../components/StarRating';
 import { getCurrentUserId } from '../utils/auth';
+import Toast, { useToast } from '../components/Toast';
 
 export default function ProfilePage() {
   const { userId }              = useParams();
   const [profile, setProfile]   = useState(null);
   const [ratings, setRatings]   = useState([]);
+  const [friendData, setFriendData] = useState({ friends: false, friendCount: 0, commonCount: 0 });
+  const [friendLoading, setFriendLoading] = useState(false);
   const [loading, setLoading]   = useState(true);
+  const [toast, showToast]      = useToast();
   const currentUserId           = getCurrentUserId();
   const isOwn                   = parseInt(userId) === currentUserId;
+  const isLoggedIn              = !!localStorage.getItem('token');
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
     Promise.all([
       axios.get(`${API_URL}/api/users/${userId}`),
-      axios.get(`${API_URL}/api/users/${userId}/ratings`)
+      axios.get(`${API_URL}/api/users/${userId}/ratings`),
+      axios.get(`${API_URL}/api/friends/${userId}`, { headers }),
     ])
-      .then(([profileRes, ratingsRes]) => {
+      .then(([profileRes, ratingsRes, friendRes]) => {
         setProfile(profileRes.data);
         setRatings(ratingsRes.data);
+        setFriendData(friendRes.data);
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }, [userId]);
+
+  const handleFriend = async () => {
+    if (!isLoggedIn) return;
+    if (friendData.friends) {
+      if (!window.confirm(`Remove ${profile?.username} as a friend?`)) return;
+    }
+    setFriendLoading(true);
+    const token = localStorage.getItem('token');
+    const headers = { Authorization: `Bearer ${token}` };
+    try {
+      if (friendData.friends) {
+        const res = await axios.delete(`${API_URL}/api/friends/${userId}`, { headers });
+        setFriendData(prev => ({ ...prev, friends: false, friendCount: res.data.count }));
+        showToast(`Removed ${profile?.username} as a friend`);
+      } else {
+        const res = await axios.post(`${API_URL}/api/friends/${userId}`, {}, { headers });
+        setFriendData(prev => ({ ...prev, friends: true, friendCount: res.data.count }));
+        showToast(`You and ${profile?.username} are now friends! 🤝`);
+      }
+    } catch (err) { console.error(err); }
+    setFriendLoading(false);
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    showToast('Profile link copied!');
+  };
 
   if (loading) return <Spinner />;
   if (!profile) return <div className="text-center py-20 text-gray-600">User not found</div>;
@@ -35,9 +71,14 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-3xl mx-auto px-5 py-10">
+      <Toast message={toast} />
+
       {/* Hero */}
       <div className="relative overflow-hidden bg-gradient-to-br from-brand-900/50 to-black border border-white/[0.07] rounded-2xl p-8 mb-8">
+        {/* Banner gradient accent */}
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand-600 via-indigo-500 to-brand-400 rounded-t-2xl" />
         <div className="absolute inset-0 bg-gradient-to-r from-brand-600/5 to-indigo-600/5 pointer-events-none" />
+
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
           {/* Avatar */}
           <div className="relative flex-shrink-0">
@@ -49,30 +90,68 @@ export default function ProfilePage() {
                 {profile.username?.[0]?.toUpperCase()}
               </div>
             )}
+            {/* DJ badge overlay */}
+            {profile.is_dj && (
+              <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-black border border-white/10 flex items-center justify-center text-sm" title="DJ">
+                🎵
+              </div>
+            )}
           </div>
 
           {/* Info */}
           <div className="flex-1 text-center sm:text-left">
-            <h1 className="text-2xl font-extrabold text-white">{profile.username}</h1>
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1">
+              <h1 className="text-2xl font-extrabold text-white">{profile.username}</h1>
+              {profile.is_dj && <span className="text-base" title="DJ">🎵</span>}
+              {profile.dj_verified && <span className="text-base" title="Verified DJ">✅</span>}
+            </div>
             <div className="flex flex-wrap justify-center sm:justify-start gap-3 mt-1 text-gray-500 text-sm">
               {profile.location && <span>📍 {profile.location}</span>}
-              {joined && <span>📅 Joined {joined}</span>}
+              {joined && <span>📅 Since {joined}</span>}
             </div>
             {profile.bio && (
               <p className="text-gray-300 mt-3 text-sm max-w-md">{profile.bio}</p>
             )}
+            {/* DJ link */}
+            {profile.is_dj && profile.dj_id && (
+              <Link to={`/dj/${profile.dj_id}`}
+                className="inline-flex items-center gap-1 mt-2 text-brand-400 hover:text-brand-300 text-xs font-semibold transition-colors">
+                🎧 View DJ Profile →
+              </Link>
+            )}
+
+            {/* Stats row */}
             <div className="flex flex-wrap justify-center sm:justify-start gap-3 mt-4">
+              <StatPill label="Friends" value={friendData.friendCount} />
               <StatPill label="Sets Rated" value={ratings.length} />
+              {!isOwn && friendData.commonCount > 0 && (
+                <StatPill label="In Common" value={`${friendData.commonCount} friend${friendData.commonCount !== 1 ? 's' : ''}`} highlight />
+              )}
             </div>
           </div>
 
-          {/* Edit button */}
-          {isOwn && (
-            <Link to="/profile/edit"
-              className="flex-shrink-0 text-sm font-semibold px-4 py-2 rounded-xl border border-white/10 text-gray-300 hover:border-brand-500/50 hover:text-white transition-all duration-200">
-              Edit Profile
-            </Link>
-          )}
+          {/* Action buttons */}
+          <div className="flex flex-col gap-2 flex-shrink-0 items-end">
+            {isOwn ? (
+              <Link to="/profile/edit"
+                className="text-sm font-semibold px-4 py-2 rounded-xl border border-white/10 text-gray-300 hover:border-brand-500/50 hover:text-white transition-all duration-200">
+                Edit Profile
+              </Link>
+            ) : isLoggedIn ? (
+              <button onClick={handleFriend} disabled={friendLoading}
+                className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 ${
+                  friendData.friends
+                    ? 'bg-white/10 border border-white/20 text-white hover:bg-red-500/20 hover:border-red-400/30 hover:text-red-300'
+                    : 'bg-white/[0.08] border border-white/10 text-gray-200 hover:border-brand-500/50 hover:text-white'
+                }`}>
+                {friendLoading ? '…' : friendData.friends ? '🤝 Friends' : '+ Add Friend'}
+              </button>
+            ) : null}
+            <button onClick={handleCopyLink}
+              className="text-xs text-gray-500 hover:text-gray-300 px-3 py-1.5 rounded-lg border border-white/[0.06] hover:border-white/20 transition-all duration-200">
+              🔗 Copy Link
+            </button>
+          </div>
         </div>
       </div>
 
@@ -85,6 +164,11 @@ export default function ProfilePage() {
         <div className="text-center py-14 border border-white/[0.05] rounded-2xl text-gray-600">
           <p className="text-3xl mb-2">🎵</p>
           <p>No reviews yet</p>
+          {isOwn && (
+            <Link to="/trending" className="inline-block mt-3 text-brand-400 hover:text-brand-300 text-sm font-medium transition-colors">
+              Browse sets to rate →
+            </Link>
+          )}
         </div>
       ) : (
         <div className="space-y-3">
@@ -115,10 +199,10 @@ export default function ProfilePage() {
   );
 }
 
-function StatPill({ label, value }) {
+function StatPill({ label, value, highlight }) {
   return (
-    <div className="bg-white/[0.05] border border-white/[0.08] rounded-xl px-4 py-2 text-center">
-      <p className="text-white font-bold text-lg">{value}</p>
+    <div className={`border rounded-xl px-4 py-2 text-center ${highlight ? 'bg-brand-600/10 border-brand-600/30' : 'bg-white/[0.05] border-white/[0.08]'}`}>
+      <p className={`font-bold text-lg ${highlight ? 'text-brand-300' : 'text-white'}`}>{value}</p>
       <p className="text-gray-500 text-xs">{label}</p>
     </div>
   );
