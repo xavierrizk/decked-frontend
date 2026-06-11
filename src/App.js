@@ -10,6 +10,8 @@ import Signup from './pages/Signup';
 import Navbar from './components/Navbar';
 import CreateDJ from './pages/CreateDJ';
 import CreateSet from './pages/CreateSet';
+import ProfilePage from './pages/ProfilePage';
+import EditProfile from './pages/EditProfile';
 import PageWrapper from './components/PageWrapper';
 
 function App() {
@@ -40,8 +42,10 @@ function App() {
               <Route path="/rate/:setId" element={isLoggedIn ? <RateSet />    : <Navigate to="/login" />} />
               <Route path="/create-dj"   element={isLoggedIn ? <CreateDJ />   : <Navigate to="/login" />} />
               <Route path="/create-set"  element={isLoggedIn ? <CreateSet />  : <Navigate to="/login" />} />
-              <Route path="/login"       element={<Login   setIsLoggedIn={setIsLoggedIn} />} />
-              <Route path="/signup"      element={<Signup  setIsLoggedIn={setIsLoggedIn} />} />
+              <Route path="/profile/:userId" element={<ProfilePage />} />
+              <Route path="/profile/edit"  element={isLoggedIn ? <EditProfile /> : <Navigate to="/login" />} />
+              <Route path="/login"          element={<Login   setIsLoggedIn={setIsLoggedIn} />} />
+              <Route path="/signup"         element={<Signup  setIsLoggedIn={setIsLoggedIn} />} />
             </Routes>
           </PageWrapper>
         </main>

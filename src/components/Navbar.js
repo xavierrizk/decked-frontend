@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { getCurrentUserId } from '../utils/auth';
 
 function Navbar({ isLoggedIn, onLogout }) {
+  const userId = getCurrentUserId();
   return (
     <nav className="relative z-20 border-b border-white/5 bg-black/60 backdrop-blur-md">
       <div className="max-w-6xl mx-auto px-5 py-3.5 flex items-center justify-between">
@@ -11,6 +13,12 @@ function Navbar({ isLoggedIn, onLogout }) {
         <div className="flex items-center gap-3">
           {isLoggedIn ? (
             <>
+              {userId && (
+                <Link to={`/profile/${userId}`}
+                  className="text-gray-400 hover:text-white text-sm font-medium transition-colors duration-200">
+                  My Profile
+                </Link>
+              )}
               <Link to="/create-dj"
                 className="text-gray-400 hover:text-white text-sm font-medium transition-colors duration-200">
                 + DJ
