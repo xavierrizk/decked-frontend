@@ -41,7 +41,11 @@ export default function SetDetail() {
         { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
       await fetchRatings();
     } catch (err) {
-      alert(err.response?.data?.error || 'Failed to delete');
+      const msg = err.response?.data?.error || err.message || 'Failed to delete';
+      const status = err.response?.status;
+      if (status === 404) alert('Rating not found — it may have already been deleted.');
+      else if (status === 401) alert('You need to be logged in to delete a rating.');
+      else alert(msg);
     }
     setDeletingId(null);
   };
