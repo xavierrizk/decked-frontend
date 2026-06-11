@@ -7,8 +7,9 @@ function SetDetail() {
   const { id } = useParams();
   const [set, setSet] = useState(null);
   const [ratings, setRatings] = useState([]);
-  const [averageRating, setAverageRating] = useState(0);
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const isLoggedIn = !!localStorage.getItem('token');
 
   useEffect(() => {
     Promise.all([
@@ -18,44 +19,91 @@ function SetDetail() {
       .then(([setRes, ratingsRes]) => {
         setSet(setRes.data);
         setRatings(ratingsRes.data.ratings || []);
-        setAverageRating(ratingsRes.data.averageRating || 0);
+        setStats(ratingsRes.data.stats || null);
         setLoading(false);
       })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
-      });
+      .catch((err) => { console.error(err); setLoading(false); });
   }, [id]);
 
-  if (loading) return <div>Loading...</div>;
-  if (!set) return <div>Set not found</div>;
+  if (loading) return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-10 h-10 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
+
+  if (!set) return (
+    <div className="text-center py-20 text-gray-500">Set not found</div>
+  );
+
+  const avg = stats?.average || 0;
+  const total = stats?.total || 0;
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>{set.title}</h1>
-      <p>📍 {set.location}</p>
-      <p>⏱️ {set.duration_minutes} minutes</p>
-      {set.video_url && (
-        <iframe
-          width="400"
-          height="300"
-          src={`https://www.youtube.com/embed/${set.video_url}`}
-          title={set.title}
-        ></iframe>
-      )}
-      <h2>⭐ Average Rating: {averageRating.toFixed(1)} / 5</h2>
-      <Link to={`/rate/${set.id}`}>Rate This Set</Link>
+    <div className="max-w-3xl mx-auto px-4 py-10">
+      {/* Header */}
+      <div className="mb-6">
+        <Link to={`/dj/${set.dj_id}`} className="text-brand-400 hover:text-brand-300 text-sm font-medium">
+          ← {set.dj_name}
+        </Link>
+        <h1 className="text-3xl font-extrabold text-white mt-1">{set.title}</h1>
+        <div className="flex flex-wrap gap-4 mt-3 text-gray-400 text-sm">
+          {set.location && <span>📍 {set.location}</span>}
+          {set.duration && <span>⏱️ {set.duration} mins</span>}
+          {set.genre && <span>🎵 {set.genre}</span>}
+        </div>
+      </div>
 
-      <h3>Reviews</h3>
+      {/* Video */}
+      {set.video_url && (
+        <div className="rounded-xl overflow-hidden mb-6 aspect-video w-full">
+          <iframe
+            className="w-full h-full"
+            src={`https://www.youtube.com/embed/${set.video_url}`}
+            title={set.title}
+            allowFullScreen
+          />
+        </div>
+      )}
+
+      {/* Rating summary */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-5 mb-6 flex items-center justify-between">
+        <div>
+          <p className="text-4xl font-extrabold text-white">{avg > 0 ? Number(avg).toFixed(1) : '—'}<span className="text-gray-500 text-xl font-normal">/5</span></p>
+          <p className="text-gray-400 text-sm mt-1">{total} {total === 1 ? 'rating' : 'ratings'}</p>
+        </div>
+        {isLoggedIn ? (
+          <Link to={`/rate/${set.id}`}
+            className="bg-brand-600 hover:bg-brand-500 text-white font-semibold px-5 py-2.5 rounded-lg transition-all shadow-lg shadow-brand-900/50">
+            Rate This Set
+          </Link>
+        ) : (
+          <Link to="/login" className="text-brand-400 hover:text-brand-300 text-sm font-medium">
+            Log in to rate
+          </Link>
+        )}
+      </div>
+
+      {/* Reviews */}
+      <h2 className="text-xl font-semibold text-gray-300 mb-4">Reviews</h2>
       {ratings.length === 0 ? (
-        <p>No ratings yet. Be the first!</p>
+        <div className="text-center py-12 text-gray-500 border border-white/5 rounded-xl">
+          <p className="text-3xl mb-2">⭐</p>
+          <p>No reviews yet. Be the first!</p>
+        </div>
       ) : (
-        ratings.map((rating, idx) => (
-          <div key={idx} style={{ border: '1px solid #eee', padding: '10px', margin: '10px 0' }}>
-            <p>⭐ {rating.rating}/5</p>
-            <p>{rating.review_text}</p>
-          </div>
-        ))
+        <div className="space-y-3">
+          {ratings.map((r, idx) => (
+            <div key={idx} className="bg-white/5 border border-white/10 rounded-xl p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-white font-semibold text-sm">{r.username}</span>
+                <span className="bg-brand-700/50 text-brand-300 text-xs font-bold px-2.5 py-1 rounded-full">
+                  {r.score}/5
+                </span>
+              </div>
+              {r.review && <p className="text-gray-400 text-sm">{r.review}</p>}
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
