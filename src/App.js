@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import axios from 'axios';
 import './App.css';
+import API_URL from './api';
 import Home              from './pages/Home';
 import DJProfile         from './pages/DJProfile';
 import SetDetail         from './pages/SetDetail';
@@ -22,17 +24,31 @@ import RequestDJPage           from './pages/RequestDJPage';
 import MyDJsPage               from './pages/MyDJsPage';
 import Navbar            from './components/Navbar';
 import PageWrapper       from './components/PageWrapper';
+import AnnouncementsBanner from './components/AnnouncementsBanner';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+  const [banInfo, setBanInfo] = useState(null);
 
   useEffect(() => {
     setIsLoggedIn(!!localStorage.getItem('token'));
   }, []);
 
+  // Check ban status on mount if logged in
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    axios.get(`${API_URL}/api/user/is-banned`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).then(r => {
+      if (r.data.banned) setBanInfo(r.data.ban);
+    }).catch(() => {});
+  }, [isLoggedIn]);
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     setIsLoggedIn(false);
+    setBanInfo(null);
   };
 
   const Protected = ({ children }) =>
@@ -43,6 +59,15 @@ function App() {
       <div className="animated-bg" />
       <div className="relative z-10 min-h-screen flex flex-col">
         <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+        <AnnouncementsBanner />
+        {banInfo && (
+          <div className="bg-red-900/60 border-b border-red-500/40 px-4 py-3 text-center">
+            <p className="text-red-200 text-sm font-semibold">
+              Your account has been banned: <span className="text-red-100">{banInfo.reason}</span>
+              {banInfo.expires_at && <span className="text-red-300"> · Expires {new Date(banInfo.expires_at).toLocaleDateString()}</span>}
+            </p>
+          </div>
+        )}
         <main className="flex-1">
           <PageWrapper>
             <Routes>

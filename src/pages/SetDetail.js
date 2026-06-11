@@ -5,6 +5,7 @@ import axios from 'axios';
 import { StarDisplay } from '../components/StarRating';
 import { getCurrentUserId } from '../utils/auth';
 import Toast, { useToast } from '../components/Toast';
+import ReportModal from '../components/ReportModal';
 
 export default function SetDetail() {
   const { id } = useParams();
@@ -20,6 +21,7 @@ export default function SetDetail() {
   const [deletingComment, setDeletingComment] = useState(null);
   const [submittingComment, setSubmittingComment] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
+  const [reportModal, setReportModal] = useState({ open: false, type: null, id: null, name: '' });
   const [toast, showToast] = useToast();
   const isLoggedIn    = !!localStorage.getItem('token');
   const currentUserId = getCurrentUserId();
@@ -148,6 +150,13 @@ export default function SetDetail() {
   return (
     <div className="max-w-3xl mx-auto px-5 py-10">
       <Toast message={toast} />
+      <ReportModal
+        open={reportModal.open}
+        onClose={() => setReportModal({ open: false, type: null, id: null, name: '' })}
+        reportType={reportModal.type}
+        targetId={reportModal.id}
+        targetName={reportModal.name}
+      />
 
       {/* Breadcrumb + Follow */}
       {set.dj_name && (
@@ -184,6 +193,14 @@ export default function SetDetail() {
             title="Share on Twitter">
             🐦
           </button>
+          {/* Report set */}
+          {isLoggedIn && (
+            <button onClick={() => setReportModal({ open: true, type: 'set', id: set.id, name: set.title })}
+              className="text-gray-500 hover:text-red-400 text-sm px-3 py-1.5 rounded-lg border border-white/[0.07] hover:border-red-500/30 transition-all duration-200"
+              title="Report set">
+              🚩
+            </button>
+          )}
           {/* Like */}
           <button onClick={handleToggleLike}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all duration-200 hover:scale-105 active:scale-95 text-sm font-medium ${
@@ -322,12 +339,21 @@ export default function SetDetail() {
                       <Link to={`/profile/${c.user_id}`} className="text-white font-semibold text-sm hover:text-brand-400 transition-colors">{c.username}</Link>
                       <span className="text-gray-600 text-xs">{new Date(c.created_at).toLocaleDateString()}</span>
                     </div>
-                    {c.user_id === currentUserId && (
-                      <button onClick={() => handleDeleteComment(c.id)} disabled={deletingComment === c.id}
-                        className="text-xs text-gray-600 hover:text-red-400 transition-colors disabled:opacity-40">
-                        {deletingComment === c.id ? '…' : 'Delete'}
-                      </button>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {c.user_id === currentUserId && (
+                        <button onClick={() => handleDeleteComment(c.id)} disabled={deletingComment === c.id}
+                          className="text-xs text-gray-600 hover:text-red-400 transition-colors disabled:opacity-40">
+                          {deletingComment === c.id ? '…' : 'Delete'}
+                        </button>
+                      )}
+                      {isLoggedIn && c.user_id !== currentUserId && (
+                        <button onClick={() => setReportModal({ open: true, type: 'comment', id: c.id, name: `comment by ${c.username}` })}
+                          className="text-xs text-gray-700 hover:text-red-400 transition-colors"
+                          title="Report comment">
+                          🚩
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <p className="text-gray-300 text-sm">{c.text}</p>
                 </div>

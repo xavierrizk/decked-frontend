@@ -5,6 +5,11 @@ import axios from 'axios';
 import { getIsAdmin } from '../utils/auth';
 import DeleteModal from '../components/DeleteModal';
 import Toast, { useToast } from '../components/Toast';
+import AdminAnalyticsDashboard from './AdminAnalyticsDashboard';
+import ReportsModeration from './ReportsModeration';
+import BanManager from './BanManager';
+import AnnouncementsManager from './AnnouncementsManager';
+import CommentModerationQueue from './CommentModerationQueue';
 
 const STATUS_TABS = ['pending', 'approved', 'rejected'];
 const NAV = [
@@ -13,6 +18,10 @@ const NAV = [
   { id: 'verifications', icon: '✅', label: 'Verifications' },
   { id: 'manage-djs',    icon: '🗑️', label: 'Manage DJs' },
   { id: 'manage-sets',   icon: '🎵', label: 'Manage Sets' },
+  { id: 'reports',       icon: '🚩', label: 'Reports & Moderation' },
+  { id: 'ban-users',     icon: '🔒', label: 'Ban Users' },
+  { id: 'announcements', icon: '📢', label: 'Announcements' },
+  { id: 'comments',      icon: '💬', label: 'Comment Queue' },
   { id: 'audit-log',     icon: '📋', label: 'Audit Log' },
 ];
 
@@ -161,6 +170,9 @@ export default function AdminDashboard() {
               {n.id === 'dj-requests' && stats?.pending_requests > 0 && (
                 <span className="ml-auto text-xs bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 px-1.5 py-0.5 rounded-full font-bold">{stats.pending_requests}</span>
               )}
+              {n.id === 'reports' && stats?.active_reports > 0 && (
+                <span className="ml-auto text-xs bg-red-500/20 text-red-300 border border-red-500/30 px-1.5 py-0.5 rounded-full font-bold">{stats.active_reports}</span>
+              )}
             </button>
           ))}
         </nav>
@@ -179,24 +191,20 @@ export default function AdminDashboard() {
 
       {/* Main content */}
       <main className="flex-1 px-6 py-8 pb-20 sm:pb-8 overflow-auto">
-        {/* Overview */}
-        {section === 'overview' && (
-          <div>
-            <h1 className="text-2xl font-extrabold text-white mb-1">Overview</h1>
-            <p className="text-gray-500 text-sm mb-6">Platform at a glance</p>
-            {stats ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {[['👥','Users',stats.total_users],['🎧','DJs',stats.total_djs],['🎵','Sets',stats.total_sets],['✅','Verified',stats.verified_djs],['⏳','Pending DJ Reqs',stats.pending_requests,true]].map(([icon,label,val,warn]) => (
-                  <div key={label} className={`rounded-2xl border p-5 ${warn && val > 0 ? 'bg-yellow-500/10 border-yellow-500/30' : 'bg-white/[0.03] border-white/[0.07]'}`}>
-                    <p className="text-3xl mb-2">{icon}</p>
-                    <p className={`text-3xl font-extrabold ${warn && val > 0 ? 'text-yellow-300' : 'text-white'}`}>{val}</p>
-                    <p className="text-gray-500 text-sm mt-1">{label}</p>
-                  </div>
-                ))}
-              </div>
-            ) : <Skeletons count={5} />}
-          </div>
-        )}
+        {/* Overview — Analytics Dashboard */}
+        {section === 'overview' && <AdminAnalyticsDashboard />}
+
+        {/* Reports & Moderation */}
+        {section === 'reports' && <ReportsModeration />}
+
+        {/* Ban Users */}
+        {section === 'ban-users' && <BanManager />}
+
+        {/* Announcements */}
+        {section === 'announcements' && <AnnouncementsManager />}
+
+        {/* Comment Queue */}
+        {section === 'comments' && <CommentModerationQueue />}
 
         {/* DJ Requests */}
         {section === 'dj-requests' && (

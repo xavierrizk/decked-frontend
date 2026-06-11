@@ -5,6 +5,7 @@ import axios from 'axios';
 import { StarDisplay } from '../components/StarRating';
 import { getCurrentUserId } from '../utils/auth';
 import Toast, { useToast } from '../components/Toast';
+import ReportModal from '../components/ReportModal';
 
 export default function ProfilePage() {
   const { userId }              = useParams();
@@ -13,6 +14,7 @@ export default function ProfilePage() {
   const [friendData, setFriendData] = useState({ friends: false, friendCount: 0, commonCount: 0 });
   const [friendLoading, setFriendLoading] = useState(false);
   const [loading, setLoading]   = useState(true);
+  const [reportOpen, setReportOpen] = useState(false);
   const [toast, showToast]      = useToast();
   const currentUserId           = getCurrentUserId();
   const isOwn                   = parseInt(userId) === currentUserId;
@@ -72,6 +74,13 @@ export default function ProfilePage() {
   return (
     <div className="max-w-3xl mx-auto px-5 py-10">
       <Toast message={toast} />
+      <ReportModal
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+        reportType="user"
+        targetId={parseInt(userId)}
+        targetName={profile.username}
+      />
 
       {/* Hero */}
       <div className="relative overflow-hidden bg-gradient-to-br from-brand-900/50 to-black border border-white/[0.07] rounded-2xl p-8 mb-8">
@@ -151,6 +160,12 @@ export default function ProfilePage() {
               className="text-xs text-gray-500 hover:text-gray-300 px-3 py-1.5 rounded-lg border border-white/[0.06] hover:border-white/20 transition-all duration-200">
               🔗 Copy Link
             </button>
+            {!isOwn && isLoggedIn && (
+              <button onClick={() => setReportOpen(true)}
+                className="text-xs text-gray-600 hover:text-red-400 px-3 py-1.5 rounded-lg border border-white/[0.04] hover:border-red-500/20 transition-all duration-200">
+                🚩 Report
+              </button>
+            )}
           </div>
         </div>
       </div>
