@@ -41,13 +41,17 @@ export default function Home() {
               className="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95 shadow-glow">
               My Feed
             </Link>
+            <Link to="/discover"
+              className="px-6 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95">
+              🧭 Discover
+            </Link>
+            <Link to="/search"
+              className="px-6 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95">
+              🔍 Search
+            </Link>
             <Link to="/trending"
               className="px-6 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95">
-              Trending
-            </Link>
-            <Link to="/create-dj"
-              className="px-6 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95">
-              + Add DJ
+              🔥 Trending
             </Link>
           </div>
         ) : (
@@ -56,9 +60,13 @@ export default function Home() {
               className="px-8 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95 shadow-glow">
               Get Started
             </Link>
-            <Link to="/trending"
+            <Link to="/discover"
               className="px-8 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95">
-              Trending
+              🧭 Discover
+            </Link>
+            <Link to="/search"
+              className="px-8 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95">
+              🔍 Search
             </Link>
           </div>
         )}

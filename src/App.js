@@ -14,6 +14,8 @@ import EditProfile       from './pages/EditProfile';
 import FeedPage          from './pages/FeedPage';
 import TrendingPage      from './pages/TrendingPage';
 import NotificationsPage from './pages/NotificationsPage';
+import SearchPage        from './pages/SearchPage';
+import DiscoveryPage     from './pages/DiscoveryPage';
 import Navbar            from './components/Navbar';
 import PageWrapper       from './components/PageWrapper';
 
@@ -42,6 +44,8 @@ function App() {
             <Routes>
               <Route path="/"               element={<Home />} />
               <Route path="/trending"       element={<TrendingPage />} />
+              <Route path="/search"         element={<SearchPage />} />
+              <Route path="/discover"       element={<DiscoveryPage />} />
               <Route path="/dj/:id"         element={<DJProfile />} />
               <Route path="/set/:id"        element={<SetDetail />} />
               <Route path="/profile/:userId" element={<ProfilePage />} />
