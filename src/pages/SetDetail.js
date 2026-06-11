@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 
-function SetDetail() {
+export default function SetDetail() {
   const { id } = useParams();
   const [set, setSet] = useState(null);
   const [ratings, setRatings] = useState([]);
@@ -22,83 +22,96 @@ function SetDetail() {
         setStats(ratingsRes.data.stats || null);
         setLoading(false);
       })
-      .catch((err) => { console.error(err); setLoading(false); });
+      .catch(() => setLoading(false));
   }, [id]);
 
   if (loading) return (
     <div className="flex items-center justify-center min-h-[60vh]">
-      <div className="w-10 h-10 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
+      <div className="w-10 h-10 border-4 border-brand-600 border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
-  if (!set) return (
-    <div className="text-center py-20 text-gray-500">Set not found</div>
-  );
+  if (!set) return <div className="text-center py-20 text-gray-600">Set not found</div>;
 
-  const avg = stats?.average || 0;
-  const total = stats?.total || 0;
+  const avg   = stats?.average ? Number(stats.average).toFixed(1) : null;
+  const total = Number(stats?.total) || 0;
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10">
-      {/* Header */}
-      <div className="mb-6">
-        <Link to={`/dj/${set.dj_id}`} className="text-brand-400 hover:text-brand-300 text-sm font-medium">
+    <div className="max-w-3xl mx-auto px-5 py-10">
+      {/* Breadcrumb */}
+      {set.dj_name && (
+        <Link to={`/dj/${set.dj_id}`} className="text-gray-500 hover:text-brand-400 text-sm transition-colors mb-3 inline-block">
           ← {set.dj_name}
         </Link>
-        <h1 className="text-3xl font-extrabold text-white mt-1">{set.title}</h1>
-        <div className="flex flex-wrap gap-4 mt-3 text-gray-400 text-sm">
-          {set.location && <span>📍 {set.location}</span>}
-          {set.duration && <span>⏱️ {set.duration} mins</span>}
-          {set.genre && <span>🎵 {set.genre}</span>}
-        </div>
+      )}
+
+      <h1 className="text-3xl font-extrabold text-white mb-3">{set.title}</h1>
+
+      {/* Meta pills */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {set.location && <Pill>📍 {set.location}</Pill>}
+        {set.duration  && <Pill>⏱️ {set.duration} mins</Pill>}
+        {set.genre     && <Pill>🎵 {set.genre}</Pill>}
       </div>
 
       {/* Video */}
       {set.video_url && (
-        <div className="rounded-xl overflow-hidden mb-6 aspect-video w-full">
-          <iframe
-            className="w-full h-full"
-            src={`https://www.youtube.com/embed/${set.video_url}`}
-            title={set.title}
-            allowFullScreen
-          />
+        <div className="rounded-2xl overflow-hidden mb-6 aspect-video bg-black border border-white/[0.07]">
+          <iframe className="w-full h-full" src={`https://www.youtube.com/embed/${set.video_url}`} title={set.title} allowFullScreen />
         </div>
       )}
 
-      {/* Rating summary */}
-      <div className="bg-white/5 border border-white/10 rounded-xl p-5 mb-6 flex items-center justify-between">
+      {/* Rating bar */}
+      <div className="bg-white/[0.04] border border-white/[0.07] rounded-2xl p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <p className="text-4xl font-extrabold text-white">{avg > 0 ? Number(avg).toFixed(1) : '—'}<span className="text-gray-500 text-xl font-normal">/5</span></p>
-          <p className="text-gray-400 text-sm mt-1">{total} {total === 1 ? 'rating' : 'ratings'}</p>
+          <div className="flex items-end gap-2">
+            <span className="text-5xl font-extrabold text-white">{avg ?? '—'}</span>
+            <span className="text-gray-600 text-xl mb-1">/5</span>
+          </div>
+          <p className="text-gray-500 text-sm mt-0.5">
+            {total} {total === 1 ? 'rating' : 'ratings'}
+          </p>
+          {avg && (
+            <div className="flex gap-0.5 mt-2">
+              {[1,2,3,4,5].map(n => (
+                <span key={n} className={`text-xl ${avg >= n ? 'text-yellow-400' : 'text-gray-700'}`}>★</span>
+              ))}
+            </div>
+          )}
         </div>
         {isLoggedIn ? (
           <Link to={`/rate/${set.id}`}
-            className="bg-brand-600 hover:bg-brand-500 text-white font-semibold px-5 py-2.5 rounded-lg transition-all shadow-lg shadow-brand-900/50">
+            className="px-5 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 shadow-glow text-sm">
             Rate This Set
           </Link>
         ) : (
-          <Link to="/login" className="text-brand-400 hover:text-brand-300 text-sm font-medium">
-            Log in to rate
+          <Link to="/login" className="text-brand-400 hover:text-brand-300 text-sm font-medium transition-colors">
+            Log in to rate →
           </Link>
         )}
       </div>
 
       {/* Reviews */}
-      <h2 className="text-xl font-semibold text-gray-300 mb-4">Reviews</h2>
+      <p className="text-gray-600 text-xs font-semibold uppercase tracking-widest mb-4">Reviews</p>
       {ratings.length === 0 ? (
-        <div className="text-center py-12 text-gray-500 border border-white/5 rounded-xl">
+        <div className="text-center py-14 border border-white/[0.05] rounded-2xl text-gray-600">
           <p className="text-3xl mb-2">⭐</p>
           <p>No reviews yet. Be the first!</p>
         </div>
       ) : (
         <div className="space-y-3">
           {ratings.map((r, idx) => (
-            <div key={idx} className="bg-white/5 border border-white/10 rounded-xl p-4">
+            <div key={idx} className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-white font-semibold text-sm">{r.username}</span>
-                <span className="bg-brand-700/50 text-brand-300 text-xs font-bold px-2.5 py-1 rounded-full">
-                  {r.score}/5
-                </span>
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-0.5">
+                    {[1,2,3,4,5].map(n => (
+                      <span key={n} className={`text-sm ${r.score >= n ? 'text-yellow-400' : 'text-gray-700'}`}>★</span>
+                    ))}
+                  </div>
+                  <span className="text-xs font-bold bg-brand-700/40 text-brand-300 px-2 py-0.5 rounded-full">{r.score}/5</span>
+                </div>
               </div>
               {r.review && <p className="text-gray-400 text-sm">{r.review}</p>}
             </div>
@@ -109,4 +122,10 @@ function SetDetail() {
   );
 }
 
-export default SetDetail;
+function Pill({ children }) {
+  return (
+    <span className="text-xs text-gray-400 bg-white/[0.05] border border-white/[0.07] px-3 py-1 rounded-full">
+      {children}
+    </span>
+  );
+}

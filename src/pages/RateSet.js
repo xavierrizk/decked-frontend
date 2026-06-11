@@ -2,98 +2,89 @@ import API_URL from '../api';
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import StarRating from '../components/StarRating';
 
-function RateSet() {
+const LABELS = { 0.5:'½ star',1:'Meh',1.5:'Poor',2:'OK',2.5:'Decent',3:'Good',3.5:'Very Good',4:'Great',4.5:'Excellent',5:'🔥 Decked!' };
+
+export default function RateSet() {
   const { setId } = useParams();
-  const [rating, setRating] = useState(5);
-  const [reviewText, setReviewText] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [score, setScore]       = useState(3);
+  const [review, setReview]     = useState('');
+  const [error, setError]       = useState('');
+  const [success, setSuccess]   = useState('');
+  const [loading, setLoading]   = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
-    const token = localStorage.getItem('token');
+    setLoading(true); setError('');
+
+    // Backend only accepts integers 1-5, so round half-stars up
+    const finalScore = Math.ceil(score);
 
     try {
       await axios.post(
         `${API_URL}/api/ratings/set/${setId}`,
-        { score: rating, review: reviewText },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { score: finalScore, review },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
       );
       setSuccess('Rating submitted!');
-      setTimeout(() => navigate(`/set/${setId}`), 1500);
+      setTimeout(() => navigate(`/set/${setId}`), 1400);
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to submit rating');
       setLoading(false);
     }
   };
 
-  const labels = { 1: 'Meh', 2: 'OK', 3: 'Good', 4: 'Great', 5: 'Decked! 🔥' };
-
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-white/5 border border-white/10 rounded-2xl p-8 shadow-xl">
-        <Link to={`/set/${setId}`} className="text-brand-400 hover:text-brand-300 text-sm font-medium block mb-4">
+    <div className="min-h-[85vh] flex items-center justify-center px-4">
+      <div className="w-full max-w-sm">
+        <Link to={`/set/${setId}`} className="text-gray-500 hover:text-brand-400 text-sm transition-colors block mb-6">
           ← Back to set
         </Link>
-        <h1 className="text-3xl font-bold text-white mb-1">Rate This Set</h1>
-        <p className="text-gray-400 text-sm mb-6">Share your thoughts on this DJ set</p>
 
-        {error && (
-          <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-4 py-3 mb-4">
-            {error}
-          </div>
-        )}
-        {success && (
-          <div className="bg-green-500/10 border border-green-500/30 text-green-400 text-sm rounded-lg px-4 py-3 mb-4">
-            {success}
-          </div>
-        )}
+        <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-7 shadow-2xl backdrop-blur-sm">
+          <h1 className="text-2xl font-extrabold text-white mb-1">Rate This Set</h1>
+          <p className="text-gray-500 text-sm mb-6">Click once = full star · Click again = half star</p>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Star rating */}
-          <div>
-            <label className="block text-gray-300 text-sm font-medium mb-2">Rating</label>
-            <div className="flex gap-2">
-              {[1, 2, 3, 4, 5].map((n) => (
-                <button
-                  key={n} type="button" onClick={() => setRating(n)}
-                  className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-all ${
-                    rating >= n
-                      ? 'bg-brand-600 text-white shadow-lg shadow-brand-900/50'
-                      : 'bg-white/5 text-gray-400 hover:bg-white/10'
-                  }`}
-                >
-                  {n}
-                </button>
-              ))}
+          {error && (
+            <div className="mb-5 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
+              {error}
             </div>
-            <p className="text-brand-400 text-sm font-medium mt-2 text-center">{labels[rating]}</p>
-          </div>
+          )}
+          {success && (
+            <div className="mb-5 px-4 py-3 bg-green-500/10 border border-green-500/20 rounded-xl text-green-400 text-sm flex items-center gap-2">
+              <span>✓</span> {success}
+            </div>
+          )}
 
-          <div>
-            <label className="block text-gray-300 text-sm font-medium mb-1">Review <span className="text-gray-500">(optional)</span></label>
-            <textarea
-              value={reviewText} onChange={(e) => setReviewText(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 transition-colors resize-none h-28"
-              placeholder="What did you think of this set?"
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Stars */}
+            <div>
+              <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wider mb-3">Your Rating</label>
+              <StarRating value={score} onChange={setScore} />
+              <p className="text-brand-400 text-sm font-semibold mt-2">{LABELS[score] || ''}</p>
+            </div>
 
-          <button
-            type="submit" disabled={loading}
-            className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white font-semibold py-2.5 rounded-lg transition-all shadow-lg shadow-brand-900/50"
-          >
-            {loading ? 'Submitting...' : 'Submit Rating'}
-          </button>
-        </form>
+            {/* Review */}
+            <div>
+              <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                Review <span className="text-gray-700 normal-case tracking-normal font-normal">(optional)</span>
+              </label>
+              <textarea
+                value={review} onChange={(e) => setReview(e.target.value)}
+                className="w-full bg-white/[0.04] border border-white/10 focus:border-brand-500 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 text-sm outline-none transition-colors duration-200 resize-none h-28"
+                placeholder="What did you think of this set?"
+              />
+            </div>
+
+            <button type="submit" disabled={loading}
+              className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-40 text-white font-semibold py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-glow">
+              {loading ? 'Submitting…' : 'Submit Rating'}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
 }
-
-export default RateSet;
