@@ -93,25 +93,20 @@ export default function DJProfile() {
             </div>
           </div>
 
-          {/* Follow button */}
-          {isLoggedIn && !isOwnDj && (
-            <button onClick={handleFollow} disabled={followLoading}
-              className={`flex-shrink-0 px-7 py-3 rounded-xl text-sm font-bold transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 ${
-                follow.following
-                  ? 'bg-white/10 border border-white/20 text-white hover:bg-red-500/20 hover:border-red-400/30 hover:text-red-300'
-                  : 'bg-brand-600 hover:bg-brand-500 text-white shadow-glow text-base'
-              }`}>
-              {followLoading ? '…' : follow.following ? '✓ Following' : '+ Follow'}
-            </button>
-          )}
-          {!isLoggedIn && (
-            <Link to="/login"
-              className="flex-shrink-0 px-7 py-3 rounded-xl text-sm font-bold bg-brand-600 hover:bg-brand-500 text-white shadow-glow transition-all duration-200 hover:scale-105">
-              Follow
-            </Link>
-          )}
+          {/* Follow button (hero top-right) */}
+          <FollowButton follow={follow} followLoading={followLoading} isLoggedIn={isLoggedIn} isOwnDj={isOwnDj} djName={dj.name} onFollow={handleFollow} />
         </div>
       </div>
+
+      {/* Standalone follow CTA below hero (for logged-out or extra visibility) */}
+      {!isOwnDj && (
+        <div className="flex items-center justify-between mb-6 px-1">
+          <p className="text-gray-500 text-sm">
+            {follow.following ? `You follow ${dj.name}` : `Follow ${dj.name} to get their new sets in your feed`}
+          </p>
+          <FollowButton follow={follow} followLoading={followLoading} isLoggedIn={isLoggedIn} isOwnDj={isOwnDj} djName={dj.name} onFollow={handleFollow} />
+        </div>
+      )}
 
       {/* Top sets */}
       {stats?.top_sets?.length > 0 && (
@@ -152,6 +147,26 @@ export default function DJProfile() {
         </div>
       )}
     </div>
+  );
+}
+
+function FollowButton({ follow, followLoading, isLoggedIn, isOwnDj, djName, onFollow }) {
+  if (isOwnDj) return null;
+  if (!isLoggedIn) return (
+    <Link to="/login"
+      className="flex-shrink-0 px-6 py-2.5 rounded-xl text-sm font-bold bg-brand-600 hover:bg-brand-500 text-white shadow-glow transition-all duration-200 hover:scale-105">
+      + Follow
+    </Link>
+  );
+  return (
+    <button onClick={onFollow} disabled={followLoading}
+      className={`flex-shrink-0 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 ${
+        follow.following
+          ? 'bg-white/10 border border-white/20 text-white hover:bg-red-500/20 hover:border-red-400/30 hover:text-red-300'
+          : 'bg-brand-600 hover:bg-brand-500 text-white shadow-glow'
+      }`}>
+      {followLoading ? '…' : follow.following ? '✓ Following' : '+ Follow'}
+    </button>
   );
 }
 
