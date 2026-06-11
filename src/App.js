@@ -18,6 +18,8 @@ import SearchPage              from './pages/SearchPage';
 import DiscoveryPage           from './pages/DiscoveryPage';
 import AdminDashboard          from './pages/AdminDashboard';
 import VerificationRequestPage from './pages/VerificationRequestPage';
+import RequestDJPage           from './pages/RequestDJPage';
+import MyDJsPage               from './pages/MyDJsPage';
 import Navbar            from './components/Navbar';
 import PageWrapper       from './components/PageWrapper';
 
@@ -50,6 +52,8 @@ function App() {
               <Route path="/discover"       element={<DiscoveryPage />} />
               <Route path="/verification"   element={<Protected><VerificationRequestPage /></Protected>} />
               <Route path="/admin"          element={<Protected><AdminDashboard /></Protected>} />
+              <Route path="/request-dj"     element={<Protected><RequestDJPage /></Protected>} />
+              <Route path="/my-djs"         element={<Protected><MyDJsPage /></Protected>} />
               <Route path="/dj/:id"         element={<DJProfile />} />
               <Route path="/set/:id"        element={<SetDetail />} />
               <Route path="/profile/:userId" element={<ProfilePage />} />

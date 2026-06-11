@@ -129,8 +129,7 @@ export default function Navbar({ isLoggedIn, onLogout }) {
                   Profile
                 </Link>
               )}
-              <Link to="/verification" className="text-gray-400 hover:text-white text-sm font-medium transition-colors duration-200 hidden sm:block">Get Verified</Link>
-              <Link to="/create-dj" className="text-gray-400 hover:text-white text-sm font-medium transition-colors duration-200 hidden sm:block">+ DJ</Link>
+              <Link to="/my-djs" className="text-gray-400 hover:text-white text-sm font-medium transition-colors duration-200 hidden sm:block">My DJs</Link>
               <Link to="/create-set" className="text-gray-400 hover:text-white text-sm font-medium transition-colors duration-200 hidden sm:block">+ Set</Link>
               {isAdmin && (
                 <Link to="/admin"
