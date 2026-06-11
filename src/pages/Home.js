@@ -6,6 +6,7 @@ import axios from 'axios';
 function Home() {
   const [djs, setDJs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const isLoggedIn = !!localStorage.getItem('token');
 
   useEffect(() => {
     axios
@@ -24,7 +25,19 @@ function Home() {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>🎵 DJs on Decked</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1>🎵 DJs on Decked</h1>
+        {isLoggedIn && (
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <Link to="/create-dj">
+              <button style={{ padding: '8px 16px', cursor: 'pointer' }}>+ Create DJ</button>
+            </Link>
+            <Link to="/create-set">
+              <button style={{ padding: '8px 16px', cursor: 'pointer' }}>+ Create Set</button>
+            </Link>
+          </div>
+        )}
+      </div>
       <div>
         {djs.length === 0 ? (
           <p>No DJs yet. Create one!</p>

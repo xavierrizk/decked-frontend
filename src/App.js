@@ -9,6 +9,8 @@ import RateSet from './pages/RateSet';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Navbar from './components/Navbar';
+import CreateDJ from './pages/CreateDJ';
+import CreateSet from './pages/CreateSet';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
@@ -36,6 +38,8 @@ function App() {
           <Route path="/dj/:id" element={<DJProfile />} />
           <Route path="/set/:id" element={<SetDetail />} />
           <Route path="/rate/:setId" element={isLoggedIn ? <RateSet /> : <Navigate to="/login" />} />
+          <Route path="/create-dj" element={isLoggedIn ? <CreateDJ /> : <Navigate to="/login" />} />
+          <Route path="/create-set" element={isLoggedIn ? <CreateSet /> : <Navigate to="/login" />} />
           <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="/signup" element={<Signup setIsLoggedIn={setIsLoggedIn} />} />
         </Routes>
