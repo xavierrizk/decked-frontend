@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import API_URL from '../api';
-import { getCurrentUserId } from '../utils/auth';
+import { getCurrentUserId, getIsAdmin } from '../utils/auth';
 
 export default function Navbar({ isLoggedIn, onLogout }) {
-  const userId                        = getCurrentUserId();
+  const userId  = getCurrentUserId();
+  const isAdmin = getIsAdmin();
   const [unread, setUnread]           = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
@@ -128,8 +129,15 @@ export default function Navbar({ isLoggedIn, onLogout }) {
                   Profile
                 </Link>
               )}
+              <Link to="/verification" className="text-gray-400 hover:text-white text-sm font-medium transition-colors duration-200 hidden sm:block">Get Verified</Link>
               <Link to="/create-dj" className="text-gray-400 hover:text-white text-sm font-medium transition-colors duration-200 hidden sm:block">+ DJ</Link>
               <Link to="/create-set" className="text-gray-400 hover:text-white text-sm font-medium transition-colors duration-200 hidden sm:block">+ Set</Link>
+              {isAdmin && (
+                <Link to="/admin"
+                  className="text-xs font-bold px-3 py-1.5 rounded-lg bg-red-500/20 border border-red-500/30 text-red-300 hover:bg-red-500/30 transition-all duration-200">
+                  ⚙️ Admin
+                </Link>
+              )}
               <button onClick={onLogout}
                 className="text-sm font-medium px-4 py-1.5 rounded-full border border-white/10 text-gray-300 hover:border-white/30 hover:text-white transition-all duration-200 active:scale-95">
                 Logout

@@ -8,29 +8,36 @@ import Toast, { useToast } from '../components/Toast';
 
 export default function DJProfile() {
   const { id } = useParams();
-  const [dj, setDJ]         = useState(null);
-  const [sets, setSets]     = useState([]);
-  const [stats, setStats]   = useState(null);
-  const [follow, setFollow] = useState({ count: 0, following: false });
+  const [dj, setDJ]           = useState(null);
+  const [sets, setSets]       = useState([]);
+  const [stats, setStats]     = useState(null);
+  const [follow, setFollow]   = useState({ count: 0, following: false });
+  const [verifStatus, setVerifStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [followLoading, setFollowLoading] = useState(false);
-  const [toast, showToast] = useToast();
+  const [toast, showToast]    = useToast();
   const currentUserId = getCurrentUserId();
   const isLoggedIn = !!localStorage.getItem('token');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const verifPromise = token
+      ? axios.get(`${API_URL}/api/verification/status`, { headers }).catch(() => ({ data: null }))
+      : Promise.resolve({ data: null });
+
     Promise.all([
       axios.get(`${API_URL}/api/djs/${id}`),
       axios.get(`${API_URL}/api/sets/dj/${id}`),
       axios.get(`${API_URL}/api/djs/${id}/stats`),
       axios.get(`${API_URL}/api/follows/${id}`, { headers }),
-    ]).then(([djRes, setsRes, statsRes, followRes]) => {
+      verifPromise,
+    ]).then(([djRes, setsRes, statsRes, followRes, verifRes]) => {
       setDJ(djRes.data);
       setSets(setsRes.data);
       setStats(statsRes.data);
       setFollow(followRes.data);
+      setVerifStatus(verifRes.data);
       setLoading(false);
     }).catch(() => setLoading(false));
   }, [id]);
@@ -84,6 +91,28 @@ export default function DJProfile() {
               )}
             </div>
             <p className="text-gray-400 mt-1 max-w-lg">{dj.bio || 'No bio available'}</p>
+
+            {/* Verification status for own DJ profile */}
+            {isOwnDj && (
+              <div className="mt-2">
+                {verifStatus?.request?.status === 'pending' && (
+                  <span className="inline-flex items-center gap-1.5 text-xs bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 px-3 py-1 rounded-full font-medium">
+                    ⏳ Verification under review
+                  </span>
+                )}
+                {verifStatus?.request?.status === 'approved' && (
+                  <span className="inline-flex items-center gap-1.5 text-xs bg-green-500/10 border border-green-500/30 text-green-300 px-3 py-1 rounded-full font-medium">
+                    ✅ Verified DJ
+                  </span>
+                )}
+                {(!verifStatus?.request || verifStatus?.request?.status === 'rejected') && (
+                  <Link to="/verification"
+                    className="inline-flex items-center gap-1.5 text-xs bg-white/[0.05] border border-white/10 text-gray-400 hover:text-white hover:border-brand-500/40 px-3 py-1 rounded-full font-medium transition-all duration-200">
+                    ✅ Request Verification
+                  </Link>
+                )}
+              </div>
+            )}
 
             {/* Stats row */}
             <div className="flex flex-wrap justify-center sm:justify-start gap-4 mt-4">

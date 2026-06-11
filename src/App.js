@@ -14,8 +14,10 @@ import EditProfile       from './pages/EditProfile';
 import FeedPage          from './pages/FeedPage';
 import TrendingPage      from './pages/TrendingPage';
 import NotificationsPage from './pages/NotificationsPage';
-import SearchPage        from './pages/SearchPage';
-import DiscoveryPage     from './pages/DiscoveryPage';
+import SearchPage              from './pages/SearchPage';
+import DiscoveryPage           from './pages/DiscoveryPage';
+import AdminDashboard          from './pages/AdminDashboard';
+import VerificationRequestPage from './pages/VerificationRequestPage';
 import Navbar            from './components/Navbar';
 import PageWrapper       from './components/PageWrapper';
 
@@ -46,6 +48,8 @@ function App() {
               <Route path="/trending"       element={<TrendingPage />} />
               <Route path="/search"         element={<SearchPage />} />
               <Route path="/discover"       element={<DiscoveryPage />} />
+              <Route path="/verification"   element={<Protected><VerificationRequestPage /></Protected>} />
+              <Route path="/admin"          element={<Protected><AdminDashboard /></Protected>} />
               <Route path="/dj/:id"         element={<DJProfile />} />
               <Route path="/set/:id"        element={<SetDetail />} />
               <Route path="/profile/:userId" element={<ProfilePage />} />

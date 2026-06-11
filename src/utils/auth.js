@@ -16,3 +16,7 @@ export function getTokenPayload() {
 export function getCurrentUserId() {
   return getTokenPayload()?.userId ?? null;
 }
+
+export function getIsAdmin() {
+  return getTokenPayload()?.isAdmin === true;
+}
