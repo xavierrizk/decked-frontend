@@ -8,19 +8,18 @@ const STATUS_TABS = ['pending', 'approved', 'rejected'];
 
 export default function AdminDashboard() {
   const isAdmin = getIsAdmin();
-  const [stats, setStats]           = useState(null);
-  const [requests, setRequests]     = useState([]);
-  const [tab, setTab]               = useState('pending');
-  const [searchQ, setSearchQ]       = useState('');
-  const [loading, setLoading]       = useState(true);
-  const [actionId, setActionId]     = useState(null);
+  const [stats, setStats]             = useState(null);
+  const [requests, setRequests]       = useState([]);
+  const [tab, setTab]                 = useState('pending');
+  const [searchQ, setSearchQ]         = useState('');
+  const [loading, setLoading]         = useState(true);
+  const [actionId, setActionId]       = useState(null);
   const [rejectNotes, setRejectNotes] = useState({});
-  const token = localStorage.getItem('token');
+  const token   = localStorage.getItem('token');
   const headers = { Authorization: `Bearer ${token}` };
 
-  if (!isAdmin) return <Navigate to="/" />;
-
   const fetchAll = useCallback(async () => {
+    if (!isAdmin) return;
     setLoading(true);
     try {
       const [statsRes, reqRes] = await Promise.all([
@@ -31,9 +30,11 @@ export default function AdminDashboard() {
       setRequests(reqRes.data);
     } catch (err) { console.error(err); }
     setLoading(false);
-  }, [tab]); // eslint-disable-line
+  }, [tab, isAdmin]); // eslint-disable-line
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
+
+  if (!isAdmin) return <Navigate to="/" />;
 
   const approve = async (id) => {
     setActionId(id);
