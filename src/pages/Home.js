@@ -3,23 +3,21 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
-function Spinner() {
-  return (
-    <div className="flex items-center justify-center min-h-[60vh]">
-      <div className="w-10 h-10 border-4 border-brand-600 border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
-}
-
-function Home() {
-  const [djs, setDJs] = useState([]);
+export default function Home() {
+  const [djs, setDJs]         = useState([]);
+  const [trending, setTrending] = useState([]);
   const [loading, setLoading] = useState(true);
   const isLoggedIn = !!localStorage.getItem('token');
 
   useEffect(() => {
-    axios.get(API_URL + '/api/djs')
-      .then((res) => { setDJs(res.data); setLoading(false); })
-      .catch(() => setLoading(false));
+    Promise.all([
+      axios.get(API_URL + '/api/djs'),
+      axios.get(API_URL + '/api/feed/trending?sort=likes'),
+    ]).then(([djsRes, trendingRes]) => {
+      setDJs(djsRes.data);
+      setTrending(trendingRes.data.slice(0, 3));
+      setLoading(false);
+    }).catch(() => setLoading(false));
   }, []);
 
   if (loading) return <Spinner />;
@@ -39,26 +37,64 @@ function Home() {
         </p>
         {isLoggedIn ? (
           <div className="flex justify-center gap-3 flex-wrap">
-            <Link to="/create-dj"
+            <Link to="/feed"
               className="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95 shadow-glow">
-              + Add DJ
+              My Feed
             </Link>
-            <Link to="/create-set"
+            <Link to="/trending"
               className="px-6 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95">
-              + Add Set
+              Trending
+            </Link>
+            <Link to="/create-dj"
+              className="px-6 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95">
+              + Add DJ
             </Link>
           </div>
         ) : (
-          <Link to="/signup"
-            className="inline-block px-8 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95 shadow-glow">
-            Get Started
-          </Link>
+          <div className="flex justify-center gap-3 flex-wrap">
+            <Link to="/signup"
+              className="px-8 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95 shadow-glow">
+              Get Started
+            </Link>
+            <Link to="/trending"
+              className="px-8 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95">
+              Trending
+            </Link>
+          </div>
         )}
       </div>
 
+      {/* Trending this week */}
+      {trending.length > 0 && (
+        <div className="mb-12">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xs font-semibold text-gray-600 uppercase tracking-widest">🔥 Trending This Week</h2>
+            <Link to="/trending" className="text-brand-400 hover:text-brand-300 text-xs font-medium transition-colors">See all →</Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {trending.map((set, i) => (
+              <Link key={set.id} to={`/set/${set.id}`}
+                className="group bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.07] hover:border-brand-500/30 rounded-2xl p-4 transition-all duration-200 hover:-translate-y-0.5">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className={`text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center ${
+                    i === 0 ? 'bg-yellow-400/20 text-yellow-300' : i === 1 ? 'bg-gray-400/20 text-gray-300' : 'bg-orange-400/20 text-orange-300'
+                  }`}>{i + 1}</span>
+                  <span className="text-brand-400 text-xs font-semibold truncate">{set.dj_name}</span>
+                </div>
+                <p className="text-white font-bold text-sm group-hover:text-brand-400 transition-colors truncate">{set.title}</p>
+                <div className="flex gap-3 mt-2 text-xs text-gray-500">
+                  <span>❤️ {set.like_count}</span>
+                  <span>⭐ {set.rating_count}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* DJ Grid */}
       <div className="flex items-center justify-between mb-5">
-        <h2 className="text-lg font-semibold text-gray-400 uppercase tracking-widest text-xs">DJs</h2>
+        <h2 className="text-xs font-semibold text-gray-600 uppercase tracking-widest">All DJs</h2>
         <span className="text-gray-600 text-sm">{djs.length} total</span>
       </div>
 
@@ -88,4 +124,6 @@ function Home() {
   );
 }
 
-export default Home;
+function Spinner() {
+  return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-10 h-10 border-4 border-brand-600 border-t-transparent rounded-full animate-spin" /></div>;
+}
