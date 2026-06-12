@@ -1,24 +1,14 @@
 import API_URL from '../api';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import { StarDisplay } from '../components/StarRating';
 import VisualizerBackground from '../components/backgrounds/VisualizerBackground';
+import DJCard from '../components/cards/DJCard';
+import SetCard from '../components/cards/SetCard';
+import UserCard from '../components/cards/UserCard';
 
 const TABS = ['All', 'DJs', 'Sets', 'Users'];
 
-function highlight(text, query) {
-  if (!query || !text) return text;
-  const idx = text.toLowerCase().indexOf(query.toLowerCase());
-  if (idx === -1) return text;
-  return (
-    <>
-      {text.slice(0, idx)}
-      <mark className="bg-brand-500/30 text-brand-300 rounded px-0.5">{text.slice(idx, idx + query.length)}</mark>
-      {text.slice(idx + query.length)}
-    </>
-  );
-}
 
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -210,20 +200,9 @@ export default function SearchPage() {
           {(tab === 'All' || tab === 'DJs') && djs.length > 0 && (
             <section>
               {tab === 'All' && <SectionLabel>🎧 DJs ({djs.length})</SectionLabel>}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {djs.map(dj => (
-                  <Link key={dj.id} to={`/dj/${dj.id}`}
-                    className="group flex items-center gap-4 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.07] hover:border-brand-500/30 rounded-2xl p-4 transition-all duration-200">
-                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-xl flex-shrink-0">🎧</div>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <p className="text-white font-bold text-sm group-hover:text-brand-400 transition-colors truncate">{highlight(dj.name, query)}</p>
-                        {dj.verified && <span className="text-xs">✅</span>}
-                      </div>
-                      <p className="text-gray-500 text-xs mt-0.5 truncate">{dj.bio || 'No bio'}</p>
-                      <p className="text-gray-600 text-xs mt-0.5">👥 {dj.follower_count} followers{dj.avg_rating ? ` · ⭐ ${dj.avg_rating}` : ''}</p>
-                    </div>
-                  </Link>
+                  <DJCard key={dj.id} dj={dj} showFollow={false} />
                 ))}
               </div>
             </section>
@@ -233,19 +212,9 @@ export default function SearchPage() {
           {(tab === 'All' || tab === 'Sets') && sets.length > 0 && (
             <section>
               {tab === 'All' && <SectionLabel>🎵 Sets ({sets.length})</SectionLabel>}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-3">
                 {sets.map(set => (
-                  <Link key={set.id} to={`/set/${set.id}`}
-                    className="group bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.07] hover:border-brand-500/30 rounded-2xl p-4 transition-all duration-200">
-                    <p className="text-white font-bold text-sm group-hover:text-brand-400 transition-colors">{highlight(set.title, query)}</p>
-                    <p className="text-brand-400 text-xs mt-0.5">{set.dj_name}</p>
-                    <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
-                      {set.location && <span>📍 {set.location}</span>}
-                      {set.genre    && <span>🎵 {set.genre}</span>}
-                      <span>❤️ {set.like_count}</span>
-                      {set.avg_rating && <span>⭐ {set.avg_rating}</span>}
-                    </div>
-                  </Link>
+                  <SetCard key={set.id} set={set} />
                 ))}
               </div>
             </section>
@@ -255,22 +224,9 @@ export default function SearchPage() {
           {(tab === 'All' || tab === 'Users') && users.length > 0 && (
             <section>
               {tab === 'All' && <SectionLabel>👤 Users ({users.length})</SectionLabel>}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {users.map(u => (
-                  <Link key={u.id} to={`/profile/${u.id}`}
-                    className="group flex items-center gap-4 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.07] hover:border-brand-500/30 rounded-2xl p-4 transition-all duration-200">
-                    {u.profile_picture_url
-                      ? <img src={u.profile_picture_url} alt={u.username} className="w-10 h-10 rounded-full object-cover border border-white/10 flex-shrink-0" />
-                      : <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-600 to-indigo-700 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">{u.username?.[0]?.toUpperCase()}</div>
-                    }
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <p className="text-white font-bold text-sm group-hover:text-brand-400 transition-colors">{highlight(u.username, query)}</p>
-                        {u.is_dj && <span className="text-xs">🎵</span>}
-                      </div>
-                      {u.location && <p className="text-gray-500 text-xs mt-0.5">📍 {u.location}</p>}
-                    </div>
-                  </Link>
+                  <UserCard key={u.id} user={u} />
                 ))}
               </div>
             </section>

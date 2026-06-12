@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import VisualizerBackground from '../components/backgrounds/VisualizerBackground';
+import DJCard from '../components/cards/DJCard';
+import SetCard from '../components/cards/SetCard';
 
 export default function Home() {
   const [djs, setDJs]         = useState([]);
@@ -77,26 +79,13 @@ export default function Home() {
       {/* Trending this week */}
       {trending.length > 0 && (
         <div className="mb-12">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-6">
             <h2 className="text-xs font-semibold text-gray-600 uppercase tracking-widest">🔥 Trending This Week</h2>
             <Link to="/trending" className="text-brand-400 hover:text-brand-300 text-xs font-medium transition-colors">See all →</Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-3">
             {trending.map((set, i) => (
-              <Link key={set.id} to={`/set/${set.id}`}
-                className="group bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.07] hover:border-brand-500/30 rounded-2xl p-4 transition-all duration-200 hover:-translate-y-0.5">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className={`text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center ${
-                    i === 0 ? 'bg-yellow-400/20 text-yellow-300' : i === 1 ? 'bg-gray-400/20 text-gray-300' : 'bg-orange-400/20 text-orange-300'
-                  }`}>{i + 1}</span>
-                  <span className="text-brand-400 text-xs font-semibold truncate">{set.dj_name}</span>
-                </div>
-                <p className="text-white font-bold text-sm group-hover:text-brand-400 transition-colors truncate">{set.title}</p>
-                <div className="flex gap-3 mt-2 text-xs text-gray-500">
-                  <span>❤️ {set.like_count}</span>
-                  <span>⭐ {set.rating_count}</span>
-                </div>
-              </Link>
+              <SetCard key={set.id} set={set} rank={i + 1} />
             ))}
           </div>
         </div>
@@ -116,17 +105,7 @@ export default function Home() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {djs.map((dj) => (
-            <Link key={dj.id} to={`/dj/${dj.id}`}
-              className="group relative bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.07] hover:border-brand-500/40 rounded-2xl p-6 transition-all duration-300 hover:shadow-glow-sm hover:-translate-y-1">
-              <div className="w-11 h-11 rounded-full bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-lg mb-4">
-                🎧
-              </div>
-              <h3 className="text-white font-bold text-lg leading-tight group-hover:text-brand-400 transition-colors duration-200">{dj.name}</h3>
-              <p className="text-gray-500 text-sm mt-1.5 line-clamp-2">{dj.bio || 'No bio yet'}</p>
-              <div className="mt-4 flex items-center text-brand-400 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                View Profile <span className="ml-1">→</span>
-              </div>
-            </Link>
+            <DJCard key={dj.id} dj={dj} showFollow={false} />
           ))}
         </div>
       )}

@@ -1,0 +1,78 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+function fmt(n) {
+  if (!n && n !== 0) return '0';
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
+  return `${n}`;
+}
+
+export default function DJCard({ dj, onFollow, isFollowing, showFollow = true }) {
+  const initial = dj.name?.[0]?.toUpperCase() || '?';
+
+  return (
+    <div className="relative group border border-white/[0.07] hover:border-purple-500/30 rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-purple-900/20 bg-[#111114]">
+      {/* Radial gradient overlay at top */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.15) 0%, transparent 70%)' }}
+      />
+
+      <Link to={`/dj/${dj.id}`} className="block p-5 pb-4">
+        {/* Avatar */}
+        <div className="flex flex-col items-center text-center mb-4">
+          <div className="w-20 h-20 rounded-full border-2 border-purple-500/40 bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center text-2xl font-black text-white mb-3 flex-shrink-0 overflow-hidden">
+            {dj.profile_picture_url
+              ? <img src={dj.profile_picture_url} alt={dj.name} className="w-full h-full object-cover" />
+              : <span>{initial}</span>
+            }
+          </div>
+
+          {/* Name + verified */}
+          <div className="flex items-center gap-1.5 flex-wrap justify-center">
+            <span className="text-xl font-black text-white tracking-tight leading-tight">{dj.name}</span>
+            {dj.verified && <span title="Verified">✅</span>}
+          </div>
+
+          {/* Genre pill */}
+          {dj.genre && (
+            <span className="mt-1.5 text-xs bg-purple-500/15 text-purple-300 px-2 py-0.5 rounded-full border border-purple-500/20">
+              {dj.genre}
+            </span>
+          )}
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 gap-2 mb-4 text-center">
+          <div>
+            <p className="text-3xl font-black text-white leading-none">{fmt(dj.follower_count)}</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wider mt-1">Followers</p>
+          </div>
+          <div>
+            <p className="text-3xl font-black text-white leading-none">{fmt(dj.set_count)}</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wider mt-1">Sets</p>
+          </div>
+        </div>
+      </Link>
+
+      {/* Follow button */}
+      {showFollow && onFollow && (
+        <div className="px-5 pb-5">
+          <button
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onFollow(dj.id); }}
+            className={`w-full py-2.5 rounded-xl font-bold text-sm transition-all duration-200 hover:scale-[1.02] active:scale-95 ${
+              isFollowing
+                ? 'bg-transparent border border-white/20 text-gray-300 hover:border-red-400/30 hover:text-red-300'
+                : 'bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-900/30'
+            }`}
+          >
+            {isFollowing ? '✓ Following' : '+ Follow'}
+          </button>
+        </div>
+      )}
+
+      {/* If no follow button, just add bottom padding via the link */}
+      {!(showFollow && onFollow) && <div className="pb-5" />}
+    </div>
+  );
+}

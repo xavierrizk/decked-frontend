@@ -2,8 +2,9 @@ import API_URL from '../api';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { StarDisplay } from '../components/StarRating';
 import VisualizerBackground from '../components/backgrounds/VisualizerBackground';
+import DJCard from '../components/cards/DJCard';
+import SetCard from '../components/cards/SetCard';
 
 export default function DiscoveryPage() {
   const [trending, setTrending]   = useState([]);
@@ -49,7 +50,7 @@ export default function DiscoveryPage() {
       {/* Trending Now */}
       {trending.length > 0 && (
         <Section title="🔥 Trending Now" subtitle="Most liked this week" linkTo="/trending">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-3">
             {trending.map((set, i) => <SetCard key={set.id} set={set} rank={i + 1} />)}
           </div>
         </Section>
@@ -58,8 +59,8 @@ export default function DiscoveryPage() {
       {/* Top Rated All Time */}
       {topRated.length > 0 && (
         <Section title="⭐ Top Rated All Time" subtitle="Highest average ratings">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {topRated.map((set, i) => <SetCard key={set.id} set={set} rank={i + 1} showRating />)}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-3">
+            {topRated.map((set, i) => <SetCard key={set.id} set={set} rank={i + 1} />)}
           </div>
         </Section>
       )}
@@ -67,8 +68,8 @@ export default function DiscoveryPage() {
       {/* Newest Sets */}
       {recent.length > 0 && (
         <Section title="🆕 Just Uploaded" subtitle="Fresh sets from the community">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {recent.map(set => <SetCard key={set.id} set={set} showDate />)}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-3">
+            {recent.map(set => <SetCard key={set.id} set={set} />)}
           </div>
         </Section>
       )}
@@ -76,8 +77,8 @@ export default function DiscoveryPage() {
       {/* Top DJs */}
       {topDjs.length > 0 && (
         <Section title="🎧 Top DJs" subtitle="Most followed artists on Decked">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {topDjs.map((dj, i) => <DjCard key={dj.id} dj={dj} rank={i + 1} />)}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {topDjs.map((dj) => <DJCard key={dj.id} dj={dj} showFollow={false} />)}
           </div>
         </Section>
       )}
@@ -101,57 +102,6 @@ function Section({ title, subtitle, linkTo, children }) {
       </div>
       {children}
     </div>
-  );
-}
-
-function SetCard({ set, rank, showRating, showDate }) {
-  return (
-    <Link to={`/set/${set.id}`}
-      className="group bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.07] hover:border-brand-500/30 rounded-2xl p-4 transition-all duration-200 hover:-translate-y-0.5">
-      {rank && (
-        <span className={`inline-flex w-6 h-6 rounded-full items-center justify-center text-xs font-bold mb-2 ${
-          rank === 1 ? 'bg-yellow-400/20 text-yellow-300' :
-          rank === 2 ? 'bg-gray-400/20 text-gray-300' :
-          rank === 3 ? 'bg-orange-400/20 text-orange-300' : 'bg-white/[0.05] text-gray-500'
-        }`}>{rank}</span>
-      )}
-      <p className="text-white font-bold text-sm group-hover:text-brand-400 transition-colors truncate">{set.title}</p>
-      <p className="text-brand-400 text-xs mt-0.5 truncate">{set.dj_name}</p>
-      <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
-        <span>❤️ {set.like_count}</span>
-        {showRating && set.avg_rating && <StarDisplay value={parseFloat(set.avg_rating)} size={11} />}
-        {showRating && set.avg_rating && <span>{set.avg_rating}</span>}
-        {showDate && set.created_at && <span>🕐 {new Date(set.created_at).toLocaleDateString()}</span>}
-        {set.genre && <span className="truncate">🎵 {set.genre}</span>}
-      </div>
-    </Link>
-  );
-}
-
-function DjCard({ dj, rank }) {
-  return (
-    <Link to={`/dj/${dj.id}`}
-      className="group flex items-center gap-3 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.07] hover:border-brand-500/30 rounded-2xl p-4 transition-all duration-200">
-      <div className="relative flex-shrink-0">
-        {rank <= 3 && (
-          <span className={`absolute -top-1.5 -left-1.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
-            rank === 1 ? 'bg-yellow-400/20 text-yellow-300' :
-            rank === 2 ? 'bg-gray-400/20 text-gray-300' : 'bg-orange-400/20 text-orange-300'
-          }`}>{rank}</span>
-        )}
-        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-xl">🎧</div>
-      </div>
-      <div className="min-w-0">
-        <div className="flex items-center gap-1">
-          <p className="text-white font-bold text-sm group-hover:text-brand-400 transition-colors truncate">{dj.name}</p>
-          {dj.verified && <span className="text-xs">✅</span>}
-        </div>
-        <p className="text-gray-500 text-xs mt-0.5">
-          👥 {dj.follower_count} followers
-          {dj.avg_rating ? ` · ⭐ ${dj.avg_rating}` : ''}
-        </p>
-      </div>
-    </Link>
   );
 }
 

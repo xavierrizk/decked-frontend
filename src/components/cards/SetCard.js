@@ -1,0 +1,73 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+const genreGradient = {
+  'Techno': 'from-slate-900 via-blue-950 to-black',
+  'Tech House': 'from-violet-950 via-purple-900 to-black',
+  'House': 'from-orange-950 via-amber-900 to-black',
+  'Drum and Bass': 'from-red-950 via-rose-900 to-black',
+  'Trance': 'from-cyan-950 via-teal-900 to-black',
+  'default': 'from-gray-900 via-zinc-800 to-black',
+};
+
+function getGradient(genre) {
+  if (!genre) return genreGradient['default'];
+  return genreGradient[genre] || genreGradient['default'];
+}
+
+export default function SetCard({ set, rank }) {
+  const gradient = getGradient(set.genre);
+
+  return (
+    <div className="relative">
+      {/* Rating badge — outside the card, top-right */}
+      <div className="absolute -top-3 -right-2 z-10 bg-[#0d0d0f] border border-white/10 rounded-xl px-2.5 py-1.5 text-center shadow-lg">
+        <p className="text-yellow-400 text-sm font-black leading-none">
+          {set.avg_rating ? Number(set.avg_rating).toFixed(1) : '—'}
+        </p>
+        <p className="text-gray-600 text-[10px] leading-none mt-0.5">{set.rating_count} ratings</p>
+      </div>
+
+      <Link to={`/set/${set.id}`}>
+        <div className={`rounded-2xl overflow-hidden relative aspect-[4/3] bg-gradient-to-br ${gradient} group cursor-pointer hover:scale-[1.02] transition-all duration-300`}>
+
+          {/* Vinyl record SVG watermark */}
+          <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full opacity-[0.06] pointer-events-none">
+            <circle cx="50" cy="50" r="48" fill="white" />
+            <circle cx="50" cy="50" r="36" fill="#111" />
+            <circle cx="50" cy="50" r="24" fill="white" />
+            <circle cx="50" cy="50" r="16" fill="#111" />
+            <circle cx="50" cy="50" r="6" fill="white" />
+            <circle cx="50" cy="50" r="2" fill="#111" />
+          </svg>
+
+          {/* Rank number */}
+          {rank && (
+            <span className="absolute top-3 left-3 text-5xl font-black text-white/10 leading-none select-none">
+              {rank}
+            </span>
+          )}
+
+          {/* Duration badge */}
+          {set.duration && (
+            <span className="absolute bottom-3 right-3 bg-black/60 text-gray-300 text-xs px-2 py-0.5 rounded-full backdrop-blur-sm z-10">
+              {set.duration} min
+            </span>
+          )}
+
+          {/* Bottom text overlay */}
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 group-hover:from-black/95 transition-all duration-300">
+            <p className="text-white font-bold text-base leading-tight line-clamp-2">{set.title}</p>
+            <Link
+              to={`/dj/${set.dj_id}`}
+              onClick={(e) => e.stopPropagation()}
+              className="text-gray-300 text-xs mt-1 hover:text-purple-300 transition-colors inline-block"
+            >
+              {set.dj_name}
+            </Link>
+          </div>
+        </div>
+      </Link>
+    </div>
+  );
+}

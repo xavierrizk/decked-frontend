@@ -1,9 +1,8 @@
 import API_URL from '../api';
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { StarDisplay } from '../components/StarRating';
 import PulsingOrbs from '../components/backgrounds/PulsingOrbs';
+import SetCard from '../components/cards/SetCard';
 
 const SORTS = [
   { key: 'likes',  label: '❤️ Most Liked' },
@@ -51,36 +50,9 @@ export default function TrendingPage() {
           <p>Nothing trending yet — add some sets!</p>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-3">
           {sets.map((set, i) => (
-            <Link key={set.id} to={`/set/${set.id}`}
-              className="group flex items-center gap-4 bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-brand-500/30 rounded-2xl p-4 transition-all duration-200">
-              {/* Rank */}
-              <div className={`flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center font-extrabold text-sm ${
-                i === 0 ? 'bg-yellow-400/20 text-yellow-300' :
-                i === 1 ? 'bg-gray-400/20 text-gray-300' :
-                i === 2 ? 'bg-orange-400/20 text-orange-300' :
-                'bg-white/[0.05] text-gray-500'
-              }`}>
-                {i + 1}
-              </div>
-
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <Link to={`/dj/${set.dj_id}`} onClick={e => e.stopPropagation()}
-                    className="text-brand-400 hover:text-brand-300 text-xs font-semibold transition-colors">
-                    {set.dj_name}
-                  </Link>
-                </div>
-                <h3 className="text-white font-bold group-hover:text-brand-400 transition-colors truncate">{set.title}</h3>
-                {set.avg_rating && <StarDisplay value={set.avg_rating} size={13} />}
-              </div>
-
-              <div className="flex-shrink-0 flex flex-col items-end gap-1 text-sm">
-                <span className="text-red-400 font-semibold">❤️ {set.like_count}</span>
-                <span className="text-gray-500 text-xs">⭐ {set.rating_count} ratings</span>
-              </div>
-            </Link>
+            <SetCard key={set.id} set={set} rank={i + 1} />
           ))}
         </div>
       )}
