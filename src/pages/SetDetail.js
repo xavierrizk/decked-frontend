@@ -1,26 +1,34 @@
 import API_URL from '../api';
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { StarDisplay } from '../components/StarRating';
 import { getCurrentUserId } from '../utils/auth';
 import Toast, { useToast } from '../components/Toast';
 import ReportModal from '../components/ReportModal';
+import ReviewCard from '../components/ReviewCard';
+import ReviewDetailModal from '../components/ReviewDetailModal';
 
 export default function SetDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [set, setSet]               = useState(null);
-  const [ratings, setRatings]       = useState([]);
+  const [reviews, setReviews]       = useState([]);
+  const [reviewTotal, setReviewTotal] = useState(0);
+  const [reviewPage, setReviewPage] = useState(1);
+  const [reviewTotalPages, setReviewTotalPages] = useState(1);
+  const [reviewSort, setReviewSort] = useState('newest');
   const [stats, setStats]           = useState(null);
   const [comments, setComments]     = useState([]);
   const [likes, setLikes]           = useState({ count: 0, liked: false });
   const [follow, setFollow]         = useState({ count: 0, following: false });
   const [commentText, setCommentText] = useState('');
   const [loading, setLoading]       = useState(true);
-  const [deletingId, setDeletingId] = useState(null);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
   const [deletingComment, setDeletingComment] = useState(null);
   const [submittingComment, setSubmittingComment] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
+  const [selectedReview, setSelectedReview] = useState(null);
   const [reportModal, setReportModal] = useState({ open: false, type: null, id: null, name: '' });
   const [toast, showToast] = useToast();
   const isLoggedIn    = !!localStorage.getItem('token');
@@ -28,9 +36,27 @@ export default function SetDetail() {
 
   const authHeaders = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}` });
 
-  const fetchRatings = () =>
-    axios.get(`${API_URL}/api/ratings/set/${id}`)
-      .then(r => { setRatings(r.data.ratings || []); setStats(r.data.stats || null); });
+  const fetchReviews = async (sort = reviewSort, page = 1) => {
+    setReviewsLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const res = await axios.get(`${API_URL}/api/reviews/set/${id}`, {
+        headers,
+        params: { sort, page, limit: 10 }
+      });
+      if (page === 1) {
+        setReviews(res.data.reviews || []);
+      } else {
+        setReviews(prev => [...prev, ...(res.data.reviews || [])]);
+      }
+      setReviewTotal(res.data.total || 0);
+      setReviewTotalPages(res.data.totalPages || 1);
+    } catch (err) {
+      console.error(err);
+    }
+    setReviewsLoading(false);
+  };
 
   const fetchComments = () =>
     axios.get(`${API_URL}/api/comments/set/${id}`)
@@ -50,15 +76,28 @@ export default function SetDetail() {
           axios.get(`${API_URL}/api/likes/set/${id}`, { headers }),
           s.dj_id ? axios.get(`${API_URL}/api/follows/${s.dj_id}`, { headers }) : Promise.resolve({ data: { count: 0, following: false } }),
         ]);
-        setRatings(ratingsRes.data.ratings || []);
         setStats(ratingsRes.data.stats || null);
         setComments(commentsRes.data);
         setLikes(likesRes.data);
         setFollow(followRes.data);
         setLoading(false);
+        // Fetch reviews separately
+        fetchReviews('newest', 1);
       })
       .catch(() => setLoading(false));
-  }, [id]);
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleSortChange = (sort) => {
+    setReviewSort(sort);
+    setReviewPage(1);
+    fetchReviews(sort, 1);
+  };
+
+  const handleLoadMore = () => {
+    const nextPage = reviewPage + 1;
+    setReviewPage(nextPage);
+    fetchReviews(reviewSort, nextPage);
+  };
 
   const handleToggleLike = async () => {
     if (!isLoggedIn) return;
@@ -91,19 +130,35 @@ export default function SetDetail() {
     setFollowLoading(false);
   };
 
-  const handleDeleteRating = async (ratingId) => {
-    if (!window.confirm('Delete your rating?')) return;
-    setDeletingId(ratingId);
+  const handleReviewLikeToggle = async (reviewId, currentlyLiked) => {
+    if (!isLoggedIn) return;
     try {
-      await axios.delete(`${API_URL}/api/ratings/${ratingId}`, { headers: authHeaders() });
-      await fetchRatings();
+      let res;
+      if (currentlyLiked) {
+        res = await axios.delete(`${API_URL}/api/reviews/${reviewId}/like`, { headers: authHeaders() });
+      } else {
+        res = await axios.post(`${API_URL}/api/reviews/${reviewId}/like`, {}, { headers: authHeaders() });
+      }
+      const newLikeCount = res.data.like_count;
+      setReviews(prev => prev.map(r => r.id === reviewId
+        ? { ...r, like_count: newLikeCount, user_has_liked: !currentlyLiked }
+        : r
+      ));
+      if (selectedReview?.id === reviewId) {
+        setSelectedReview(prev => ({ ...prev, like_count: newLikeCount, user_has_liked: !currentlyLiked }));
+      }
+    } catch (err) { console.error(err); }
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    try {
+      await axios.delete(`${API_URL}/api/reviews/${reviewId}`, { headers: authHeaders() });
+      setReviews(prev => prev.filter(r => r.id !== reviewId));
+      setReviewTotal(prev => prev - 1);
+      showToast('Review deleted');
     } catch (err) {
-      const status = err.response?.status;
-      if (status === 404) alert('Rating not found — it may have already been deleted.');
-      else if (status === 401) alert('You need to be logged in.');
-      else alert(err.response?.data?.error || 'Failed to delete');
+      showToast('Failed to delete review');
     }
-    setDeletingId(null);
   };
 
   const handleSubmitComment = async (e) => {
@@ -143,9 +198,8 @@ export default function SetDetail() {
   if (loading) return <Spinner />;
   if (!set)    return <div className="text-center py-20 text-gray-600">Set not found</div>;
 
-  const avg      = stats?.average ? Number(stats.average) : null;
-  const total    = Number(stats?.total) || 0;
-  const myRating = ratings.find(r => r.user_id === currentUserId);
+  const avg = stats?.average ? Number(stats.average) : null;
+  const myReview = reviews.find(r => r.user?.id === currentUserId);
 
   return (
     <div className="max-w-3xl mx-auto px-5 py-10">
@@ -157,11 +211,20 @@ export default function SetDetail() {
         targetId={reportModal.id}
         targetName={reportModal.name}
       />
+      <ReviewDetailModal
+        review={selectedReview}
+        open={!!selectedReview}
+        onClose={() => setSelectedReview(null)}
+        onLikeToggle={handleReviewLikeToggle}
+        onEdit={(review) => navigate(`/review/set/${id}`)}
+        onDelete={handleDeleteReview}
+        currentUserId={currentUserId}
+      />
 
       {/* Breadcrumb + Follow */}
       {set.dj_name && (
         <div className="flex items-center justify-between mb-3">
-          <Link to={`/dj/${set.dj_id}`} className="text-gray-500 hover:text-brand-400 text-sm transition-colors">
+          <Link to={`/dj/${set.dj_id}`} className="text-gray-500 hover:text-purple-400 text-sm transition-colors">
             ← 🎵 {set.dj_name}
           </Link>
           {isLoggedIn && set.dj_id && (
@@ -169,7 +232,7 @@ export default function SetDetail() {
               className={`text-xs font-semibold px-4 py-1.5 rounded-lg border transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 ${
                 follow.following
                   ? 'bg-white/[0.06] border-white/10 text-gray-300 hover:bg-red-500/10 hover:border-red-400/30 hover:text-red-300'
-                  : 'bg-brand-600/20 border-brand-500/30 text-brand-300 hover:bg-brand-600 hover:text-white'
+                  : 'bg-purple-600/20 border-purple-500/30 text-purple-300 hover:bg-purple-600 hover:text-white'
               }`}>
               {followLoading ? '…' : follow.following ? '✓ Following' : `+ Follow ${set.dj_name}`}
             </button>
@@ -181,19 +244,16 @@ export default function SetDetail() {
       <div className="flex items-start justify-between gap-3 mb-3">
         <h1 className="text-3xl font-extrabold text-white">{set.title}</h1>
         <div className="flex items-center gap-2 flex-shrink-0 mt-1">
-          {/* Copy link */}
           <button onClick={handleCopyLink}
             className="text-gray-500 hover:text-white text-sm px-3 py-1.5 rounded-lg border border-white/[0.07] hover:border-white/20 transition-all duration-200"
             title="Copy link">
             🔗
           </button>
-          {/* Share */}
           <button onClick={handleShare}
             className="text-gray-500 hover:text-white text-sm px-3 py-1.5 rounded-lg border border-white/[0.07] hover:border-white/20 transition-all duration-200"
             title="Share on Twitter">
             🐦
           </button>
-          {/* Report set */}
           {isLoggedIn && (
             <button onClick={() => setReportModal({ open: true, type: 'set', id: set.id, name: set.title })}
               className="text-gray-500 hover:text-red-400 text-sm px-3 py-1.5 rounded-lg border border-white/[0.07] hover:border-red-500/30 transition-all duration-200"
@@ -201,7 +261,6 @@ export default function SetDetail() {
               🚩
             </button>
           )}
-          {/* Like */}
           <button onClick={handleToggleLike}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all duration-200 hover:scale-105 active:scale-95 text-sm font-medium ${
               likes.liked
@@ -249,66 +308,96 @@ export default function SetDetail() {
             <span className="text-gray-600 text-xl mb-1">/5</span>
           </div>
           {avg && <StarDisplay value={avg} size={20} />}
-          <p className="text-gray-500 text-sm mt-1">{total} {total === 1 ? 'rating' : 'ratings'}</p>
+          <p className="text-gray-500 text-sm mt-1">{reviewTotal} {reviewTotal === 1 ? 'review' : 'reviews'}</p>
         </div>
         {isLoggedIn ? (
-          <Link to={`/rate/${set.id}`}
-            className="px-5 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 shadow-glow text-sm">
-            {myRating ? 'Edit Rating' : 'Rate This Set'}
+          <Link to={`/review/set/${set.id}`}
+            className="px-5 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg text-sm">
+            {myReview ? 'Edit Review' : 'Write a Review'}
           </Link>
         ) : (
-          <Link to="/login" className="text-brand-400 hover:text-brand-300 text-sm font-medium transition-colors">Log in to rate →</Link>
+          <Link to="/login" className="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors">Log in to review →</Link>
         )}
       </div>
 
-      {/* My rating callout */}
-      {myRating && (
-        <div className="bg-brand-600/10 border border-brand-600/30 rounded-xl px-4 py-3 mb-6 flex items-center justify-between">
+      {/* My review callout */}
+      {myReview && (
+        <div className="bg-purple-600/10 border border-purple-600/30 rounded-xl px-4 py-3 mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <StarDisplay value={myRating.score} size={16} />
-            <span className="text-brand-300 text-sm font-medium">Your rating</span>
+            <StarDisplay value={myReview.rating} size={16} />
+            <span className="text-purple-300 text-sm font-medium">Your review</span>
+            {myReview.review_title && (
+              <span className="text-gray-400 text-sm">— {myReview.review_title}</span>
+            )}
           </div>
           <div className="flex gap-2">
-            <Link to={`/rate/${set.id}`} className="text-xs text-brand-400 hover:text-brand-300 font-medium px-3 py-1 rounded-lg border border-brand-600/30 hover:border-brand-400/50 transition-colors">Edit</Link>
-            <button onClick={() => handleDeleteRating(myRating.id)} disabled={deletingId === myRating.id}
-              className="text-xs text-red-400 hover:text-red-300 font-medium px-3 py-1 rounded-lg border border-red-600/20 hover:border-red-400/40 transition-colors disabled:opacity-40">
-              {deletingId === myRating.id ? 'Deleting…' : 'Delete'}
+            <Link to={`/review/set/${set.id}`} className="text-xs text-purple-400 hover:text-purple-300 font-medium px-3 py-1 rounded-lg border border-purple-600/30 hover:border-purple-400/50 transition-colors">Edit</Link>
+            <button onClick={() => handleDeleteReview(myReview.id)}
+              className="text-xs text-red-400 hover:text-red-300 font-medium px-3 py-1 rounded-lg border border-red-600/20 hover:border-red-400/40 transition-colors">
+              Delete
             </button>
           </div>
         </div>
       )}
 
-      {/* Reviews */}
-      <p className="text-gray-600 text-xs font-semibold uppercase tracking-widest mb-4">Reviews</p>
-      {ratings.length === 0 ? (
-        <div className="text-center py-10 border border-white/[0.05] rounded-2xl text-gray-600 mb-8">
-          <p className="text-3xl mb-2">⭐</p><p>No reviews yet. Be the first!</p>
-        </div>
-      ) : (
-        <div className="space-y-3 mb-8">
-          {ratings.map((r) => (
-            <div key={r.id} className={`bg-white/[0.03] border rounded-2xl p-4 ${r.user_id === currentUserId ? 'border-brand-600/30' : 'border-white/[0.07]'}`}>
-              <div className="flex items-start gap-3">
-                <Link to={`/profile/${r.user_id}`} className="flex-shrink-0">
-                  {r.profile_picture_url
-                    ? <img src={r.profile_picture_url} alt={r.username} className="w-9 h-9 rounded-full object-cover border border-white/10 hover:border-brand-400/50 transition-colors" />
-                    : <div className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-600 to-indigo-700 flex items-center justify-center text-sm font-bold text-white">{r.username?.[0]?.toUpperCase()}</div>
-                  }
-                </Link>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2 mb-1">
-                    <div className="flex items-center gap-1.5">
-                      <Link to={`/profile/${r.user_id}`} className="text-white font-semibold text-sm hover:text-brand-400 transition-colors">{r.username}</Link>
-                      {r.user_id === currentUserId && <span className="text-xs bg-brand-700/30 text-brand-300 px-2 py-0.5 rounded-full">You</span>}
-                    </div>
-                    <StarDisplay value={r.score} size={14} />
-                  </div>
-                  {r.review && <p className="text-gray-400 text-sm">{r.review}</p>}
-                </div>
-              </div>
-            </div>
+      {/* Reviews section */}
+      <div className="flex items-center justify-between mb-4">
+        <p className="text-gray-600 text-xs font-semibold uppercase tracking-widest">
+          Reviews <span className="text-gray-700 font-normal normal-case">({reviewTotal})</span>
+        </p>
+        <div className="flex gap-1">
+          {['newest', 'likes', 'highest'].map(s => (
+            <button
+              key={s}
+              onClick={() => handleSortChange(s)}
+              className={`text-xs px-3 py-1.5 rounded-lg border transition-all duration-200 ${
+                reviewSort === s
+                  ? 'bg-purple-600/20 border-purple-500/30 text-purple-300'
+                  : 'bg-white/[0.02] border-white/[0.06] text-gray-500 hover:text-gray-300 hover:border-white/10'
+              }`}
+            >
+              {s === 'newest' ? 'Newest' : s === 'likes' ? 'Most Liked' : 'Highest Rated'}
+            </button>
           ))}
         </div>
+      </div>
+
+      {reviewsLoading && reviews.length === 0 ? (
+        <div className="flex items-center justify-center py-10">
+          <div className="w-7 h-7 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : reviews.length === 0 ? (
+        <div className="text-center py-10 border border-white/[0.05] rounded-2xl text-gray-600 mb-8">
+          <p className="text-3xl mb-2">⭐</p>
+          <p className="mb-3">No reviews yet. Be the first!</p>
+          {isLoggedIn && (
+            <Link to={`/review/set/${set.id}`} className="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors">
+              Write a review →
+            </Link>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-3 mb-4">
+          {reviews.map(r => (
+            <ReviewCard
+              key={r.id}
+              review={r}
+              onLikeToggle={handleReviewLikeToggle}
+              onOpen={setSelectedReview}
+              currentUserId={currentUserId}
+            />
+          ))}
+        </div>
+      )}
+
+      {reviewPage < reviewTotalPages && (
+        <button
+          onClick={handleLoadMore}
+          disabled={reviewsLoading}
+          className="w-full py-2.5 text-sm text-gray-400 hover:text-white border border-white/[0.07] hover:border-white/20 rounded-xl transition-all duration-200 mb-8 disabled:opacity-40"
+        >
+          {reviewsLoading ? 'Loading…' : 'Load more reviews'}
+        </button>
       )}
 
       {/* Comments */}
@@ -321,16 +410,16 @@ export default function SetDetail() {
           <input
             value={commentText} onChange={e => setCommentText(e.target.value)}
             placeholder="Add a comment…"
-            className="flex-1 bg-white/[0.04] border border-white/10 focus:border-brand-500 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 text-sm outline-none transition-colors"
+            className="flex-1 bg-white/[0.04] border border-white/10 focus:border-purple-500 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 text-sm outline-none transition-colors"
           />
           <button type="submit" disabled={submittingComment || !commentText.trim()}
-            className="px-4 py-2.5 bg-brand-600 hover:bg-brand-500 disabled:opacity-40 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:scale-105 active:scale-95">
+            className="px-4 py-2.5 bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:scale-105 active:scale-95">
             {submittingComment ? '…' : 'Post'}
           </button>
         </form>
       ) : (
         <div className="mb-5 text-center py-4 border border-white/[0.05] rounded-xl text-gray-600 text-sm">
-          <Link to="/login" className="text-brand-400 hover:text-brand-300 font-medium transition-colors">Log in</Link> to leave a comment
+          <Link to="/login" className="text-purple-400 hover:text-purple-300 font-medium transition-colors">Log in</Link> to leave a comment
         </div>
       )}
 
@@ -346,13 +435,13 @@ export default function SetDetail() {
                 <Link to={`/profile/${c.user_id}`} className="flex-shrink-0">
                   {c.profile_picture_url
                     ? <img src={c.profile_picture_url} alt={c.username} className="w-8 h-8 rounded-full object-cover border border-white/10" />
-                    : <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-600 to-indigo-700 flex items-center justify-center text-xs font-bold text-white">{c.username?.[0]?.toUpperCase()}</div>
+                    : <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center text-xs font-bold text-white">{c.username?.[0]?.toUpperCase()}</div>
                   }
                 </Link>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2 mb-0.5">
                     <div className="flex items-center gap-2">
-                      <Link to={`/profile/${c.user_id}`} className="text-white font-semibold text-sm hover:text-brand-400 transition-colors">{c.username}</Link>
+                      <Link to={`/profile/${c.user_id}`} className="text-white font-semibold text-sm hover:text-purple-400 transition-colors">{c.username}</Link>
                       <span className="text-gray-600 text-xs">{new Date(c.created_at).toLocaleDateString()}</span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -383,7 +472,7 @@ export default function SetDetail() {
 }
 
 function Spinner() {
-  return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-10 h-10 border-4 border-brand-600 border-t-transparent rounded-full animate-spin" /></div>;
+  return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-10 h-10 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" /></div>;
 }
 function Pill({ children }) {
   return <span className="text-xs text-gray-400 bg-white/[0.05] border border-white/[0.07] px-3 py-1 rounded-full">{children}</span>;

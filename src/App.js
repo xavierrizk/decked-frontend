@@ -7,6 +7,7 @@ import Home              from './pages/Home';
 import DJProfile         from './pages/DJProfile';
 import SetDetail         from './pages/SetDetail';
 import RateSet           from './pages/RateSet';
+import EnhancedRateSet   from './pages/EnhancedRateSet';
 import Login             from './pages/Login';
 import Signup            from './pages/Signup';
 import CreateDJ          from './pages/CreateDJ';
@@ -93,6 +94,7 @@ function App() {
               <Route path="/set/:id"        element={<SetDetail />} />
               <Route path="/profile/:userId" element={<ProfilePage />} />
               <Route path="/rate/:setId"    element={<Protected><RateSet /></Protected>} />
+              <Route path="/review/set/:setId" element={<Protected><EnhancedRateSet /></Protected>} />
               <Route path="/create-dj"      element={<Protected><CreateDJ /></Protected>} />
               <Route path="/create-set"     element={<Protected><CreateSet /></Protected>} />
               <Route path="/profile/edit"   element={<Protected><EditProfile /></Protected>} />
