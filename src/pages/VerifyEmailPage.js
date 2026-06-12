@@ -18,7 +18,11 @@ export default function VerifyEmailPage() {
       return;
     }
     axios.get(`${API_URL}/api/auth/verify-email?token=${token}`)
-      .then(() => setStatus('success'))
+      .then(res => {
+        // Store fresh token so emailVerified=true is reflected immediately
+        if (res.data.token) localStorage.setItem('token', res.data.token);
+        setStatus('success');
+      })
       .catch(() => setStatus('error'));
   }, [token]);
 
