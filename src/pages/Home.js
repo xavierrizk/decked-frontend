@@ -278,11 +278,11 @@ function BentoDJGrid({ djs }) {
   const remaining = rest.slice(3);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Row 1: Featured (2 cols) + 2 small stacked (1 col) */}
-      <div className="grid grid-cols-3 gap-4" style={{ gridTemplateRows: '320px' }}>
+      <div className="grid grid-cols-3 gap-3" style={{ gridTemplateRows: '270px' }}>
         <FeaturedDJCard dj={featured} className="col-span-2" />
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
           {top.slice(0, 2).map((dj) => (
             <SmallDJCard key={dj.id} dj={dj} className="flex-1" />
           ))}
@@ -291,7 +291,7 @@ function BentoDJGrid({ djs }) {
 
       {/* Row 2: 3 medium cards */}
       {top[2] && (
-        <div className="grid grid-cols-3 gap-4" style={{ gridTemplateRows: '260px' }}>
+        <div className="grid grid-cols-3 gap-3" style={{ gridTemplateRows: '220px' }}>
           <MediumDJCardA dj={top[2]} />
           {remaining[0] && <MediumDJCardB dj={remaining[0]} />}
           {remaining[1] && <MediumDJCardC dj={remaining[1]} />}
@@ -300,7 +300,7 @@ function BentoDJGrid({ djs }) {
 
       {/* Row 3: 4 compact cards */}
       {remaining.length > 2 && (
-        <div className="grid grid-cols-4 gap-4" style={{ gridTemplateRows: '200px' }}>
+        <div className="grid grid-cols-4 gap-3" style={{ gridTemplateRows: '160px' }}>
           {remaining.slice(2, 6).map((dj) => (
             <CompactDJCard key={dj.id} dj={dj} />
           ))}
@@ -333,31 +333,31 @@ export default function Home() {
   if (loading) return <Spinner />;
 
   return (
-    <div className="max-w-6xl mx-auto px-5 py-14">
+    <div className="max-w-6xl mx-auto px-4 py-8">
       <VisualizerBackground />
 
       {/* Hero */}
-      <div className="text-center mb-14">
-        <div className="inline-block mb-4 px-3 py-1 rounded-full text-xs font-semibold bg-brand-600/20 text-brand-300 border border-brand-600/30 tracking-widest uppercase">
+      <div className="text-center mb-8">
+        <div className="inline-block mb-3 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-brand-600/20 text-brand-300 border border-brand-600/30 tracking-widest uppercase">
           Beta
         </div>
-        <h1 style={{ fontFamily: '"Space Grotesk", sans-serif', letterSpacing: '-0.02em' }} className="text-5xl md:text-7xl font-bold text-white mb-4 leading-tight">
+        <h1 style={{ fontFamily: '"Space Grotesk", sans-serif', letterSpacing: '-0.02em' }} className="text-4xl md:text-6xl font-bold text-white mb-3 leading-tight">
           Rate the sets that <span className="text-purple-gradient">decked</span> you
         </h1>
-        <p className="text-gray-500 text-lg mb-8 max-w-md mx-auto">
+        <p className="text-gray-500 text-base mb-5 max-w-sm mx-auto">
           The community platform for discovering and reviewing DJ sets.
         </p>
         {!isLoggedIn && (
-          <div className="flex justify-center gap-3">
+          <div className="flex justify-center gap-2">
             <Link
               to="/signup"
-              className="px-8 py-3 bg-brand-600 hover:bg-brand-500 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95 shadow-glow"
+              className="px-6 py-2 bg-brand-600 hover:bg-brand-500 text-white text-sm font-semibold transition-all duration-200 hover:scale-105 active:scale-95 shadow-glow"
             >
               Get Started
             </Link>
             <Link
               to="/discover"
-              className="px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
+              className="px-6 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white text-sm font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
             >
               Explore
             </Link>
@@ -367,8 +367,8 @@ export default function Home() {
 
       {/* Trending this week */}
       {trending.length > 0 && (
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-3">
             <h2 className="section-label">
               🔥 Trending This Week
             </h2>
@@ -379,7 +379,7 @@ export default function Home() {
               See all →
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
             {trending.map((set, i) => (
               <SetCard key={set.id} set={set} rank={i + 1} />
             ))}
@@ -388,7 +388,7 @@ export default function Home() {
       )}
 
       {/* DJ Bento Grid */}
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex items-center justify-between mb-3">
         <h2 className="section-label">DJs</h2>
         <span className="text-gray-600 text-sm">{djs.length} total</span>
       </div>

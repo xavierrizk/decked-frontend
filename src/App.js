@@ -74,7 +74,7 @@ function App() {
         <OnboardingFlow />
         <SidebarMenu />
         {banInfo && (
-          <div className="bg-red-900/60 border-b border-red-500/40 px-4 py-3 text-center">
+          <div className="bg-red-900/60 border-b border-red-500/40 px-4 py-2 text-center">
             <p className="text-red-200 text-sm font-semibold">
               Your account has been banned: <span className="text-red-100">{banInfo.reason}</span>
               {banInfo.expires_at && <span className="text-red-300"> · Expires {new Date(banInfo.expires_at).toLocaleDateString()}</span>}

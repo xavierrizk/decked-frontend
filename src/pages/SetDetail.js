@@ -1,5 +1,5 @@
 import API_URL from '../api';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import WaveformBackground from '../components/backgrounds/WaveformBackground';
@@ -34,6 +34,7 @@ export default function SetDetail() {
   const [toast, showToast] = useToast();
   const isLoggedIn    = !!localStorage.getItem('token');
   const currentUserId = getCurrentUserId();
+  const sentinelRef   = useRef(null);
 
   const authHeaders = () => ({ Authorization: `Bearer ${localStorage.getItem('token')}` });
 
@@ -94,11 +95,24 @@ export default function SetDetail() {
     fetchReviews(sort, 1);
   };
 
-  const handleLoadMore = () => {
+  // Infinite scroll sentinel
+  const handleLoadMore = useCallback(() => {
+    if (reviewsLoading || reviewPage >= reviewTotalPages) return;
     const nextPage = reviewPage + 1;
     setReviewPage(nextPage);
     fetchReviews(reviewSort, nextPage);
-  };
+  }, [reviewsLoading, reviewPage, reviewTotalPages, reviewSort]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+    const observer = new IntersectionObserver(
+      (entries) => { if (entries[0].isIntersecting) handleLoadMore(); },
+      { rootMargin: '200px' }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [handleLoadMore]);
 
   const handleToggleLike = async () => {
     if (!isLoggedIn) return;
@@ -203,7 +217,7 @@ export default function SetDetail() {
   const myReview = reviews.find(r => r.user?.id === currentUserId);
 
   return (
-    <div className="max-w-3xl mx-auto px-5 py-10">
+    <div className="max-w-3xl mx-auto px-4 py-6">
       <WaveformBackground />
       <Toast message={toast} />
       <ReportModal
@@ -303,7 +317,7 @@ export default function SetDetail() {
       )}
 
       {/* Rating bar */}
-      <div className="bg-white/[0.04] border border-white/[0.07] rounded-2xl p-5 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-white/[0.04] border border-white/[0.07] rounded-xl p-4 mb-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-end gap-2 mb-1">
             <span className="text-5xl font-extrabold text-white">{avg ? avg.toFixed(1) : '—'}</span>
@@ -324,7 +338,7 @@ export default function SetDetail() {
 
       {/* My review callout */}
       {myReview && (
-        <div className="bg-purple-600/10 border border-purple-600/30 rounded-xl px-4 py-3 mb-6 flex items-center justify-between">
+        <div className="bg-purple-600/10 border border-purple-600/30 rounded-xl px-4 py-3 mb-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <StarDisplay value={myReview.rating} size={16} />
             <span className="text-purple-300 text-sm font-medium">Your review</span>
@@ -392,14 +406,12 @@ export default function SetDetail() {
         </div>
       )}
 
-      {reviewPage < reviewTotalPages && (
-        <button
-          onClick={handleLoadMore}
-          disabled={reviewsLoading}
-          className="w-full py-2.5 text-sm text-gray-400 hover:text-white border border-white/[0.07] hover:border-white/20 rounded-xl transition-all duration-200 mb-8 disabled:opacity-40"
-        >
-          {reviewsLoading ? 'Loading…' : 'Load more reviews'}
-        </button>
+      {/* Infinite scroll sentinel */}
+      <div ref={sentinelRef} className="h-1 mb-4" />
+      {reviewsLoading && reviews.length > 0 && (
+        <div className="flex justify-center pb-4">
+          <div className="w-5 h-5 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
+        </div>
       )}
 
       {/* Comments */}

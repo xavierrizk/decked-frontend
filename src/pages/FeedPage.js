@@ -19,7 +19,7 @@ export default function FeedPage() {
   if (loading) return <Spinner />;
 
   return (
-    <div className="max-w-2xl mx-auto px-5 py-10">
+    <div className="max-w-2xl mx-auto px-4 py-6">
       <PulsingOrbs />
       <div className="mb-8">
         <h1 className="text-3xl font-extrabold text-white">Your Feed</h1>
@@ -36,7 +36,7 @@ export default function FeedPage() {
           </Link>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {sets.map((set) => (
             <Link key={set.id} to={`/set/${set.id}`}
               className="group block bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-brand-500/30 rounded-2xl p-5 transition-all duration-200">

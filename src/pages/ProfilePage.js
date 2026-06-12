@@ -100,7 +100,7 @@ export default function ProfilePage() {
     : null;
 
   return (
-    <div className="max-w-3xl mx-auto px-5 py-10">
+    <div className="max-w-3xl mx-auto px-4 py-6">
       <SmoothGradient />
       <Toast message={toast} />
       <ReportModal

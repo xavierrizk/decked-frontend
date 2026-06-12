@@ -23,7 +23,7 @@ export default function TrendingPage() {
   }, [sort]);
 
   return (
-    <div className="max-w-3xl mx-auto px-5 py-10">
+    <div className="max-w-3xl mx-auto px-4 py-6">
       <PulsingOrbs />
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-white" style={{ fontFamily: '"Space Grotesk", sans-serif', letterSpacing: '-0.02em' }}>Trending</h1>

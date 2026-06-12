@@ -71,7 +71,7 @@ export default function DJProfile() {
   const isOwnDj = dj.user_id === currentUserId;
 
   return (
-    <div className="max-w-4xl mx-auto px-5 py-10">
+    <div className="max-w-4xl mx-auto px-4 py-6">
       <GradientParticles />
       <Toast message={toast} />
 

@@ -31,7 +31,7 @@ export default function DiscoveryPage() {
   if (loading) return <Spinner />;
 
   return (
-    <div className="max-w-5xl mx-auto px-5 py-10">
+    <div className="max-w-5xl mx-auto px-4 py-6">
       <VisualizerBackground />
       {/* Hero */}
       <div className="text-center mb-12">
