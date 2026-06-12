@@ -350,52 +350,19 @@ export default function Home() {
         <p className="text-gray-500 text-lg mb-8 max-w-md mx-auto">
           The community platform for discovering and reviewing DJ sets.
         </p>
-        {isLoggedIn ? (
-          <div className="flex justify-center gap-3 flex-wrap">
-            <Link
-              to="/feed"
-              className="px-6 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95 shadow-glow"
-            >
-              My Feed
-            </Link>
-            <Link
-              to="/discover"
-              className="px-6 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
-            >
-              🧭 Discover
-            </Link>
-            <Link
-              to="/search"
-              className="px-6 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
-            >
-              🔍 Search
-            </Link>
-            <Link
-              to="/trending"
-              className="px-6 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
-            >
-              🔥 Trending
-            </Link>
-          </div>
-        ) : (
-          <div className="flex justify-center gap-3 flex-wrap">
+        {!isLoggedIn && (
+          <div className="flex justify-center gap-3">
             <Link
               to="/signup"
-              className="px-8 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95 shadow-glow"
+              className="px-8 py-3 bg-brand-600 hover:bg-brand-500 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95 shadow-glow"
             >
               Get Started
             </Link>
             <Link
               to="/discover"
-              className="px-8 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
+              className="px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
             >
-              🧭 Discover
-            </Link>
-            <Link
-              to="/search"
-              className="px-8 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
-            >
-              🔍 Search
+              Explore
             </Link>
           </div>
         )}

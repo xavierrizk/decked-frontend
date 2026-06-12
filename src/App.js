@@ -28,6 +28,7 @@ import PageWrapper       from './components/PageWrapper';
 import AnnouncementsBanner from './components/AnnouncementsBanner';
 import EmailVerificationBanner from './components/EmailVerificationBanner';
 import OnboardingFlow from './components/OnboardingFlow';
+import SidebarMenu from './components/SidebarMenu';
 import VerifyEmailPage    from './pages/VerifyEmailPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import NotFoundPage       from './pages/NotFoundPage';
@@ -71,6 +72,7 @@ function App() {
         <AnnouncementsBanner />
         <EmailVerificationBanner />
         <OnboardingFlow />
+        <SidebarMenu />
         {banInfo && (
           <div className="bg-red-900/60 border-b border-red-500/40 px-4 py-3 text-center">
             <p className="text-red-200 text-sm font-semibold">
