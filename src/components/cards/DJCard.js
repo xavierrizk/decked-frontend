@@ -60,11 +60,11 @@ export default function DJCard({ dj, onFollow, isFollowing, showFollow = true })
         {/* Stats */}
         <div className="grid grid-cols-2 gap-2 mb-4 text-center">
           <div>
-            <p className="text-3xl font-black text-white leading-none">{fmt(dj.follower_count)}</p>
+            <p className="text-3xl font-black text-white leading-none" style={{ fontFamily: '"IBM Plex Mono", monospace' }}>{fmt(dj.follower_count)}</p>
             <p className="text-xs text-gray-500 uppercase tracking-wider mt-1">Followers</p>
           </div>
           <div>
-            <p className="text-3xl font-black text-white leading-none">{fmt(dj.set_count)}</p>
+            <p className="text-3xl font-black text-white leading-none" style={{ fontFamily: '"IBM Plex Mono", monospace' }}>{fmt(dj.set_count)}</p>
             <p className="text-xs text-gray-500 uppercase tracking-wider mt-1">Sets</p>
           </div>
         </div>

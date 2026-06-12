@@ -35,8 +35,8 @@ export default function DiscoveryPage() {
       <VisualizerBackground />
       {/* Hero */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-3">
-          Discover <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-indigo-400">New Music</span>
+        <h1 className="text-4xl sm:text-5xl font-bold text-white mb-3" style={{ fontFamily: '"Space Grotesk", sans-serif', letterSpacing: '-0.02em' }}>
+          Discover <span className="text-brand-gradient">New Music</span>
         </h1>
         <p className="text-gray-500 text-lg max-w-md mx-auto">
           Trending sets, top-rated classics, fresh uploads, and the best DJs on the platform.
@@ -91,7 +91,7 @@ function Section({ title, subtitle, linkTo, children }) {
     <div className="mb-12">
       <div className="flex items-end justify-between mb-4">
         <div>
-          <h2 className="text-white font-extrabold text-xl">{title}</h2>
+          <h2 className="text-white font-bold text-xl" style={{ fontFamily: '"Space Grotesk", sans-serif' }}>{title}</h2>
           {subtitle && <p className="text-gray-500 text-sm mt-0.5">{subtitle}</p>}
         </div>
         {linkTo && (

@@ -26,7 +26,7 @@ export default function TrendingPage() {
     <div className="max-w-3xl mx-auto px-5 py-10">
       <PulsingOrbs />
       <div className="mb-8">
-        <h1 className="text-3xl font-extrabold text-white">Trending</h1>
+        <h1 className="text-3xl font-bold text-white" style={{ fontFamily: '"Space Grotesk", sans-serif', letterSpacing: '-0.02em' }}>Trending</h1>
         <p className="text-gray-500 mt-1 text-sm">The hottest sets on Decked this week</p>
       </div>
 

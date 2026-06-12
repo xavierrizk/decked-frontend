@@ -1,1 +1,32 @@
 * { box-sizing: border-box; }
+
+/* ── Primary button ───────────────────────────── */
+.btn-primary {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  background: linear-gradient(135deg, #7C3AED, #A855F7);
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-primary:hover {
+  box-shadow: 0 0 20px rgba(168,85,247,0.4);
+  transform: translateY(-1px);
+}
+
+/* ── Secondary button ─────────────────────────── */
+.btn-secondary {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  background: transparent;
+  color: #A855F7;
+  border: 1px solid rgba(168,85,247,0.4);
+  padding: 10px 24px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-secondary:hover {
+  border-color: #A855F7;
+  box-shadow: 0 0 15px rgba(168,85,247,0.2);
+  background: rgba(168,85,247,0.05);
+}

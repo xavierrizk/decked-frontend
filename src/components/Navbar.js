@@ -58,8 +58,26 @@ export default function Navbar({ isLoggedIn, onLogout }) {
     <nav className="relative z-20 border-b border-white/5 bg-black/60 backdrop-blur-md">
       <div className="max-w-6xl mx-auto px-5 py-3 flex items-center gap-4">
         {/* Logo */}
-        <Link to="/" className="text-white text-xl font-extrabold tracking-tight hover:text-brand-400 transition-colors duration-200 flex-shrink-0">
-          🎛️ Decked
+        <Link to="/" className="flex items-center gap-2 group flex-shrink-0">
+          {/* Vinyl icon */}
+          <div className="relative w-7 h-7 flex-shrink-0">
+            <div className="absolute inset-0 rounded-full opacity-90" style={{ background: 'linear-gradient(135deg, #A855F7, #00D9FF)' }} />
+            <div className="absolute inset-[4px] rounded-full bg-[#0a0a0a]" />
+            <div className="absolute inset-[9px] rounded-full opacity-80" style={{ background: 'linear-gradient(135deg, #A855F7, #00D9FF)' }} />
+            <div className="absolute inset-[11px] rounded-full bg-[#0a0a0a]" />
+          </div>
+          <span
+            className="text-lg font-bold tracking-tight"
+            style={{
+              fontFamily: '"Space Grotesk", sans-serif',
+              background: 'linear-gradient(135deg, #F5F5F5, #A855F7)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}
+          >
+            DECKED
+          </span>
         </Link>
 
         {/* Nav links */}

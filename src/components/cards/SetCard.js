@@ -22,7 +22,7 @@ export default function SetCard({ set, rank }) {
     <div className="relative">
       {/* Rating badge — outside the card, top-right */}
       <div className="absolute -top-3 -right-2 z-10 bg-[#0d0d0f] border border-white/10 rounded-xl px-2.5 py-1.5 text-center shadow-lg">
-        <p className="text-yellow-400 text-sm font-black leading-none">
+        <p className="text-yellow-400 text-sm font-black leading-none" style={{ fontFamily: '"IBM Plex Mono", monospace' }}>
           {set.avg_rating ? Number(set.avg_rating).toFixed(1) : '—'}
         </p>
         <p className="text-gray-600 text-[10px] leading-none mt-0.5">{set.rating_count} ratings</p>

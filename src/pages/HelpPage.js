@@ -68,7 +68,7 @@ export default function HelpPage() {
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-600/20 border border-purple-500/30 text-purple-400 text-xs font-semibold mb-5">
             ✦ Help Center
           </div>
-          <h1 className="text-4xl md:text-5xl font-black text-white mb-3">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-3" style={{ fontFamily: '"Space Grotesk", sans-serif', letterSpacing: '-0.02em' }}>
             How can we help?
           </h1>
           <p className="text-gray-500 text-base mb-8">

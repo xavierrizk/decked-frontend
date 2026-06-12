@@ -341,11 +341,8 @@ export default function Home() {
         <div className="inline-block mb-4 px-3 py-1 rounded-full text-xs font-semibold bg-brand-600/20 text-brand-300 border border-brand-600/30 tracking-widest uppercase">
           Beta
         </div>
-        <h1 className="text-5xl sm:text-6xl font-extrabold text-white leading-tight mb-4">
-          Rate the{' '}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-indigo-400">
-            Best Sets
-          </span>
+        <h1 style={{ fontFamily: '"Space Grotesk", sans-serif', letterSpacing: '-0.02em' }} className="text-5xl md:text-7xl font-bold text-white mb-4 leading-tight">
+          Rate the sets that <span className="text-purple-gradient">decked</span> you
         </h1>
         <p className="text-gray-500 text-lg mb-8 max-w-md mx-auto">
           The community platform for discovering and reviewing DJ sets.
@@ -372,7 +369,7 @@ export default function Home() {
       {trending.length > 0 && (
         <div className="mb-12">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xs font-semibold text-gray-600 uppercase tracking-widest">
+            <h2 className="section-label">
               🔥 Trending This Week
             </h2>
             <Link
@@ -392,7 +389,7 @@ export default function Home() {
 
       {/* DJ Bento Grid */}
       <div className="flex items-center justify-between mb-5">
-        <h2 className="text-xs font-semibold text-gray-600 uppercase tracking-widest">DJs</h2>
+        <h2 className="section-label">DJs</h2>
         <span className="text-gray-600 text-sm">{djs.length} total</span>
       </div>
 
