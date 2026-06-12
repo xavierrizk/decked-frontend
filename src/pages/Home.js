@@ -31,7 +31,7 @@ function FeaturedDJCard({ dj, className = '' }) {
   return (
     <Link
       to={`/dj/${dj.id}`}
-      className={`relative rounded-3xl overflow-hidden group cursor-pointer ${className}`}
+      className={`relative overflow-hidden group cursor-pointer ${className}`}
       style={{ backgroundImage: bg, backgroundSize: 'cover', backgroundPosition: 'center' }}
     >
       {/* Gradient overlay */}
@@ -76,10 +76,10 @@ function SmallDJCard({ dj, className = '' }) {
   return (
     <Link
       to={`/dj/${dj.id}`}
-      className={`flex items-center gap-3 bg-[#111114] border border-white/[0.07] hover:border-purple-500/30 rounded-2xl p-3 group transition-all duration-200 hover:-translate-y-0.5 overflow-hidden ${className}`}
+      className={`flex items-center gap-3 bg-[#111114] border border-white/[0.07] hover:border-purple-500/30 rounded p-3 group transition-all duration-200 hover:-translate-y-0.5 overflow-hidden ${className}`}
     >
       {/* Square image */}
-      <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0">
+      <div className="w-16 h-16 rounded-sm overflow-hidden flex-shrink-0">
         {dj.profile_image_url ? (
           <img
             src={dj.profile_image_url}
@@ -113,7 +113,7 @@ function MediumDJCardA({ dj }) {
   return (
     <Link
       to={`/dj/${dj.id}`}
-      className="relative rounded-2xl overflow-hidden group cursor-pointer border border-white/[0.07] hover:border-purple-500/30 transition-all duration-300 hover:-translate-y-1 flex flex-col"
+      className="relative overflow-hidden group cursor-pointer border border-white/[0.07] hover:border-purple-500/30 transition-all duration-300 hover:-translate-y-1 flex flex-col"
       style={{ height: '100%' }}
     >
       {/* Image fills top 65% */}
@@ -162,7 +162,7 @@ function MediumDJCardB({ dj }) {
   return (
     <Link
       to={`/dj/${dj.id}`}
-      className="relative rounded-2xl overflow-hidden group cursor-pointer transition-all duration-300 hover:scale-[1.02]"
+      className="relative overflow-hidden group cursor-pointer transition-all duration-300 hover:scale-[1.02]"
       style={{
         height: '100%',
         backgroundImage: dj.profile_image_url
@@ -194,7 +194,7 @@ function MediumDJCardC({ dj }) {
   return (
     <Link
       to={`/dj/${dj.id}`}
-      className="flex rounded-2xl overflow-hidden group cursor-pointer bg-[#111114] border border-white/[0.07] hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
+      className="flex overflow-hidden group cursor-pointer bg-[#111114] border border-white/[0.07] hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
       style={{ height: '100%' }}
     >
       {/* Image — left 45% */}
@@ -249,7 +249,7 @@ function CompactDJCard({ dj }) {
   return (
     <Link
       to={`/dj/${dj.id}`}
-      className="relative rounded-2xl overflow-hidden group cursor-pointer transition-all duration-300 hover:scale-[1.03]"
+      className="relative overflow-hidden group cursor-pointer transition-all duration-300 hover:scale-[1.03]"
       style={{
         height: '100%',
         backgroundImage: dj.profile_image_url

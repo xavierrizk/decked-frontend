@@ -27,7 +27,7 @@ export default function ReviewCard({ review, onLikeToggle, onOpen, currentUserId
   return (
     <div
       onClick={handleCardClick}
-      className={`relative bg-[#111114] rounded-2xl p-5 border transition-all duration-200 cursor-pointer group ${
+      className={`relative bg-[#111114] rounded p-5 border transition-all duration-200 cursor-pointer group ${
         isOwn
           ? 'border-l-2 border-l-purple-500/50 border-white/[0.06] hover:border-white/[0.12]'
           : 'border-white/[0.06] hover:border-white/[0.12]'

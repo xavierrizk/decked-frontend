@@ -5,7 +5,7 @@ export default function UserCard({ user }) {
   const initial = user.username?.[0]?.toUpperCase() || '?';
 
   return (
-    <div className="bg-[#111114] rounded-2xl p-5 border border-white/[0.07] text-center hover:border-purple-500/20 hover:-translate-y-0.5 transition-all duration-200">
+    <div className="bg-[#111114] rounded p-5 border border-white/[0.07] text-center hover:border-purple-500/20 hover:-translate-y-0.5 transition-all duration-200">
       {/* Avatar */}
       <div className="flex justify-center mb-3">
         <div className="w-[72px] h-[72px] rounded-full ring-2 ring-white/5 overflow-hidden bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center flex-shrink-0">

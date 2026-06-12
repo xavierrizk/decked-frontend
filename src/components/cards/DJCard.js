@@ -20,7 +20,7 @@ export default function DJCard({ dj, onFollow, isFollowing, showFollow = true })
   const profileImage = dj.profile_image_url || dj.profile_picture_url;
 
   return (
-    <div className="relative group border border-white/[0.07] hover:border-purple-500/30 rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-purple-900/20 bg-[#111114]">
+    <div className="relative group border border-white/[0.07] hover:border-purple-500/30 rounded overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-purple-900/20 bg-[#111114]">
       {/* Radial gradient overlay at top */}
       <div
         className="absolute inset-0 pointer-events-none"

@@ -29,7 +29,7 @@ export default function SetCard({ set, rank }) {
       </div>
 
       <Link to={`/set/${set.id}`}>
-        <div className={`rounded-2xl overflow-hidden relative aspect-[4/3] bg-gradient-to-br ${gradient} group cursor-pointer hover:scale-[1.02] transition-all duration-300`}>
+        <div className={`rounded overflow-hidden relative aspect-[4/3] bg-gradient-to-br ${gradient} group cursor-pointer hover:scale-[1.02] transition-all duration-300`}>
 
           {/* Vinyl record SVG watermark */}
           <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full opacity-[0.06] pointer-events-none">
