@@ -66,6 +66,7 @@ export default function Navbar({ isLoggedIn, onLogout }) {
         <div className="hidden sm:flex items-center gap-5 flex-shrink-0">
           <Link to="/discover" className="text-gray-500 hover:text-white text-sm font-medium transition-colors duration-200">Discover</Link>
           <Link to="/trending" className="text-gray-500 hover:text-white text-sm font-medium transition-colors duration-200">Trending</Link>
+          <Link to="/help" className="text-gray-400 hover:text-white text-sm transition-colors">Help</Link>
           {isLoggedIn && (
             <Link to="/feed" className="text-gray-500 hover:text-white text-sm font-medium transition-colors duration-200">Feed</Link>
           )}

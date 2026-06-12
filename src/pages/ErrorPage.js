@@ -47,6 +47,12 @@ export default function ErrorPage({ message }) {
             Home
           </Link>
         </div>
+        <p className="text-gray-700 text-xs mt-6">
+          Need help?{' '}
+          <Link to="/help" className="text-gray-500 hover:text-gray-300 underline underline-offset-2 transition-colors">
+            Check the FAQ
+          </Link>
+        </p>
       </div>
     </div>
   );
