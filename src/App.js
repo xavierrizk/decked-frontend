@@ -28,6 +28,8 @@ import AnnouncementsBanner from './components/AnnouncementsBanner';
 import EmailVerificationBanner from './components/EmailVerificationBanner';
 import VerifyEmailPage    from './pages/VerifyEmailPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import NotFoundPage       from './pages/NotFoundPage';
+import ErrorPage          from './pages/ErrorPage';
 import ResetPasswordPage  from './pages/ResetPasswordPage';
 
 function App() {
@@ -98,6 +100,8 @@ function App() {
               <Route path="/verify-email"   element={<VerifyEmailPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password"  element={<ResetPasswordPage />} />
+              <Route path="/error"           element={<ErrorPage />} />
+              <Route path="*"               element={<NotFoundPage />} />
             </Routes>
           </PageWrapper>
         </main>
