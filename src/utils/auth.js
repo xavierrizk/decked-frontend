@@ -20,3 +20,7 @@ export function getCurrentUserId() {
 export function getIsAdmin() {
   return getTokenPayload()?.isAdmin === true;
 }
+
+export function isEmailVerified() {
+  return getTokenPayload()?.emailVerified === true;
+}

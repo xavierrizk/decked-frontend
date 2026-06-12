@@ -40,7 +40,12 @@ export default function Login({ setIsLoggedIn }) {
           )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <Field label="Email" type="email" value={email} onChange={setEmail} placeholder="you@example.com" />
-            <Field label="Password" type="password" value={password} onChange={setPassword} placeholder="••••••••" />
+            <div>
+              <Field label="Password" type="password" value={password} onChange={setPassword} placeholder="••••••••" />
+              <div className="text-right mt-1.5">
+                <Link to="/forgot-password" className="text-xs text-gray-500 hover:text-brand-400 transition-colors">Forgot password?</Link>
+              </div>
+            </div>
             <Btn loading={loading} label="Sign In" loadingLabel="Signing in…" />
           </form>
         </div>

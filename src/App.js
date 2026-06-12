@@ -25,6 +25,10 @@ import MyDJsPage               from './pages/MyDJsPage';
 import Navbar            from './components/Navbar';
 import PageWrapper       from './components/PageWrapper';
 import AnnouncementsBanner from './components/AnnouncementsBanner';
+import EmailVerificationBanner from './components/EmailVerificationBanner';
+import VerifyEmailPage    from './pages/VerifyEmailPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage  from './pages/ResetPasswordPage';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
@@ -60,6 +64,7 @@ function App() {
       <div className="relative z-10 min-h-screen flex flex-col">
         <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
         <AnnouncementsBanner />
+        <EmailVerificationBanner />
         {banInfo && (
           <div className="bg-red-900/60 border-b border-red-500/40 px-4 py-3 text-center">
             <p className="text-red-200 text-sm font-semibold">
@@ -90,6 +95,9 @@ function App() {
               <Route path="/notifications"  element={<Protected><NotificationsPage /></Protected>} />
               <Route path="/login"          element={<Login  setIsLoggedIn={setIsLoggedIn} />} />
               <Route path="/signup"         element={<Signup setIsLoggedIn={setIsLoggedIn} />} />
+              <Route path="/verify-email"   element={<VerifyEmailPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password"  element={<ResetPasswordPage />} />
             </Routes>
           </PageWrapper>
         </main>
