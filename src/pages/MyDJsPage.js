@@ -1,13 +1,78 @@
 import API_URL from '../api';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import axios from 'axios';
 
+function DJImageUpload({ djId, currentImage, onUpload }) {
+  const [preview, setPreview] = useState(currentImage);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef();
+
+  const handleFile = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setPreview(URL.createObjectURL(file));
+    setUploading(true);
+    const formData = new FormData();
+    formData.append('image', file);
+    try {
+      const res = await axios.patch(
+        `${API_URL}/api/djs/${djId}/profile-image`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      onUpload(res.data.profile_image_url);
+    } catch (e) {
+      console.error(e);
+    }
+    setUploading(false);
+  };
+
+  return (
+    <div className="flex flex-col items-center gap-3">
+      <div
+        className="w-32 h-32 rounded-2xl overflow-hidden bg-[#111114] border-2 border-dashed border-white/20 cursor-pointer hover:border-purple-500/50 transition-colors relative"
+        onClick={() => fileRef.current?.click()}
+      >
+        {preview ? (
+          <img src={preview} alt="DJ profile" className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full flex flex-col items-center justify-center text-gray-600">
+            <span className="text-3xl">📸</span>
+            <span className="text-xs mt-1">Upload photo</span>
+          </div>
+        )}
+        {uploading && (
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+            <div className="w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+      </div>
+      <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+      <button
+        onClick={() => fileRef.current?.click()}
+        className="text-xs text-purple-400 hover:text-purple-300 transition-colors"
+      >
+        {uploading ? 'Uploading...' : 'Change photo'}
+      </button>
+    </div>
+  );
+}
+
 export default function MyDJsPage() {
-  const [djs, setDjs]         = useState([]);
+  const [djs, setDjs]           = useState([]);
   const [requests, setRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading]   = useState(true);
   const token = localStorage.getItem('token');
+
+  const handleImageUpload = (djId, newUrl) => {
+    setDjs(prev => prev.map(d => d.id === djId ? { ...d, profile_image_url: newUrl } : d));
+  };
 
   useEffect(() => {
     if (!token) return;
@@ -61,7 +126,11 @@ export default function MyDJsPage() {
                 {djs.map(dj => (
                   <div key={dj.id} className="bg-white/[0.03] border border-white/[0.07] hover:border-brand-500/30 rounded-2xl p-5 transition-all duration-200">
                     <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-2xl flex-shrink-0">🎧</div>
+                      <DJImageUpload
+                        djId={dj.id}
+                        currentImage={dj.profile_image_url}
+                        onUpload={(url) => handleImageUpload(dj.id, url)}
+                      />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-0.5">
                           <p className="text-white font-extrabold truncate">{dj.name}</p>

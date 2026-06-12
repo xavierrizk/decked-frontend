@@ -7,8 +7,17 @@ function fmt(n) {
   return `${n}`;
 }
 
+const accentColors = [
+  '#7c3aed, #4c1d95',
+  '#1d4ed8, #1e3a8a',
+  '#0891b2, #164e63',
+  '#be185d, #831843',
+  '#059669, #064e3b',
+];
+
 export default function DJCard({ dj, onFollow, isFollowing, showFollow = true }) {
   const initial = dj.name?.[0]?.toUpperCase() || '?';
+  const profileImage = dj.profile_image_url || dj.profile_picture_url;
 
   return (
     <div className="relative group border border-white/[0.07] hover:border-purple-500/30 rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-purple-900/20 bg-[#111114]">
@@ -21,11 +30,17 @@ export default function DJCard({ dj, onFollow, isFollowing, showFollow = true })
       <Link to={`/dj/${dj.id}`} className="block p-5 pb-4">
         {/* Avatar */}
         <div className="flex flex-col items-center text-center mb-4">
-          <div className="w-20 h-20 rounded-full border-2 border-purple-500/40 bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center text-2xl font-black text-white mb-3 flex-shrink-0 overflow-hidden">
-            {dj.profile_picture_url
-              ? <img src={dj.profile_picture_url} alt={dj.name} className="w-full h-full object-cover" />
-              : <span>{initial}</span>
-            }
+          <div className="w-20 h-20 rounded-full border-2 border-purple-500/40 flex items-center justify-center text-2xl font-black text-white mb-3 flex-shrink-0 overflow-hidden">
+            {profileImage ? (
+              <img src={profileImage} alt={dj.name} className="w-full h-full object-cover" />
+            ) : (
+              <div
+                className="w-full h-full flex items-center justify-center text-2xl font-black text-white"
+                style={{ background: `linear-gradient(135deg, ${accentColors[dj.id % accentColors.length]})` }}
+              >
+                {initial}
+              </div>
+            )}
           </div>
 
           {/* Name + verified */}
