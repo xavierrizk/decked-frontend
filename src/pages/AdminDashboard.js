@@ -2,6 +2,7 @@ import API_URL from '../api';
 import React, { useState, useEffect, useCallback } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import NeonGridBackground from '../components/backgrounds/NeonGridBackground';
 import { getIsAdmin } from '../utils/auth';
 import DeleteModal from '../components/DeleteModal';
 import Toast, { useToast } from '../components/Toast';
@@ -133,6 +134,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex min-h-[calc(100vh-56px)]">
+      <NeonGridBackground />
       <Toast message={toast} />
       <DeleteModal
         open={deleteModal.open}

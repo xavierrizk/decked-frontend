@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { StarDisplay } from '../components/StarRating';
+import VisualizerBackground from '../components/backgrounds/VisualizerBackground';
 
 const TABS = ['All', 'DJs', 'Sets', 'Users'];
 
@@ -94,6 +95,7 @@ export default function SearchPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-5 py-10">
+      <VisualizerBackground />
       {/* Search bar */}
       <div className="mb-8">
         <form onSubmit={handleSubmit} className="relative">

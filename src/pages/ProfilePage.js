@@ -2,6 +2,7 @@ import API_URL from '../api';
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import SmoothGradient from '../components/backgrounds/SmoothGradient';
 import { StarDisplay } from '../components/StarRating';
 import { getCurrentUserId } from '../utils/auth';
 import Toast, { useToast } from '../components/Toast';
@@ -100,6 +101,7 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-3xl mx-auto px-5 py-10">
+      <SmoothGradient />
       <Toast message={toast} />
       <ReportModal
         open={reportOpen}

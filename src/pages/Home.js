@@ -2,6 +2,7 @@ import API_URL from '../api';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import VisualizerBackground from '../components/backgrounds/VisualizerBackground';
 
 export default function Home() {
   const [djs, setDJs]         = useState([]);
@@ -24,6 +25,7 @@ export default function Home() {
 
   return (
     <div className="max-w-6xl mx-auto px-5 py-14">
+      <VisualizerBackground />
       {/* Hero */}
       <div className="text-center mb-14">
         <div className="inline-block mb-4 px-3 py-1 rounded-full text-xs font-semibold bg-brand-600/20 text-brand-300 border border-brand-600/30 tracking-widest uppercase">

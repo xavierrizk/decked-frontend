@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { StarDisplay } from '../components/StarRating';
+import VisualizerBackground from '../components/backgrounds/VisualizerBackground';
 
 export default function DiscoveryPage() {
   const [trending, setTrending]   = useState([]);
@@ -30,6 +31,7 @@ export default function DiscoveryPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-5 py-10">
+      <VisualizerBackground />
       {/* Hero */}
       <div className="text-center mb-12">
         <h1 className="text-4xl sm:text-5xl font-extrabold text-white mb-3">

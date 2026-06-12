@@ -2,6 +2,7 @@ import API_URL from '../api';
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import GradientParticles from '../components/backgrounds/GradientParticles';
 import { StarDisplay } from '../components/StarRating';
 import { getCurrentUserId } from '../utils/auth';
 import Toast, { useToast } from '../components/Toast';
@@ -71,6 +72,7 @@ export default function DJProfile() {
 
   return (
     <div className="max-w-4xl mx-auto px-5 py-10">
+      <GradientParticles />
       <Toast message={toast} />
 
       {/* Hero */}

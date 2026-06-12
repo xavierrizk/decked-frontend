@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { StarDisplay } from '../components/StarRating';
+import PulsingOrbs from '../components/backgrounds/PulsingOrbs';
 
 const SORTS = [
   { key: 'likes',  label: '❤️ Most Liked' },
@@ -24,6 +25,7 @@ export default function TrendingPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-5 py-10">
+      <PulsingOrbs />
       <div className="mb-8">
         <h1 className="text-3xl font-extrabold text-white">Trending</h1>
         <p className="text-gray-500 mt-1 text-sm">The hottest sets on Decked this week</p>

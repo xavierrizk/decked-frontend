@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { StarDisplay } from '../components/StarRating';
+import PulsingOrbs from '../components/backgrounds/PulsingOrbs';
 
 export default function FeedPage() {
   const [sets, setSets]     = useState([]);
@@ -19,6 +20,7 @@ export default function FeedPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-5 py-10">
+      <PulsingOrbs />
       <div className="mb-8">
         <h1 className="text-3xl font-extrabold text-white">Your Feed</h1>
         <p className="text-gray-500 mt-1 text-sm">New sets from DJs you follow</p>

@@ -2,6 +2,7 @@ import API_URL from '../api';
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import MinimalDots from '../components/backgrounds/MinimalDots';
 
 export default function Login({ setIsLoggedIn }) {
   const [email, setEmail] = useState('');
@@ -26,6 +27,7 @@ export default function Login({ setIsLoggedIn }) {
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4">
+      <MinimalDots />
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold text-white">Welcome back</h1>

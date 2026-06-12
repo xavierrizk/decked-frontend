@@ -2,6 +2,7 @@ import API_URL from '../api';
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import WaveformBackground from '../components/backgrounds/WaveformBackground';
 import { StarDisplay } from '../components/StarRating';
 import { getCurrentUserId } from '../utils/auth';
 import Toast, { useToast } from '../components/Toast';
@@ -203,6 +204,7 @@ export default function SetDetail() {
 
   return (
     <div className="max-w-3xl mx-auto px-5 py-10">
+      <WaveformBackground />
       <Toast message={toast} />
       <ReportModal
         open={reportModal.open}
