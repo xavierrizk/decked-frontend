@@ -45,15 +45,14 @@ function App() {
     setIsLoggedIn(!!localStorage.getItem('token'));
   }, []);
 
-  // Check if onboarding should be shown
+  // Check if onboarding should be shown — rely on DB only, not localStorage
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (!token) return;
-    if (localStorage.getItem('onboarding_shown')) return;
+    if (!token) { setShowOnboarding(false); return; }
     axios.get(`${API_URL}/api/auth/onboarding-status`, {
       headers: { Authorization: `Bearer ${token}` },
     }).then(r => {
-      if (!r.data.onboarding_completed) setShowOnboarding(true);
+      setShowOnboarding(!r.data.onboarding_completed);
     }).catch(() => {});
   }, [isLoggedIn]);
 

@@ -192,7 +192,6 @@ export default function OnboardingFlow({ onComplete }) {
     try {
       await axios.patch(`${API_URL}/api/auth/onboarding/step3`, { bio, location, profile_picture_url: avatarUrl }, { headers });
       await axios.patch(`${API_URL}/api/auth/onboarding/complete`, {}, { headers });
-      localStorage.setItem('onboarding_shown', '1');
       if (onComplete) onComplete();
     } catch {
       setError('Could not save. Try again.');
