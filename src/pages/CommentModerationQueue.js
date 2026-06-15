@@ -67,7 +67,7 @@ export default function CommentModerationQueue() {
         <div className="space-y-3">
           {paginated.map(c => (
             <div key={c.id} className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-4 flex items-start gap-4">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-600 to-indigo-700 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-600 to-brand-700 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">
                 {c.profile_picture_url
                   ? <img src={c.profile_picture_url} alt="" className="w-9 h-9 rounded-full object-cover" />
                   : c.username?.[0]?.toUpperCase()

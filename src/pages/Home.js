@@ -13,14 +13,14 @@ const fmt = (n) => {
 };
 
 const accentGrads = [
-  '#7c3aed, #4c1d95',
+  '#5A6470, #252D34',
   '#1d4ed8, #1e3a8a',
   '#0891b2, #164e63',
   '#be185d, #831843',
   '#059669, #064e3b',
 ];
 
-const accentSolids = ['#7c3aed', '#3b82f6', '#06b6d4', '#ec4899'];
+const accentSolids = ['#5A6470', '#3b82f6', '#06b6d4', '#ec4899'];
 
 /* ─── card sub-components ─────────────────────────── */
 function FeaturedDJCard({ dj, className = '' }) {
@@ -50,9 +50,9 @@ function FeaturedDJCard({ dj, className = '' }) {
       {/* Bottom info */}
       <div className="absolute bottom-0 left-0 right-0 p-6">
         {dj.genre && (
-          <p className="text-purple-300 text-xs font-semibold uppercase tracking-widest mb-1">{dj.genre}</p>
+          <p className="text-[#00D9FF] text-xs font-semibold uppercase tracking-widest mb-1">{dj.genre}</p>
         )}
-        <h2 className="text-white text-3xl font-black leading-tight mb-1 group-hover:text-purple-200 transition-colors">
+        <h2 className="text-white text-3xl font-black leading-tight mb-1 group-hover:text-[#00D9FF] transition-colors">
           {dj.name}
         </h2>
         <div className="flex items-center gap-4 mt-2">
@@ -67,7 +67,7 @@ function FeaturedDJCard({ dj, className = '' }) {
           <p className="text-gray-400 text-sm mt-2 line-clamp-2 leading-relaxed">{dj.bio}</p>
         )}
       </div>
-      <div className="absolute inset-0 bg-purple-600/0 group-hover:bg-purple-600/5 transition-colors duration-300" />
+      <div className="absolute inset-0 bg-purple-600/0 group-hover:bg-brand-500/5 transition-colors duration-300" />
     </Link>
   );
 }
@@ -76,7 +76,7 @@ function SmallDJCard({ dj, className = '' }) {
   return (
     <Link
       to={`/dj/${dj.id}`}
-      className={`flex items-center gap-3 bg-[#111114] border border-white/[0.07] hover:border-purple-500/30 rounded p-3 group transition-all duration-200 hover:-translate-y-0.5 overflow-hidden ${className}`}
+      className={`flex items-center gap-3 bg-[#111114] border border-white/[0.07] hover:border-[#00D9FF]/30 rounded p-3 group transition-all duration-200 hover:-translate-y-0.5 overflow-hidden ${className}`}
     >
       {/* Square image */}
       <div className="w-16 h-16 rounded-sm overflow-hidden flex-shrink-0">
@@ -97,13 +97,13 @@ function SmallDJCard({ dj, className = '' }) {
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1">
-          <p className="text-white font-bold text-sm truncate group-hover:text-purple-300 transition-colors">
+          <p className="text-white font-bold text-sm truncate group-hover:text-[#00D9FF] transition-colors">
             {dj.name}
           </p>
           {dj.verified && <span className="text-xs flex-shrink-0">✅</span>}
         </div>
         <p className="text-gray-500 text-xs mt-0.5">{fmt(dj.follower_count)} followers</p>
-        {dj.genre && <p className="text-purple-400 text-xs mt-0.5 truncate">{dj.genre}</p>}
+        {dj.genre && <p className="text-[#00D9FF] text-xs mt-0.5 truncate">{dj.genre}</p>}
       </div>
     </Link>
   );
@@ -113,7 +113,7 @@ function MediumDJCardA({ dj }) {
   return (
     <Link
       to={`/dj/${dj.id}`}
-      className="relative overflow-hidden group cursor-pointer border border-white/[0.07] hover:border-purple-500/30 transition-all duration-300 hover:-translate-y-1 flex flex-col"
+      className="relative overflow-hidden group cursor-pointer border border-white/[0.07] hover:border-[#00D9FF]/30 transition-all duration-300 hover:-translate-y-1 flex flex-col"
       style={{ height: '100%' }}
     >
       {/* Image fills top 65% */}
@@ -140,7 +140,7 @@ function MediumDJCardA({ dj }) {
             <p className="text-white font-black text-base truncate">{dj.name}</p>
             {dj.verified && <span className="text-sm">✅</span>}
           </div>
-          {dj.genre && <p className="text-purple-400 text-xs">{dj.genre}</p>}
+          {dj.genre && <p className="text-[#00D9FF] text-xs">{dj.genre}</p>}
         </div>
         <div className="flex gap-4 mt-2">
           <div>
@@ -222,7 +222,7 @@ function MediumDJCardC({ dj }) {
             {dj.verified && <span className="text-sm">✅</span>}
           </div>
           {dj.genre && (
-            <span className="text-xs bg-purple-500/15 text-purple-300 px-2 py-0.5 rounded-full">
+            <span className="text-xs bg-brand-600/15 text-[#00D9FF] px-2 py-0.5 rounded-full">
               {dj.genre}
             </span>
           )}

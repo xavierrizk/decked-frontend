@@ -106,7 +106,7 @@ export default function EnhancedRateSet() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-10 h-10 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-10 h-10 border-4 border-brand-600 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -115,7 +115,7 @@ export default function EnhancedRateSet() {
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-10">
       <Toast message={toast} />
       <div className="w-full max-w-lg">
-        <Link to={`/set/${setId}`} className="text-gray-500 hover:text-purple-400 text-sm transition-colors block mb-6">
+        <Link to={`/set/${setId}`} className="text-gray-500 hover:text-[#00D9FF] text-sm transition-colors block mb-6">
           ← Back to set
         </Link>
 
@@ -146,7 +146,7 @@ export default function EnhancedRateSet() {
                 Your Rating <span className="text-red-400">*</span>
               </label>
               <StarRatingInput value={rating} onChange={setRating} size={38} />
-              <p className="text-purple-400 text-sm font-semibold mt-2 h-5">{LABELS[rating] || ''}</p>
+              <p className="text-[#00D9FF] text-sm font-semibold mt-2 h-5">{LABELS[rating] || ''}</p>
             </div>
 
             {/* Review Title */}
@@ -163,7 +163,7 @@ export default function EnhancedRateSet() {
                 onChange={e => setReviewTitle(e.target.value)}
                 maxLength={100}
                 placeholder="Summarize your experience…"
-                className="w-full bg-white/[0.04] border border-white/10 focus:border-purple-500 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 text-sm outline-none transition-colors duration-200"
+                className="w-full bg-white/[0.04] border border-white/10 focus:border-brand-600 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 text-sm outline-none transition-colors duration-200"
               />
             </div>
 
@@ -182,7 +182,7 @@ export default function EnhancedRateSet() {
                 maxLength={5000}
                 rows={6}
                 placeholder="Share your thoughts on this set…"
-                className="w-full bg-white/[0.04] border border-white/10 focus:border-purple-500 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 text-sm outline-none transition-colors duration-200 resize-none"
+                className="w-full bg-white/[0.04] border border-white/10 focus:border-brand-600 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 text-sm outline-none transition-colors duration-200 resize-none"
               />
             </div>
 
@@ -220,7 +220,7 @@ export default function EnhancedRateSet() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white font-semibold py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-lg"
+              className="w-full btn-primary disabled:opacity-40  font-semibold py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-lg"
             >
               {submitting ? (isEditMode ? 'Updating…' : 'Posting…') : (isEditMode ? 'Update Review' : 'Post Review')}
             </button>

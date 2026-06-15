@@ -150,7 +150,7 @@ export default function OnboardingFlow() {
       {/* Card */}
       <div className="relative w-full max-w-lg bg-[#0d0d0f] border border-white/[0.07] rounded-3xl shadow-2xl overflow-hidden">
         {/* Top accent bar */}
-        <div className="h-1 bg-gradient-to-r from-purple-600 to-purple-400" />
+        <div className="h-1 bg-gradient-to-r from-brand-600 to-purple-400" />
 
         {/* Header row */}
         <div className="flex items-center justify-between px-6 pt-5 pb-2">
@@ -165,7 +165,7 @@ export default function OnboardingFlow() {
                 key={i}
                 className={`inline-block rounded-full transition-all duration-300 ${
                   i <= step
-                    ? 'w-2 h-2 bg-purple-500'
+                    ? 'w-2 h-2 bg-brand-500'
                     : 'w-1.5 h-1.5 bg-white/20'
                 }`}
               />
@@ -185,13 +185,13 @@ export default function OnboardingFlow() {
         {/* Step content */}
         <div className="px-8 pt-4 pb-8" style={slideStyle}>
           {/* Emoji circle */}
-          <div className="w-20 h-20 rounded-2xl bg-purple-500/10 flex items-center justify-center text-4xl mx-auto mb-6">
+          <div className="w-20 h-20 rounded-2xl bg-brand-600/10 flex items-center justify-center text-4xl mx-auto mb-6">
             {current.emoji}
           </div>
 
           {/* Subtitle pill */}
           <div className="flex justify-center mb-3">
-            <span className="text-xs font-semibold text-purple-400 bg-purple-500/10 px-3 py-1 rounded-full inline-block">
+            <span className="text-xs font-semibold text-[#00D9FF] bg-brand-600/10 px-3 py-1 rounded-full inline-block">
               {current.subtitle}
             </span>
           </div>
@@ -216,7 +216,7 @@ export default function OnboardingFlow() {
                   <a
                     href={current.tipLink}
                     onClick={handleComplete}
-                    className="text-purple-400 hover:text-purple-300 underline transition-colors"
+                    className="text-[#00D9FF] hover:text-[#00D9FF] underline transition-colors"
                   >
                     {current.tipLinkLabel}
                   </a>
@@ -255,8 +255,8 @@ export default function OnboardingFlow() {
                 disabled={animating}
                 className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all ${
                   isFinal
-                    ? 'bg-purple-600 hover:bg-purple-500 text-white'
-                    : 'border border-purple-600 text-purple-400 hover:bg-purple-600/20'
+                    ? 'bg-brand-600 hover:bg-brand-500 text-white'
+                    : 'border border-brand-600 text-[#00D9FF] hover:bg-brand-500/20'
                 }`}
               >
                 {current.cta}

@@ -6,7 +6,7 @@ const PARTICLES = Array.from({ length: 14 }, (_, i) => ({
   left: `${(i * 13 + 8) % 90}%`,
   dur: `${5 + (i % 4) * 1.5}s`,
   delay: `${(i * 0.5) % 5}s`,
-  color: i % 2 === 0 ? '#7c3aed' : '#3b82f6',
+  color: i % 2 === 0 ? '#5A6470' : '#3b82f6',
 }));
 
 export default function NotificationParticles() {

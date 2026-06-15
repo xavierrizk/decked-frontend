@@ -75,7 +75,7 @@ export default function EditProfile() {
               <img src={profilePicUrl} alt="avatar"
                 className="w-16 h-16 rounded-full object-cover border-2 border-brand-500/40" />
             ) : (
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-brand-500 to-indigo-600 flex items-center justify-center text-2xl font-bold text-white">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-2xl font-bold text-white">
                 ?
               </div>
             )}
@@ -106,7 +106,7 @@ export default function EditProfile() {
                 placeholder="House music lover, based in…" />
             </div>
             <button type="submit" disabled={loading}
-              className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-40 text-white font-semibold py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-glow">
+              className="w-full btn-primary disabled:opacity-40  font-semibold py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-glow">
               {loading ? 'Saving…' : 'Save Profile'}
             </button>
           </form>

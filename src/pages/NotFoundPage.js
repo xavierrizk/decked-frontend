@@ -8,7 +8,7 @@ export default function NotFoundPage() {
     <div className="min-h-screen bg-[#0d0d0f] flex items-center justify-center px-4">
       {/* Background glow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-brand-600/10 rounded-full blur-[120px]" />
       </div>
 
       <div className="relative text-center max-w-md w-full">
@@ -36,7 +36,7 @@ export default function NotFoundPage() {
           </button>
           <Link
             to="/"
-            className="px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-sm font-bold transition-all duration-200 hover:scale-105 active:scale-95"
+            className="px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-sm font-bold transition-all duration-200 hover:scale-105 active:scale-95"
           >
             Back to Home
           </Link>

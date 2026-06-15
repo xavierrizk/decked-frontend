@@ -107,16 +107,16 @@ export default function Navbar({ isLoggedIn, onLogout }) {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-1.5 group flex-shrink-0 mr-1">
           <div className="relative w-5 h-5 flex-shrink-0">
-            <div className="absolute inset-0 rounded-full opacity-90" style={{ background: 'linear-gradient(135deg, #A855F7, #00D9FF)' }} />
+            <div className="absolute inset-0 rounded-full opacity-90" style={{ background: 'linear-gradient(135deg, #5A6470, #00D9FF)' }} />
             <div className="absolute inset-[3px] rounded-full bg-[#0a0a0a]" />
-            <div className="absolute inset-[6.5px] rounded-full opacity-80" style={{ background: 'linear-gradient(135deg, #A855F7, #00D9FF)' }} />
+            <div className="absolute inset-[6.5px] rounded-full opacity-80" style={{ background: 'linear-gradient(135deg, #00D9FF, #FF006E)' }} />
             <div className="absolute inset-[8.5px] rounded-full bg-[#0a0a0a]" />
           </div>
           <span
             className="text-sm font-bold tracking-tight leading-none"
             style={{
               fontFamily: '"Space Grotesk", sans-serif',
-              background: 'linear-gradient(135deg, #F5F5F5, #A855F7)',
+              background: 'linear-gradient(135deg, #F5F5F5, #00D9FF)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -141,7 +141,7 @@ export default function Navbar({ isLoggedIn, onLogout }) {
         {/* Search — expands inline */}
         <div className="flex-1 relative hidden sm:block" style={{ maxWidth: '280px' }}>
           {searchOpen ? (
-            <form onSubmit={handleSearch} className="flex items-center gap-2 bg-white/[0.07] border border-purple-500/30 rounded px-2.5 py-1 transition-all duration-200">
+            <form onSubmit={handleSearch} className="flex items-center gap-2 bg-white/[0.07] border border-brand-600/30 rounded px-2.5 py-1 transition-all duration-200">
               <span className="text-gray-500 text-xs">🔍</span>
               <input
                 ref={searchInputRef}
@@ -214,7 +214,7 @@ export default function Navbar({ isLoggedIn, onLogout }) {
                 Login
               </Link>
               <Link to="/signup"
-                className="flex items-center h-7 px-3 rounded bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold transition-all duration-150 hover:scale-105 active:scale-95">
+                className="flex items-center h-7 px-3 text-xs font-semibold transition-all duration-150 hover:scale-105 active:scale-95" style={{ background: '#00D9FF', color: '#0a0a0a' }}>
                 Sign Up
               </Link>
             </>

@@ -65,7 +65,7 @@ export default function HelpPage() {
 
         {/* Hero */}
         <div className="pt-16 pb-10 text-center">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-600/20 border border-purple-500/30 text-purple-400 text-xs font-semibold mb-5">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-600/20 border border-brand-600/30 text-[#00D9FF] text-xs font-semibold mb-5">
             ✦ Help Center
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-3" style={{ fontFamily: '"Space Grotesk", sans-serif', letterSpacing: '-0.02em' }}>
@@ -77,7 +77,7 @@ export default function HelpPage() {
 
           {/* Search bar */}
           <div className="relative max-w-xl mx-auto">
-            <div className="flex items-center gap-3 bg-[#111114] border border-white/10 focus-within:border-purple-500/50 rounded-2xl px-5 py-3.5 transition-all duration-200">
+            <div className="flex items-center gap-3 bg-[#111114] border border-white/10 focus-within:border-[#00D9FF]/50 rounded-2xl px-5 py-3.5 transition-all duration-200">
               <svg className="w-4 h-4 text-gray-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
               </svg>
@@ -111,7 +111,7 @@ export default function HelpPage() {
               onClick={() => setActiveCategory(cat)}
               className={`px-4 py-2 rounded-xl text-sm font-semibold border transition-all cursor-pointer ${
                 activeCategory === cat
-                  ? 'bg-purple-600 border-purple-600 text-white'
+                  ? 'bg-brand-600 border-brand-600 text-white'
                   : 'bg-white/[0.03] border-white/[0.07] text-gray-400 hover:border-white/20 hover:text-white'
               }`}
             >
@@ -131,7 +131,7 @@ export default function HelpPage() {
               Try a different search or email{' '}
               <a
                 href="mailto:support@decked.com"
-                className="text-purple-400 hover:text-purple-300 underline underline-offset-2 transition-colors"
+                className="text-[#00D9FF] hover:text-[#00D9FF] underline underline-offset-2 transition-colors"
               >
                 support@decked.com
               </a>
@@ -144,7 +144,7 @@ export default function HelpPage() {
           activeCategory === 'All' ? (
             Object.entries(grouped).map(([cat, items]) => (
               <div key={cat}>
-                <p className="text-xs font-bold text-purple-400 uppercase tracking-widest mb-3 mt-8">
+                <p className="text-xs font-bold text-[#00D9FF] uppercase tracking-widest mb-3 mt-8">
                   {cat}
                 </p>
                 <div className="bg-[#111114] border border-white/[0.07] rounded-2xl overflow-hidden divide-y divide-white/[0.05]">
@@ -207,14 +207,14 @@ export default function HelpPage() {
 
         {/* Bottom CTA */}
         {filtered.length > 0 && (
-          <div className="bg-purple-500/10 border border-purple-500/20 rounded-2xl p-8 text-center mt-12">
+          <div className="bg-brand-600/10 border border-brand-600/20 rounded-2xl p-8 text-center mt-12">
             <h2 className="text-white font-bold text-xl mb-2">Still need help?</h2>
             <p className="text-gray-400 text-sm mb-5">
               Can't find what you're looking for? Reach out and we'll help.
             </p>
             <a
               href="mailto:support@decked.com"
-              className="inline-block px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-sm font-bold transition-all duration-200 hover:scale-105 active:scale-95"
+              className="inline-block px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-sm font-bold transition-all duration-200 hover:scale-105 active:scale-95"
             >
               Email support@decked.com
             </a>

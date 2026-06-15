@@ -17,19 +17,19 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Headings use Space Grotesk */
 h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; }
 
 /* ── Brand gradient text utilities ────────────── */
 .text-brand-gradient {
-  background: linear-gradient(135deg, #A855F7, #00D9FF);
+  background: linear-gradient(135deg, #5A6470, #00D9FF);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
+/* Used on the hero word "decked" */
 .text-purple-gradient {
-  background: linear-gradient(135deg, #A855F7, #EC4899);
+  background: linear-gradient(135deg, #00D9FF, #FF006E);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -46,24 +46,26 @@ h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; }
   position: absolute;
   inset: -1px;
   border-radius: inherit;
-  background: linear-gradient(135deg, rgba(168,85,247,0.5), rgba(0,217,255,0.3));
+  background: linear-gradient(135deg, rgba(90,100,112,0.5), rgba(0,217,255,0.3));
   z-index: -1;
 }
 
 /* ── Neon glow utilities ──────────────────────── */
-.glow-purple { box-shadow: 0 0 20px rgba(168,85,247,0.4); }
-.glow-cyan   { box-shadow: 0 0 15px rgba(0,217,255,0.3); }
-.glow-pink   { box-shadow: 0 0 20px rgba(244,114,182,0.4); }
-.glow-gold   { box-shadow: 0 0 15px rgba(251,191,36,0.3); }
+.glow-grey { box-shadow: 0 0 20px rgba(90,100,112,0.5); }
+.glow-cyan { box-shadow: 0 0 15px rgba(0,217,255,0.4); }
+.glow-pink { box-shadow: 0 0 20px rgba(255,0,110,0.45); }
+.glow-gold { box-shadow: 0 0 15px rgba(251,191,36,0.3); }
+/* legacy alias */
+.glow-purple { box-shadow: 0 0 20px rgba(90,100,112,0.5); }
 
 /* ── Page transitions ─────────────────────────── */
 @keyframes fadeSlideIn {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 .page-enter {
-  animation: fadeSlideIn 0.35s ease both;
+  animation: fadeSlideIn 0.3s ease both;
 }
 
 /* ── Animated gradient background ────────────── */
@@ -82,9 +84,9 @@ h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; }
   right: -20%;
   bottom: -20%;
   background:
-    radial-gradient(ellipse at 20% 30%, rgba(124,58,237,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 30%, rgba(90,100,112,0.07) 0%, transparent 50%),
     radial-gradient(ellipse at 80% 70%, rgba(0,217,255,0.05) 0%, transparent 50%),
-    radial-gradient(ellipse at 60% 10%, rgba(244,114,182,0.04) 0%, transparent 40%);
+    radial-gradient(ellipse at 60% 10%, rgba(255,0,110,0.03) 0%, transparent 40%);
   animation: bgShift 20s ease-in-out infinite alternate;
 }
 @keyframes bgShift {
@@ -102,17 +104,17 @@ h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; }
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(168,85,247,0.7);
+  color: rgba(0,217,255,0.7);
 }
 
 /* ── Custom scrollbar ─────────────────────────── */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: #0a0a0a; }
-::-webkit-scrollbar-thumb { background: rgba(168,85,247,0.3); border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(168,85,247,0.6); }
+::-webkit-scrollbar-thumb { background: rgba(90,100,112,0.4); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,217,255,0.4); }
 
 /* ── Focus ring ───────────────────────────────── */
-*:focus-visible { outline: 2px solid rgba(168,85,247,0.6); outline-offset: 2px; }
+*:focus-visible { outline: 2px solid rgba(0,217,255,0.6); outline-offset: 2px; }
 
 /* ── Inputs: autofill fix ─────────────────────── */
 input:-webkit-autofill,
@@ -121,6 +123,17 @@ input:-webkit-autofill:focus {
   -webkit-text-fill-color: #fff !important;
   transition: background-color 5000s ease-in-out 0s;
 }
+
+/* ── Primary button: cyan bg ─────────────────── */
+.btn-primary {
+  background: #00D9FF;
+  color: #0a0a0a;
+  font-weight: 600;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.btn-primary:hover { opacity: 0.88; }
+.btn-primary:active { transform: scale(0.97); }
+.btn-primary:disabled { opacity: 0.4; }
 
 /* ── Star rating ─────────────────────────────── */
 .star-btn {

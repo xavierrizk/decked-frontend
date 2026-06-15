@@ -42,7 +42,7 @@ export default function ErrorPage({ message }) {
           </button>
           <Link
             to="/"
-            className="px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-sm font-bold transition-all duration-200 hover:scale-105 active:scale-95"
+            className="px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-sm font-bold transition-all duration-200 hover:scale-105 active:scale-95"
           >
             Home
           </Link>

@@ -6,7 +6,7 @@ const PARTICLES = Array.from({ length: 20 }, (_, i) => ({
   left: `${(i * 17 + 5) % 95}%`,
   delay: `${(i * 0.4) % 5}s`,
   duration: `${8 + (i % 6) * 2}s`,
-  color: i % 3 === 0 ? '#7c3aed' : i % 3 === 1 ? '#3b82f6' : '#06b6d4',
+  color: i % 3 === 0 ? '#5A6470' : i % 3 === 1 ? '#3b82f6' : '#06b6d4',
 }));
 
 export default function GradientParticles() {
@@ -14,7 +14,7 @@ export default function GradientParticles() {
     <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
       {/* Animated gradient blobs */}
       <div className="absolute inset-0" style={{
-        background: 'radial-gradient(ellipse at 20% 50%, rgba(124,58,237,0.15) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(59,130,246,0.10) 0%, transparent 50%)',
+        background: 'radial-gradient(ellipse at 20% 50%, rgba(90,100,112,0.15) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(59,130,246,0.10) 0%, transparent 50%)',
         animation: 'gradShift 12s ease-in-out infinite alternate',
       }} />
       {/* Floating particles */}

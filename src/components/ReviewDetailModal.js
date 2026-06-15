@@ -45,7 +45,7 @@ export default function ReviewDetailModal({ review, open, onClose, onLikeToggle,
                   className="w-10 h-10 rounded-full object-cover border border-white/10"
                 />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center text-base font-bold text-white">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-600 to-brand-700 flex items-center justify-center text-base font-bold text-white">
                   {review.user?.username?.[0]?.toUpperCase()}
                 </div>
               )}
@@ -54,7 +54,7 @@ export default function ReviewDetailModal({ review, open, onClose, onLikeToggle,
               <Link
                 to={`/profile/${review.user?.id}`}
                 onClick={onClose}
-                className="text-white font-semibold hover:text-purple-400 transition-colors"
+                className="text-white font-semibold hover:text-[#00D9FF] transition-colors"
               >
                 {review.user?.username}
               </Link>
@@ -108,7 +108,7 @@ export default function ReviewDetailModal({ review, open, onClose, onLikeToggle,
                 {onEdit && (
                   <button
                     onClick={() => { onClose(); onEdit(review); }}
-                    className="text-sm font-medium px-4 py-2 rounded-xl border border-white/10 text-gray-300 hover:border-purple-500/50 hover:text-white transition-all duration-200"
+                    className="text-sm font-medium px-4 py-2 rounded-xl border border-white/10 text-gray-300 hover:border-[#00D9FF]/50 hover:text-white transition-all duration-200"
                   >
                     Edit
                   </button>

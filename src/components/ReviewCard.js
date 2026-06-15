@@ -25,7 +25,7 @@ export default function ReviewCard({ review, onLikeToggle, onOpen, currentUserId
       onClick={() => onOpen && onOpen(review)}
       className={`relative bg-[#111114] p-4 border transition-all duration-200 cursor-pointer group ${
         isOwn
-          ? 'border-l-2 border-l-purple-500/50 border-white/[0.06] hover:border-white/[0.12]'
+          ? 'border-l-2 border-l-[#00D9FF]/40 border-white/[0.06] hover:border-white/[0.12]'
           : 'border-white/[0.06] hover:border-white/[0.12]'
       }`}
     >
@@ -48,7 +48,7 @@ export default function ReviewCard({ review, onLikeToggle, onOpen, currentUserId
                 className="w-7 h-7 rounded-full object-cover border border-white/10"
               />
             ) : (
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center text-xs font-bold text-white">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-brand-600 to-brand-700 flex items-center justify-center text-xs font-bold text-white">
                 {review.user?.username?.[0]?.toUpperCase()}
               </div>
             )}
@@ -58,7 +58,7 @@ export default function ReviewCard({ review, onLikeToggle, onOpen, currentUserId
             <Link
               to={`/profile/${review.user?.id}`}
               onClick={(e) => e.stopPropagation()}
-              className="text-sm font-semibold text-white hover:text-purple-400 transition-colors"
+              className="text-sm font-semibold text-white hover:text-[#00D9FF] transition-colors"
             >
               @{review.user?.username}
             </Link>
@@ -81,7 +81,7 @@ export default function ReviewCard({ review, onLikeToggle, onOpen, currentUserId
       {previewText && (
         <p className="text-gray-400 text-sm leading-relaxed">
           {previewText}
-          {truncated && <span className="text-purple-400 ml-1 text-xs font-medium cursor-pointer">more</span>}
+          {truncated && <span className="text-[#00D9FF] ml-1 text-xs font-medium cursor-pointer">more</span>}
         </p>
       )}
 

@@ -61,7 +61,7 @@ export default function SetCard({ set, rank }) {
             <Link
               to={`/dj/${set.dj_id}`}
               onClick={(e) => e.stopPropagation()}
-              className="text-gray-300 text-xs mt-1 hover:text-purple-300 transition-colors inline-block"
+              className="text-gray-300 text-xs mt-1 hover:text-[#00D9FF] transition-colors inline-block"
             >
               {set.dj_name}
             </Link>

@@ -4,7 +4,7 @@ export default function SmoothGradient() {
   return (
     <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
       <div className="absolute inset-0" style={{
-        background: 'radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.12) 0%, transparent 60%)',
+        background: 'radial-gradient(ellipse at 50% 0%, rgba(90,100,112,0.12) 0%, transparent 60%)',
         animation: 'smoothPulse 10s ease-in-out infinite',
       }} />
       <div className="absolute inset-0" style={{

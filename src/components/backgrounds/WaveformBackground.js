@@ -35,12 +35,12 @@ export default function WaveformBackground() {
         </path>
         <defs>
           <linearGradient id="waveGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#7c3aed"/>
+            <stop offset="0%" stopColor="#5A6470"/>
             <stop offset="100%" stopColor="#06b6d4"/>
           </linearGradient>
           <linearGradient id="waveGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#06b6d4"/>
-            <stop offset="100%" stopColor="#7c3aed"/>
+            <stop offset="100%" stopColor="#5A6470"/>
           </linearGradient>
         </defs>
       </svg>

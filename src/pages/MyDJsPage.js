@@ -36,7 +36,7 @@ function DJImageUpload({ djId, currentImage, onUpload }) {
   return (
     <div className="flex flex-col items-center gap-3">
       <div
-        className="w-32 h-32 rounded-2xl overflow-hidden bg-[#111114] border-2 border-dashed border-white/20 cursor-pointer hover:border-purple-500/50 transition-colors relative"
+        className="w-32 h-32 rounded-2xl overflow-hidden bg-[#111114] border-2 border-dashed border-white/20 cursor-pointer hover:border-[#00D9FF]/50 transition-colors relative"
         onClick={() => fileRef.current?.click()}
       >
         {preview ? (
@@ -49,14 +49,14 @@ function DJImageUpload({ djId, currentImage, onUpload }) {
         )}
         {uploading && (
           <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-            <div className="w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+            <div className="w-6 h-6 border-2 border-brand-600 border-t-transparent rounded-full animate-spin" />
           </div>
         )}
       </div>
       <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
       <button
         onClick={() => fileRef.current?.click()}
-        className="text-xs text-purple-400 hover:text-purple-300 transition-colors"
+        className="text-xs text-[#00D9FF] hover:text-[#00D9FF] transition-colors"
       >
         {uploading ? 'Uploading...' : 'Change photo'}
       </button>

@@ -63,7 +63,7 @@ export default function VerificationRequestPage() {
     <div className="max-w-2xl mx-auto px-5 py-10">
       {/* Header */}
       <div className="text-center mb-10">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-3xl mb-4 shadow-glow">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-brand-700 text-3xl mb-4 shadow-glow">
           ✅
         </div>
         <h1 className="text-3xl font-extrabold text-white mb-2">DJ Verification</h1>
@@ -125,7 +125,7 @@ export default function VerificationRequestPage() {
               />
             </div>
             <button type="submit" disabled={submitting}
-              className="w-full py-3 bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white font-bold rounded-xl transition-all duration-200 hover:scale-[1.01] active:scale-95 shadow-glow">
+              className="w-full py-3 btn-primary disabled:opacity-50  font-bold rounded-xl transition-all duration-200 hover:scale-[1.01] active:scale-95 shadow-glow">
               {submitting ? 'Submitting…' : 'Submit Verification Request'}
             </button>
           </form>

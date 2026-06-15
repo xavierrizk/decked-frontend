@@ -77,9 +77,9 @@ export default function DJProfile() {
 
       {/* Hero */}
       <div className="relative overflow-hidden bg-gradient-to-br from-brand-900/60 to-black border border-white/[0.07] rounded-2xl p-8 mb-6">
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-600/10 to-indigo-600/10 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-600/10 to-brand-700/10 pointer-events-none" />
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-brand-500 to-indigo-600 flex items-center justify-center text-4xl flex-shrink-0 shadow-glow">
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-4xl flex-shrink-0 shadow-glow">
             🎧
           </div>
           <div className="flex-1 text-center sm:text-left">

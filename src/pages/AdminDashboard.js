@@ -246,7 +246,7 @@ export default function AdminDashboard() {
                   <div className="space-y-2">
                     {rows.map(dj => (
                       <div key={dj.id} className="flex items-center gap-4 bg-white/[0.03] border border-white/[0.07] hover:border-white/10 rounded-2xl px-5 py-4 transition-all">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-indigo-600 flex items-center justify-center text-xl flex-shrink-0">🎧</div>
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-brand-700 flex items-center justify-center text-xl flex-shrink-0">🎧</div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
                             <Link to={`/dj/${dj.id}`} className="text-white font-bold hover:text-brand-400 transition-colors truncate">{dj.name}</Link>
@@ -409,7 +409,7 @@ function DjRequestCard({ r, tab, actionId, onApprove, onReject, note, onNoteChan
         <div className="flex items-start gap-4 flex-1 min-w-0">
           {r.profile_picture_url
             ? <img src={r.profile_picture_url} alt="" className="w-11 h-11 rounded-full object-cover border border-white/10 flex-shrink-0" />
-            : <div className="w-11 h-11 rounded-full bg-gradient-to-br from-brand-600 to-indigo-700 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">{r.username?.[0]?.toUpperCase()}</div>
+            : <div className="w-11 h-11 rounded-full bg-gradient-to-br from-brand-600 to-brand-700 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">{r.username?.[0]?.toUpperCase()}</div>
           }
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2 mb-1">
@@ -440,7 +440,7 @@ function VerifCard({ r, tab, actionId, onApprove, onReject, note, onNoteChange }
         <div className="flex items-start gap-4 flex-1 min-w-0">
           {r.profile_picture_url
             ? <img src={r.profile_picture_url} alt="" className="w-11 h-11 rounded-full object-cover border border-white/10 flex-shrink-0" />
-            : <div className="w-11 h-11 rounded-full bg-gradient-to-br from-brand-600 to-indigo-700 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">{r.username?.[0]?.toUpperCase()}</div>
+            : <div className="w-11 h-11 rounded-full bg-gradient-to-br from-brand-600 to-brand-700 flex items-center justify-center text-sm font-bold text-white flex-shrink-0">{r.username?.[0]?.toUpperCase()}</div>
           }
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2 mb-1">

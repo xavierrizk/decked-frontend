@@ -46,7 +46,7 @@ export default function Signup({ setIsLoggedIn }) {
             <Field label="Email"    type="email"    value={email}    onChange={setEmail}    placeholder="you@example.com" />
             <Field label="Password" type="password" value={password} onChange={setPassword} placeholder="••••••••" />
             <button type="submit" disabled={loading}
-              className="w-full mt-1 bg-brand-600 hover:bg-brand-500 disabled:opacity-40 text-white font-semibold py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-glow">
+              className="w-full mt-1 btn-primary disabled:opacity-40  font-semibold py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-glow">
               {loading ? 'Creating account…' : 'Create Account'}
             </button>
           </form>

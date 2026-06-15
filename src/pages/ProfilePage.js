@@ -122,17 +122,17 @@ export default function ProfilePage() {
 
       {/* Hero */}
       <div className="relative overflow-hidden bg-gradient-to-br from-purple-900/50 to-black border border-white/[0.07] rounded-2xl p-8 mb-8">
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-purple-600 via-indigo-500 to-purple-400 rounded-t-2xl" />
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/5 to-indigo-600/5 pointer-events-none" />
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand-600 via-indigo-500 to-purple-400 rounded-t-2xl" />
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-600/5 to-brand-700/5 pointer-events-none" />
 
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
           {/* Avatar */}
           <div className="relative flex-shrink-0">
             {profile.profile_picture_url ? (
               <img src={profile.profile_picture_url} alt={profile.username}
-                className="w-24 h-24 rounded-full object-cover border-2 border-purple-500/50 shadow-lg" />
+                className="w-24 h-24 rounded-full object-cover border-2 border-[#00D9FF]/50 shadow-lg" />
             ) : (
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-4xl font-extrabold text-white shadow-lg">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-500 to-brand-700 flex items-center justify-center text-4xl font-extrabold text-white shadow-lg">
                 {profile.username?.[0]?.toUpperCase()}
               </div>
             )}
@@ -159,7 +159,7 @@ export default function ProfilePage() {
             )}
             {profile.is_dj && profile.dj_id && (
               <Link to={`/dj/${profile.dj_id}`}
-                className="inline-flex items-center gap-1 mt-2 text-purple-400 hover:text-purple-300 text-xs font-semibold transition-colors">
+                className="inline-flex items-center gap-1 mt-2 text-[#00D9FF] hover:text-[#00D9FF] text-xs font-semibold transition-colors">
                 🎧 View DJ Profile →
               </Link>
             )}
@@ -176,7 +176,7 @@ export default function ProfilePage() {
           <div className="flex flex-col gap-2 flex-shrink-0 items-end">
             {isOwn ? (
               <Link to="/profile/edit"
-                className="text-sm font-semibold px-4 py-2 rounded-xl border border-white/10 text-gray-300 hover:border-purple-500/50 hover:text-white transition-all duration-200">
+                className="text-sm font-semibold px-4 py-2 rounded-xl border border-white/10 text-gray-300 hover:border-[#00D9FF]/50 hover:text-white transition-all duration-200">
                 Edit Profile
               </Link>
             ) : isLoggedIn ? (
@@ -184,7 +184,7 @@ export default function ProfilePage() {
                 className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 ${
                   friendData.friends
                     ? 'bg-white/10 border border-white/20 text-white hover:bg-red-500/20 hover:border-red-400/30 hover:text-red-300'
-                    : 'bg-white/[0.08] border border-white/10 text-gray-200 hover:border-purple-500/50 hover:text-white'
+                    : 'bg-white/[0.08] border border-white/10 text-gray-200 hover:border-[#00D9FF]/50 hover:text-white'
                 }`}>
                 {friendLoading ? '…' : friendData.friends ? '🤝 Friends' : '+ Add Friend'}
               </button>
@@ -209,7 +209,7 @@ export default function ProfilePage() {
           onClick={() => handleTabChange('reviews')}
           className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 ${
             activeTab === 'reviews'
-              ? 'bg-purple-600/20 border border-purple-500/30 text-purple-300'
+              ? 'bg-brand-600/20 border border-brand-600/30 text-[#00D9FF]'
               : 'text-gray-500 hover:text-gray-300 border border-transparent'
           }`}
         >
@@ -240,7 +240,7 @@ export default function ProfilePage() {
               <p className="text-3xl mb-2">🎵</p>
               <p>No reviews yet</p>
               {isOwn && (
-                <Link to="/trending" className="inline-block mt-3 text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors">
+                <Link to="/trending" className="inline-block mt-3 text-[#00D9FF] hover:text-[#00D9FF] text-sm font-medium transition-colors">
                   Browse sets to rate →
                 </Link>
               )}
@@ -249,10 +249,10 @@ export default function ProfilePage() {
             <div className="space-y-3">
               {ratings.map((r) => (
                 <Link key={r.id} to={`/set/${r.set_id}`}
-                  className="group block bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-purple-500/30 rounded-2xl p-4 transition-all duration-200">
+                  className="group block bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-[#00D9FF]/30 rounded-2xl p-4 transition-all duration-200">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="text-white font-semibold text-sm group-hover:text-purple-400 transition-colors truncate">
+                      <p className="text-white font-semibold text-sm group-hover:text-[#00D9FF] transition-colors truncate">
                         {r.set_title}
                       </p>
                       {r.review_title && (
@@ -333,8 +333,8 @@ export default function ProfilePage() {
 
 function StatPill({ label, value, highlight }) {
   return (
-    <div className={`border rounded-xl px-4 py-2 text-center ${highlight ? 'bg-purple-600/10 border-purple-600/30' : 'bg-white/[0.05] border-white/[0.08]'}`}>
-      <p className={`font-bold text-lg ${highlight ? 'text-purple-300' : 'text-white'}`}>{value}</p>
+    <div className={`border rounded-xl px-4 py-2 text-center ${highlight ? 'bg-brand-600/10 border-brand-600/30' : 'bg-white/[0.05] border-white/[0.08]'}`}>
+      <p className={`font-bold text-lg ${highlight ? 'text-[#00D9FF]' : 'text-white'}`}>{value}</p>
       <p className="text-gray-500 text-xs">{label}</p>
     </div>
   );
@@ -343,7 +343,7 @@ function StatPill({ label, value, highlight }) {
 function Spinner() {
   return (
     <div className="flex items-center justify-center min-h-[60vh]">
-      <div className="w-10 h-10 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" />
+      <div className="w-10 h-10 border-4 border-brand-600 border-t-transparent rounded-full animate-spin" />
     </div>
   );
 }

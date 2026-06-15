@@ -48,7 +48,7 @@ export default function RequestDJPage() {
     <div className="max-w-2xl mx-auto px-5 py-10">
       {/* Header */}
       <div className="text-center mb-10">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-600 to-indigo-600 text-3xl mb-4 shadow-glow">🎧</div>
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-600 to-brand-700 text-3xl mb-4 shadow-glow">🎧</div>
         <h1 className="text-3xl font-extrabold text-white mb-2">Request a DJ Profile</h1>
         <p className="text-gray-500 max-w-sm mx-auto">
           Submit a request to add a DJ to Decked. Our team reviews every request within 24 hours.
@@ -113,7 +113,7 @@ export default function RequestDJPage() {
             <textarea value={form.why_decked} onChange={set('why_decked')} placeholder="Tell us about their impact, notable gigs, releases…" rows={4} className={inp + ' resize-none'} />
           </div>
           <button type="submit" disabled={submitting}
-            className="w-full py-3 bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white font-bold rounded-xl transition-all duration-200 hover:scale-[1.01] active:scale-95 shadow-glow">
+            className="w-full py-3 btn-primary disabled:opacity-50  font-bold rounded-xl transition-all duration-200 hover:scale-[1.01] active:scale-95 shadow-glow">
             {submitting ? 'Submitting…' : 'Submit Request'}
           </button>
         </form>

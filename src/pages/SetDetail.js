@@ -240,7 +240,7 @@ export default function SetDetail() {
       {/* Breadcrumb + Follow */}
       {set.dj_name && (
         <div className="flex items-center justify-between mb-3">
-          <Link to={`/dj/${set.dj_id}`} className="text-gray-500 hover:text-purple-400 text-sm transition-colors">
+          <Link to={`/dj/${set.dj_id}`} className="text-gray-500 hover:text-[#00D9FF] text-sm transition-colors">
             ← 🎵 {set.dj_name}
           </Link>
           {isLoggedIn && set.dj_id && (
@@ -248,7 +248,7 @@ export default function SetDetail() {
               className={`text-xs font-semibold px-4 py-1.5 rounded-lg border transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 ${
                 follow.following
                   ? 'bg-white/[0.06] border-white/10 text-gray-300 hover:bg-red-500/10 hover:border-red-400/30 hover:text-red-300'
-                  : 'bg-purple-600/20 border-purple-500/30 text-purple-300 hover:bg-purple-600 hover:text-white'
+                  : 'bg-brand-600/20 border-brand-600/30 text-[#00D9FF] hover:bg-brand-600 hover:text-white'
               }`}>
               {followLoading ? '…' : follow.following ? '✓ Following' : `+ Follow ${set.dj_name}`}
             </button>
@@ -328,26 +328,26 @@ export default function SetDetail() {
         </div>
         {isLoggedIn ? (
           <Link to={`/review/set/${set.id}`}
-            className="px-5 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 shadow-lg text-sm">
+            className="px-5 py-2.5 font-semibold transition-all duration-200 hover:scale-105 active:scale-95 text-sm" style={{ background: '#00D9FF', color: '#0a0a0a' }}>
             {myReview ? 'Edit Review' : 'Write a Review'}
           </Link>
         ) : (
-          <Link to="/login" className="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors">Log in to review →</Link>
+          <Link to="/login" className="text-[#00D9FF] hover:text-[#00D9FF] text-sm font-medium transition-colors">Log in to review →</Link>
         )}
       </div>
 
       {/* My review callout */}
       {myReview && (
-        <div className="bg-purple-600/10 border border-purple-600/30 rounded-xl px-4 py-3 mb-3 flex items-center justify-between">
+        <div className="bg-brand-600/10 border border-brand-600/30 rounded-xl px-4 py-3 mb-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <StarDisplay value={myReview.rating} size={16} />
-            <span className="text-purple-300 text-sm font-medium">Your review</span>
+            <span className="text-[#00D9FF] text-sm font-medium">Your review</span>
             {myReview.review_title && (
               <span className="text-gray-400 text-sm">— {myReview.review_title}</span>
             )}
           </div>
           <div className="flex gap-2">
-            <Link to={`/review/set/${set.id}`} className="text-xs text-purple-400 hover:text-purple-300 font-medium px-3 py-1 rounded-lg border border-purple-600/30 hover:border-purple-400/50 transition-colors">Edit</Link>
+            <Link to={`/review/set/${set.id}`} className="text-xs text-[#00D9FF] hover:text-[#00D9FF] font-medium px-3 py-1 rounded-lg border border-brand-600/30 hover:border-[#00D9FF]/50 transition-colors">Edit</Link>
             <button onClick={() => handleDeleteReview(myReview.id)}
               className="text-xs text-red-400 hover:text-red-300 font-medium px-3 py-1 rounded-lg border border-red-600/20 hover:border-red-400/40 transition-colors">
               Delete
@@ -368,7 +368,7 @@ export default function SetDetail() {
               onClick={() => handleSortChange(s)}
               className={`text-xs px-3 py-1.5 rounded-lg border transition-all duration-200 ${
                 reviewSort === s
-                  ? 'bg-purple-600/20 border-purple-500/30 text-purple-300'
+                  ? 'bg-brand-600/20 border-brand-600/30 text-[#00D9FF]'
                   : 'bg-white/[0.02] border-white/[0.06] text-gray-500 hover:text-gray-300 hover:border-white/10'
               }`}
             >
@@ -380,14 +380,14 @@ export default function SetDetail() {
 
       {reviewsLoading && reviews.length === 0 ? (
         <div className="flex items-center justify-center py-10">
-          <div className="w-7 h-7 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-7 h-7 border-2 border-brand-600 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : reviews.length === 0 ? (
         <div className="text-center py-10 border border-white/[0.05] rounded-2xl text-gray-600 mb-8">
           <p className="text-3xl mb-2">⭐</p>
           <p className="mb-3">No reviews yet. Be the first!</p>
           {isLoggedIn && (
-            <Link to={`/review/set/${set.id}`} className="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors">
+            <Link to={`/review/set/${set.id}`} className="text-[#00D9FF] hover:text-[#00D9FF] text-sm font-medium transition-colors">
               Write a review →
             </Link>
           )}
@@ -410,7 +410,7 @@ export default function SetDetail() {
       <div ref={sentinelRef} className="h-1 mb-4" />
       {reviewsLoading && reviews.length > 0 && (
         <div className="flex justify-center pb-4">
-          <div className="w-5 h-5 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-5 h-5 border-2 border-brand-600 border-t-transparent rounded-full animate-spin" />
         </div>
       )}
 
@@ -424,16 +424,16 @@ export default function SetDetail() {
           <input
             value={commentText} onChange={e => setCommentText(e.target.value)}
             placeholder="Add a comment…"
-            className="flex-1 bg-white/[0.04] border border-white/10 focus:border-purple-500 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 text-sm outline-none transition-colors"
+            className="flex-1 bg-white/[0.04] border border-white/10 focus:border-[#00D9FF] rounded-xl px-4 py-2.5 text-white placeholder-gray-600 text-sm outline-none transition-colors"
           />
           <button type="submit" disabled={submittingComment || !commentText.trim()}
-            className="px-4 py-2.5 bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white text-sm font-semibold rounded-xl transition-all duration-200 hover:scale-105 active:scale-95">
+            className="px-4 py-2.5 disabled:opacity-40 text-sm font-semibold transition-all duration-200 hover:scale-105 active:scale-95" style={{ background: '#00D9FF', color: '#0a0a0a' }}>
             {submittingComment ? '…' : 'Post'}
           </button>
         </form>
       ) : (
         <div className="mb-5 text-center py-4 border border-white/[0.05] rounded-xl text-gray-600 text-sm">
-          <Link to="/login" className="text-purple-400 hover:text-purple-300 font-medium transition-colors">Log in</Link> to leave a comment
+          <Link to="/login" className="text-[#00D9FF] hover:text-[#00D9FF] font-medium transition-colors">Log in</Link> to leave a comment
         </div>
       )}
 
@@ -449,13 +449,13 @@ export default function SetDetail() {
                 <Link to={`/profile/${c.user_id}`} className="flex-shrink-0">
                   {c.profile_picture_url
                     ? <img src={c.profile_picture_url} alt={c.username} className="w-8 h-8 rounded-full object-cover border border-white/10" />
-                    : <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center text-xs font-bold text-white">{c.username?.[0]?.toUpperCase()}</div>
+                    : <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-600 to-brand-700 flex items-center justify-center text-xs font-bold text-white">{c.username?.[0]?.toUpperCase()}</div>
                   }
                 </Link>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2 mb-0.5">
                     <div className="flex items-center gap-2">
-                      <Link to={`/profile/${c.user_id}`} className="text-white font-semibold text-sm hover:text-purple-400 transition-colors">{c.username}</Link>
+                      <Link to={`/profile/${c.user_id}`} className="text-white font-semibold text-sm hover:text-[#00D9FF] transition-colors">{c.username}</Link>
                       <span className="text-gray-600 text-xs">{new Date(c.created_at).toLocaleDateString()}</span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -486,7 +486,7 @@ export default function SetDetail() {
 }
 
 function Spinner() {
-  return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-10 h-10 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" /></div>;
+  return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-10 h-10 border-4 border-brand-600 border-t-transparent rounded-full animate-spin" /></div>;
 }
 function Pill({ children }) {
   return <span className="text-xs text-gray-400 bg-white/[0.05] border border-white/[0.07] px-3 py-1 rounded-full">{children}</span>;
