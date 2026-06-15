@@ -27,7 +27,7 @@ import Navbar            from './components/Navbar';
 import PageWrapper       from './components/PageWrapper';
 import AnnouncementsBanner from './components/AnnouncementsBanner';
 import EmailVerificationBanner from './components/EmailVerificationBanner';
-import ExtendedOnboarding from './components/ExtendedOnboarding';
+import OnboardingFlow from './components/OnboardingFlow';
 import SidebarMenu from './components/SidebarMenu';
 import VerifyEmailPage    from './pages/VerifyEmailPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
@@ -82,7 +82,7 @@ function App() {
     <Router>
       <div className="animated-bg" />
       {showOnboarding && (
-        <ExtendedOnboarding onComplete={() => setShowOnboarding(false)} />
+        <OnboardingFlow onComplete={() => setShowOnboarding(false)} />
       )}
       <div className="relative z-10 min-h-screen flex flex-col">
         <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
