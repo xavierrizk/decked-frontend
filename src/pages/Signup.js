@@ -19,7 +19,7 @@ export default function Signup({ setIsLoggedIn }) {
       const res = await axios.post(API_URL + '/api/auth/signup', { username, email, password });
       localStorage.setItem('token', res.data.token);
       setIsLoggedIn(true);
-      navigate('/');
+      // App.js checks onboarding status and shows the modal — no navigate needed here
     } catch (err) {
       setError(err.response?.data?.error || 'Signup failed');
       setLoading(false);

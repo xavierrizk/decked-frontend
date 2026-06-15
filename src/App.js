@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
 import API_URL from './api';
@@ -36,16 +36,13 @@ import ErrorPage          from './pages/ErrorPage';
 import HelpPage           from './pages/HelpPage';
 import ResetPasswordPage  from './pages/ResetPasswordPage';
 
-function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
-  const [banInfo, setBanInfo] = useState(null);
+// Inner component that can use useNavigate (must be inside <Router>)
+function AppInner({ isLoggedIn, setIsLoggedIn }) {
+  const [banInfo, setBanInfo]           = useState(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    setIsLoggedIn(!!localStorage.getItem('token'));
-  }, []);
-
-  // Check if onboarding should be shown — rely on DB only, not localStorage
+  // Check onboarding status every time login state changes
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) { setShowOnboarding(false); return; }
@@ -74,14 +71,19 @@ function App() {
     setShowOnboarding(false);
   };
 
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+    navigate('/');
+  };
+
   const Protected = ({ children }) =>
     isLoggedIn ? children : <Navigate to="/login" />;
 
   return (
-    <Router>
+    <>
       <div className="animated-bg" />
       {showOnboarding && (
-        <OnboardingFlow onComplete={() => setShowOnboarding(false)} />
+        <OnboardingFlow onComplete={handleOnboardingComplete} />
       )}
       <div className="relative z-10 min-h-screen flex flex-col">
         <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
@@ -129,6 +131,16 @@ function App() {
           </PageWrapper>
         </main>
       </div>
+    </>
+  );
+}
+
+function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
+
+  return (
+    <Router>
+      <AppInner isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
     </Router>
   );
 }
