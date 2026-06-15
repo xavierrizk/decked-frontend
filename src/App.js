@@ -27,7 +27,7 @@ import Navbar            from './components/Navbar';
 import PageWrapper       from './components/PageWrapper';
 import AnnouncementsBanner from './components/AnnouncementsBanner';
 import EmailVerificationBanner from './components/EmailVerificationBanner';
-import OnboardingFlow from './components/OnboardingFlow';
+import ExtendedOnboarding from './components/ExtendedOnboarding';
 import SidebarMenu from './components/SidebarMenu';
 import VerifyEmailPage    from './pages/VerifyEmailPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
@@ -39,12 +39,25 @@ import ResetPasswordPage  from './pages/ResetPasswordPage';
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
   const [banInfo, setBanInfo] = useState(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
     setIsLoggedIn(!!localStorage.getItem('token'));
   }, []);
 
-  // Check ban status on mount if logged in
+  // Check if onboarding should be shown
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    if (localStorage.getItem('onboarding_shown')) return;
+    axios.get(`${API_URL}/api/auth/onboarding-status`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).then(r => {
+      if (!r.data.onboarding_completed) setShowOnboarding(true);
+    }).catch(() => {});
+  }, [isLoggedIn]);
+
+  // Check ban status
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) return;
@@ -59,6 +72,7 @@ function App() {
     localStorage.removeItem('token');
     setIsLoggedIn(false);
     setBanInfo(null);
+    setShowOnboarding(false);
   };
 
   const Protected = ({ children }) =>
@@ -67,11 +81,13 @@ function App() {
   return (
     <Router>
       <div className="animated-bg" />
+      {showOnboarding && (
+        <ExtendedOnboarding onComplete={() => setShowOnboarding(false)} />
+      )}
       <div className="relative z-10 min-h-screen flex flex-col">
         <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
         <AnnouncementsBanner />
         <EmailVerificationBanner />
-        <OnboardingFlow />
         <SidebarMenu />
         {banInfo && (
           <div className="bg-red-900/60 border-b border-red-500/40 px-4 py-2 text-center">

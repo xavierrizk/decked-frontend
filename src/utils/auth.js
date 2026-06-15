@@ -24,3 +24,7 @@ export function getIsAdmin() {
 export function isEmailVerified() {
   return getTokenPayload()?.emailVerified === true;
 }
+
+export function getCurrentUsername() {
+  return getTokenPayload()?.username ?? null;
+}

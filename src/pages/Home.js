@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import VisualizerBackground from '../components/backgrounds/VisualizerBackground';
 import SetCard from '../components/cards/SetCard';
+import { getCurrentUserId, getCurrentUsername } from '../utils/auth';
 
 /* ─── helpers ─────────────────────────────────────── */
 const fmt = (n) => {
@@ -312,23 +313,43 @@ function BentoDJGrid({ djs }) {
 
 /* ─── main page ───────────────────────────────────── */
 export default function Home() {
-  const [djs, setDJs]           = useState([]);
-  const [trending, setTrending] = useState([]);
-  const [loading, setLoading]   = useState(true);
+  const [djs, setDJs]                   = useState([]);
+  const [trending, setTrending]         = useState([]);
+  const [personalized, setPersonalized] = useState([]);
+  const [hasPrefs, setHasPrefs]         = useState(false);
+  const [loading, setLoading]           = useState(true);
+
   const isLoggedIn = !!localStorage.getItem('token');
+  const userId     = getCurrentUserId();
+  const username   = getCurrentUsername();
+  const token      = localStorage.getItem('token');
 
   useEffect(() => {
-    Promise.all([
+    const base = [
       axios.get(API_URL + '/api/djs/featured'),
       axios.get(API_URL + '/api/feed/trending?sort=likes'),
-    ])
-      .then(([djsRes, trendingRes]) => {
+    ];
+    const personalizedReq = isLoggedIn
+      ? axios.get(API_URL + '/api/feed/personalized', { headers: { Authorization: `Bearer ${token}` } }).catch(() => null)
+      : Promise.resolve(null);
+
+    Promise.all([...base, personalizedReq])
+      .then(([djsRes, trendingRes, persRes]) => {
         setDJs(djsRes.data);
         setTrending(trendingRes.data.slice(0, 3));
+        if (persRes?.data) {
+          const prefs = persRes.data.preferences || {};
+          const genres = prefs.favorite_genres || [];
+          const djIds  = prefs.favorite_djs    || [];
+          if (genres.length > 0 || djIds.length > 0) {
+            setPersonalized(persRes.data.sets?.slice(0, 6) || []);
+            setHasPrefs(true);
+          }
+        }
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) return <Spinner />;
 
@@ -336,46 +357,69 @@ export default function Home() {
     <div className="max-w-6xl mx-auto px-4 py-8">
       <VisualizerBackground />
 
-      {/* Hero */}
-      <div className="text-center mb-8">
-        <div className="inline-block mb-3 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-brand-600/20 text-brand-300 border border-brand-600/30 tracking-widest uppercase">
-          Beta
-        </div>
-        <h1 style={{ fontFamily: '"Space Grotesk", sans-serif', letterSpacing: '-0.02em' }} className="text-4xl md:text-6xl font-bold text-white mb-3 leading-tight">
-          Rate the sets that <span className="text-purple-gradient">decked</span> you
-        </h1>
-        <p className="text-gray-500 text-base mb-5 max-w-sm mx-auto">
-          The community platform for discovering and reviewing DJ sets.
-        </p>
-        {!isLoggedIn && (
-          <div className="flex justify-center gap-2">
+      {/* ── Greeting (logged in) or Hero (logged out) ── */}
+      {isLoggedIn && username ? (
+        <div className="mb-8 pb-6 border-b border-white/[0.05]">
+          <p className="text-2xl font-semibold text-gray-300" style={{ fontFamily: '"Space Grotesk", sans-serif' }}>
+            Welcome back,{' '}
             <Link
-              to="/signup"
-              className="px-6 py-2 bg-brand-600 hover:bg-brand-500 text-white text-sm font-semibold transition-all duration-200 hover:scale-105 active:scale-95 shadow-glow"
+              to={`/profile/${userId}`}
+              className="transition-colors hover:underline"
+              style={{ color: '#00D9FF' }}
             >
+              {username}
+            </Link>
+            .
+          </p>
+          <p className="text-gray-600 text-sm mt-1">
+            {hasPrefs ? "Here’s what we’ve been recommending based on your taste." : "Here’s what’s trending right now."}
+          </p>
+        </div>
+      ) : (
+        <div className="text-center mb-8">
+          <div className="inline-block mb-3 px-2.5 py-0.5 text-[10px] font-semibold bg-brand-600/20 text-brand-300 border border-brand-600/30 tracking-widest uppercase">
+            Beta
+          </div>
+          <h1 style={{ fontFamily: '"Space Grotesk", sans-serif', letterSpacing: '-0.02em' }} className="text-4xl md:text-6xl font-bold text-white mb-3 leading-tight">
+            Rate the sets that <span className="text-purple-gradient">decked</span> you
+          </h1>
+          <p className="text-gray-500 text-base mb-5 max-w-sm mx-auto">
+            The community platform for discovering and reviewing DJ sets.
+          </p>
+          <div className="flex justify-center gap-2">
+            <Link to="/signup" className="btn-primary px-6 py-2 text-sm">
               Get Started
             </Link>
             <Link
               to="/discover"
-              className="px-6 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white text-sm font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
+              className="px-6 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white text-sm font-semibold transition-all duration-200"
             >
               Explore
             </Link>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Trending this week */}
+      {/* ── Personalized sets ──────────────────────────── */}
+      {hasPrefs && personalized.length > 0 && (
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="section-label">✨ Recommended for You</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+            {personalized.map(set => (
+              <SetCard key={set.id} set={set} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Trending this week ─────────────────────────── */}
       {trending.length > 0 && (
         <div className="mb-8">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="section-label">
-              🔥 Trending This Week
-            </h2>
-            <Link
-              to="/trending"
-              className="text-brand-400 hover:text-brand-300 text-xs font-medium transition-colors"
-            >
+            <h2 className="section-label">🔥 Trending This Week</h2>
+            <Link to="/trending" className="text-[#00D9FF]/60 hover:text-[#00D9FF] text-xs font-medium transition-colors">
               See all →
             </Link>
           </div>
@@ -387,28 +431,24 @@ export default function Home() {
         </div>
       )}
 
-      {/* DJ Bento Grid */}
+      {/* ── DJ Bento Grid ─────────────────────────────── */}
       <div className="flex items-center justify-between mb-3">
         <h2 className="section-label">DJs</h2>
         <span className="text-gray-600 text-sm">{djs.length} total</span>
       </div>
 
       {djs.length === 0 ? (
-        <div className="text-center py-24 border border-white/5 rounded-2xl">
+        <div className="text-center py-24 border border-white/5">
           <p className="text-5xl mb-4">🎛️</p>
           <p className="text-gray-500">No DJs yet. Be the first to add one!</p>
         </div>
       ) : (
         <>
-          {/* Desktop: bento grid */}
           <div className="hidden md:block">
             <BentoDJGrid djs={djs} />
           </div>
-          {/* Mobile: stacked list */}
-          <div className="md:hidden space-y-4">
-            {djs.map((dj) => (
-              <SmallDJCard key={dj.id} dj={dj} className="h-20" />
-            ))}
+          <div className="md:hidden space-y-3">
+            {djs.map(dj => <SmallDJCard key={dj.id} dj={dj} className="h-20" />)}
           </div>
         </>
       )}
