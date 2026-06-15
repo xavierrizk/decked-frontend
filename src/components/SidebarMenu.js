@@ -2,10 +2,12 @@ import React, { useState, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const MENU_ITEMS = [
-  { to: '/feed',     label: 'My Feed',  icon: '📰', auth: true  },
-  { to: '/discover', label: 'Discover', icon: '🧭', auth: false },
-  { to: '/search',   label: 'Search',   icon: '🔍', auth: false },
-  { to: '/trending', label: 'Trending', icon: '🔥', auth: false },
+  { to: '/feed',      label: 'My Feed',   icon: '📰', auth: true  },
+  { to: '/discover',  label: 'Discover',  icon: '🧭', auth: false },
+  { to: '/search',    label: 'Search',    icon: '🔍', auth: false },
+  { to: '/trending',  label: 'Trending',  icon: '🔥', auth: false },
+  { to: '/concerts',  label: 'Concerts',  icon: '🎤', auth: false },
+  { to: '/festivals', label: 'Festivals', icon: '🎪', auth: false },
 ];
 
 export default function SidebarMenu() {

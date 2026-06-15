@@ -6,9 +6,11 @@ import { getCurrentUserId, getIsAdmin, getCurrentUsername } from '../utils/auth'
 import ProfileDropdown from './ProfileDropdown';
 
 const NAV_LINKS = [
-  { to: '/discover', label: 'Discover', icon: '🧭' },
-  { to: '/trending', label: 'Trending', icon: '🔥' },
-  { to: '/help',     label: 'Help',     icon: '❓' },
+  { to: '/discover',  label: 'Discover',  icon: '🧭' },
+  { to: '/trending',  label: 'Trending',  icon: '🔥' },
+  { to: '/concerts',  label: 'Concerts',  icon: '🎤' },
+  { to: '/festivals', label: 'Festivals', icon: '🎪' },
+  { to: '/help',      label: 'Help',      icon: '❓' },
 ];
 
 const AUTH_LINKS = [

@@ -3,9 +3,11 @@ import axios from 'axios';
 import API_URL from '../api';
 
 const GENRES = [
-  'House', 'Techno', 'Drum & Bass', 'Trance', 'Dubstep',
-  'Deep House', 'Minimal', 'Jungle', 'Ambient', 'Trap',
-  'Hardstyle', 'Psytrance',
+  // Electronic
+  'House', 'Techno', 'Drum & Bass', 'Trance', 'Dubstep', 'Hardstyle',
+  // Live / mainstream
+  'Rock', 'Pop', 'Hip-Hop', 'Indie', 'Metal', 'R&B',
+  'Jazz', 'Country', 'Latin', 'Punk', 'Funk', 'Reggae',
 ];
 
 const TOTAL = 3;
@@ -252,10 +254,10 @@ export default function OnboardingFlow({ onComplete }) {
               <div>
                 <StepPill step={1} />
                 <h2 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: '"Space Grotesk", sans-serif' }}>
-                  What EDM genres do you love?
+                  What live music do you love?
                 </h2>
                 <p className="text-gray-500 text-sm mb-6">
-                  Select at least 1 — you can choose multiple.
+                  Concerts, festivals, DJ sets, raves — pick your genres. Select at least 1.
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {GENRES.map(g => (

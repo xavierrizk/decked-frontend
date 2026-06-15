@@ -35,6 +35,8 @@ import NotFoundPage       from './pages/NotFoundPage';
 import ErrorPage          from './pages/ErrorPage';
 import HelpPage           from './pages/HelpPage';
 import ResetPasswordPage  from './pages/ResetPasswordPage';
+import ConcertsPage       from './pages/ConcertsPage';
+import FestivalsPage      from './pages/FestivalsPage';
 
 // Inner component that can use useNavigate (must be inside <Router>)
 function AppInner({ isLoggedIn, setIsLoggedIn }) {
@@ -103,6 +105,8 @@ function AppInner({ isLoggedIn, setIsLoggedIn }) {
             <Routes>
               <Route path="/"               element={<Home />} />
               <Route path="/trending"       element={<TrendingPage />} />
+              <Route path="/concerts"       element={<ConcertsPage />} />
+              <Route path="/festivals"      element={<FestivalsPage />} />
               <Route path="/search"         element={<SearchPage />} />
               <Route path="/discover"       element={<DiscoveryPage />} />
               <Route path="/verification"   element={<Protected><VerificationRequestPage /></Protected>} />

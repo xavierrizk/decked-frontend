@@ -15,8 +15,20 @@ function getGradient(genre) {
   return genreGradient[genre] || genreGradient['default'];
 }
 
+// Performance-type badge config
+const TYPE_BADGE = {
+  dj_set:       { label: 'DJ Set',   color: '#00D9FF' },
+  concert:      { label: 'Concert',  color: '#FF006E' },
+  live_band:    { label: 'Live Band',color: '#FBBF24' },
+  festival_set: { label: 'Festival', color: '#A855F7' },
+  rave:         { label: 'Rave',     color: '#F43F5E' },
+  other:        { label: 'Live',     color: '#9BA6B3' },
+};
+
 export default function SetCard({ set, rank }) {
   const gradient = getGradient(set.genre);
+  const badge = TYPE_BADGE[set.performance_type] || null;
+  const isDjSet = set.performance_type === 'dj_set' || (!set.performance_type && set.dj_id);
 
   return (
     <div className="relative">
@@ -43,8 +55,22 @@ export default function SetCard({ set, rank }) {
 
           {/* Rank number */}
           {rank && (
-            <span className="absolute top-3 left-3 text-5xl font-black text-white/10 leading-none select-none">
+            <span className="absolute bottom-12 right-3 text-5xl font-black text-white/10 leading-none select-none">
               {rank}
+            </span>
+          )}
+
+          {/* Performance-type badge */}
+          {badge && (
+            <span
+              className="absolute top-3 left-3 z-10 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full backdrop-blur-sm"
+              style={{
+                color: badge.color,
+                background: 'rgba(0,0,0,0.55)',
+                border: `1px solid ${badge.color}55`,
+              }}
+            >
+              {badge.label}
             </span>
           )}
 
@@ -58,13 +84,17 @@ export default function SetCard({ set, rank }) {
           {/* Bottom text overlay */}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 group-hover:from-black/95 transition-all duration-300">
             <p className="text-white font-bold text-base leading-tight line-clamp-2">{set.title}</p>
-            <Link
-              to={`/dj/${set.dj_id}`}
-              onClick={(e) => e.stopPropagation()}
-              className="text-gray-300 text-xs mt-1 hover:text-[#00D9FF] transition-colors inline-block"
-            >
-              {set.dj_name}
-            </Link>
+            {isDjSet && set.dj_id ? (
+              <Link
+                to={`/dj/${set.dj_id}`}
+                onClick={(e) => e.stopPropagation()}
+                className="text-gray-300 text-xs mt-1 hover:text-[#00D9FF] transition-colors inline-block"
+              >
+                {set.dj_name}
+              </Link>
+            ) : (
+              <span className="text-gray-300 text-xs mt-1 inline-block">{set.dj_name}</span>
+            )}
           </div>
         </div>
       </Link>
