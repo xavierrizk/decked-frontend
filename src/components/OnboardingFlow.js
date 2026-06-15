@@ -10,6 +10,14 @@ const GENRES = [
   'Jazz', 'Country', 'Latin', 'Punk', 'Funk', 'Reggae',
 ];
 
+const CONTENT_TYPES = [
+  { value: 'concerts',   label: '🎤 Concerts' },
+  { value: 'festivals',  label: '🎪 Festivals' },
+  { value: 'dj_sets',    label: '🎧 DJ Sets' },
+  { value: 'live_bands', label: '🎸 Live Bands' },
+  { value: 'raves',      label: '🔊 Raves' },
+];
+
 const TOTAL = 3;
 
 /* ─── Progress bar ────────────────────────────── */
@@ -108,6 +116,7 @@ export default function OnboardingFlow({ onComplete }) {
 
   // Step 1
   const [genres, setGenres] = useState([]);
+  const [contentTypes, setContentTypes] = useState([]);
 
   // Step 2
   const [djList,  setDjList]  = useState([]);
@@ -127,7 +136,8 @@ export default function OnboardingFlow({ onComplete }) {
     // Restore any saved progress
     axios.get(`${API_URL}/api/auth/onboarding/progress`, { headers })
       .then(r => {
-        if (r.data.favorite_genres?.length)   setGenres(r.data.favorite_genres);
+        if (r.data.favorite_genres?.length)         setGenres(r.data.favorite_genres);
+        if (r.data.favorite_content_types?.length)  setContentTypes(r.data.favorite_content_types);
         if (r.data.favorite_djs?.length)       setSelDJs(r.data.favorite_djs);
         if (r.data.bio)                        setBio(r.data.bio);
         if (r.data.location)                   setLocation(r.data.location);
@@ -154,6 +164,9 @@ export default function OnboardingFlow({ onComplete }) {
   const toggleGenre = (g) =>
     setGenres(prev => prev.includes(g) ? prev.filter(x => x !== g) : [...prev, g]);
 
+  const toggleContentType = (t) =>
+    setContentTypes(prev => prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t]);
+
   const toggleDJ = (id) => {
     setSelDJs(prev => {
       if (prev.includes(id)) return prev.filter(x => x !== id);
@@ -167,7 +180,7 @@ export default function OnboardingFlow({ onComplete }) {
     if (genres.length === 0) { setError('Select at least 1 genre'); return; }
     setSaving(true);
     try {
-      await axios.patch(`${API_URL}/api/auth/onboarding/step1`, { favorite_genres: genres }, { headers });
+      await axios.patch(`${API_URL}/api/auth/onboarding/step1`, { favorite_genres: genres, favorite_content_types: contentTypes }, { headers });
       goTo(2, true);
     } catch {
       setError('Could not save. Try again.');
@@ -270,10 +283,30 @@ export default function OnboardingFlow({ onComplete }) {
                   ))}
                 </div>
                 {genres.length > 0 && (
-                  <p className="mt-4 text-xs" style={{ color: '#00D9FF' }}>
+                  <p className="mt-3 text-xs" style={{ color: '#00D9FF' }}>
                     {genres.length} selected
                   </p>
                 )}
+
+                {/* Content types */}
+                <p className="text-gray-400 text-sm mt-7 mb-3 font-medium">What do you go to?</p>
+                <div className="flex flex-wrap gap-2">
+                  {CONTENT_TYPES.map(ct => (
+                    <button
+                      key={ct.value}
+                      type="button"
+                      onClick={() => toggleContentType(ct.value)}
+                      className={`px-4 py-2.5 text-sm font-medium border transition-all duration-150 select-none ${
+                        contentTypes.includes(ct.value)
+                          ? 'text-black border-[#00D9FF]'
+                          : 'border-white/[0.08] text-gray-400 hover:border-white/20 hover:text-white'
+                      }`}
+                      style={contentTypes.includes(ct.value) ? { background: '#00D9FF' } : {}}
+                    >
+                      {ct.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 

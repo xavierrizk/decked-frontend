@@ -216,6 +216,13 @@ export default function SetDetail() {
   const avg = stats?.average ? Number(stats.average) : null;
   const myReview = reviews.find(r => r.user?.id === currentUserId);
 
+  const isDjSet = set.performance_type === 'dj_set' || (!set.performance_type && set.dj_id);
+  const TYPE_LABELS = {
+    dj_set: 'DJ Set', concert: 'Concert', live_band: 'Live Band',
+    festival_set: 'Festival Set', rave: 'Rave', other: 'Live',
+  };
+  const typeLabel = TYPE_LABELS[set.performance_type] || null;
+
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
       <WaveformBackground />
@@ -240,10 +247,14 @@ export default function SetDetail() {
       {/* Breadcrumb + Follow */}
       {set.dj_name && (
         <div className="flex items-center justify-between mb-3">
-          <Link to={`/dj/${set.dj_id}`} className="text-gray-500 hover:text-[#00D9FF] text-sm transition-colors">
-            ← 🎵 {set.dj_name}
-          </Link>
-          {isLoggedIn && set.dj_id && (
+          {isDjSet && set.dj_id ? (
+            <Link to={`/dj/${set.dj_id}`} className="text-gray-500 hover:text-[#00D9FF] text-sm transition-colors">
+              ← 🎵 {set.dj_name}
+            </Link>
+          ) : (
+            <span className="text-gray-400 text-sm">🎤 {set.dj_name}</span>
+          )}
+          {isLoggedIn && isDjSet && set.dj_id && (
             <button onClick={handleFollow} disabled={followLoading}
               className={`text-xs font-semibold px-4 py-1.5 rounded-lg border transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 ${
                 follow.following
@@ -289,7 +300,21 @@ export default function SetDetail() {
       </div>
 
       <div className="flex flex-wrap gap-2 mb-6">
-        {set.location && <Pill>📍 {set.location}</Pill>}
+        {typeLabel && (
+          <span className="text-xs font-semibold px-3 py-1 rounded-full"
+            style={{ color: '#00D9FF', background: 'rgba(0,217,255,0.1)', border: '1px solid rgba(0,217,255,0.3)' }}>
+            {typeLabel}
+          </span>
+        )}
+        {set.festival_name && (
+          <Link to="/festivals" className="text-xs text-[#A855F7] bg-[#A855F7]/10 border border-[#A855F7]/30 px-3 py-1 rounded-full hover:bg-[#A855F7]/20 transition-colors">
+            🎪 {set.festival_name}
+          </Link>
+        )}
+        {set.venue_name && (
+          <Pill>🏟️ {set.venue_name}{set.venue_city ? `, ${set.venue_city}` : ''}</Pill>
+        )}
+        {set.location && !set.venue_name && <Pill>📍 {set.location}</Pill>}
         {set.duration  && <Pill>⏱️ {set.duration} mins</Pill>}
         {set.genre     && <Pill>🎵 {set.genre}</Pill>}
       </div>
