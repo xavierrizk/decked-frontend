@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import API_URL from '../api';
-import { getCurrentUserId, getIsAdmin } from '../utils/auth';
+import { getCurrentUserId, getIsAdmin, getCurrentUsername } from '../utils/auth';
+import ProfileDropdown from './ProfileDropdown';
 
 const NAV_LINKS = [
   { to: '/discover', label: 'Discover', icon: '🧭' },
@@ -43,8 +44,9 @@ function NavIconBtn({ to, label, icon, badge, className = '' }) {
 }
 
 export default function Navbar({ isLoggedIn, onLogout }) {
-  const userId  = getCurrentUserId();
-  const isAdmin = getIsAdmin();
+  const userId   = getCurrentUserId();
+  const isAdmin  = getIsAdmin();
+  const username = getCurrentUsername();
   const [unread, setUnread]           = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
@@ -195,17 +197,14 @@ export default function Navbar({ isLoggedIn, onLogout }) {
           {isLoggedIn ? (
             <>
               <NavIconBtn to="/notifications" label="Notifications" icon="🔔" badge={unread} />
-              {userId && <NavIconBtn to={`/profile/${userId}`} label="Profile" icon="👤" />}
-              {isAdmin && (
-                <Link to="/admin" title="Admin" aria-label="Admin"
-                  className="flex items-center justify-center w-8 h-8 rounded bg-red-500/20 border border-red-500/30 text-red-300 hover:bg-red-500/30 transition-all duration-150 ml-0.5">
-                  <span className="text-xs">⚙️</span>
-                </Link>
-              )}
-              <button onClick={onLogout} title="Logout"
-                className="flex items-center justify-center h-7 px-2.5 rounded border border-white/[0.08] text-gray-500 hover:border-white/20 hover:text-white text-xs font-medium transition-all duration-150 ml-0.5">
-                Out
-              </button>
+              <div className="ml-1">
+                <ProfileDropdown
+                  userId={userId}
+                  username={username}
+                  isAdmin={isAdmin}
+                  onLogout={onLogout}
+                />
+              </div>
             </>
           ) : (
             <>

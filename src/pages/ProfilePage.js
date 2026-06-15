@@ -1,6 +1,6 @@
 import API_URL from '../api';
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { getCurrentUserId } from '../utils/auth';
 import Toast, { useToast } from '../components/Toast';
@@ -18,6 +18,8 @@ import { relativeTime } from '../components/profile/helpers';
 export default function ProfilePage() {
   const { userId } = useParams();
   const navigate   = useNavigate();
+  const [searchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
 
   const [profile, setProfile]   = useState(null);
   const [loading, setLoading]   = useState(true);
@@ -53,7 +55,6 @@ export default function ProfilePage() {
     setLoading(true);
     setReviewsLoading(true);
     // reset tab caches when viewing a different user
-    setActiveTab('reviews');
     setFavState('idle'); setFollowState('idle'); setNetState('idle'); setActState('idle');
 
     Promise.all([
@@ -113,6 +114,13 @@ export default function ProfilePage() {
     if (tab === 'network')   ensureNetwork();
     if (tab === 'activity')  ensureActivity();
   };
+
+  // Honor ?tab= query param (e.g. from navbar dropdown links)
+  useEffect(() => {
+    const valid = ['reviews', 'favorites', 'activity', 'following', 'network'];
+    const tab = valid.includes(tabParam) ? tabParam : 'reviews';
+    handleTab(tab);
+  }, [tabParam, userId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const openReview = (review) => {
     // ReviewDetailModal expects a `user` object + time_ago
