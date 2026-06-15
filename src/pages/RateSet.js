@@ -21,12 +21,10 @@ export default function RateSet() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true); setError('');
-    const finalScore = Math.ceil(score); // backend takes integers 1-5
-
     try {
       await axios.post(
         `${API_URL}/api/ratings/set/${setId}`,
-        { score: finalScore, review },
+        { score, review },
         { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
       );
       setSuccess('Rating submitted!');
