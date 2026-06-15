@@ -251,6 +251,10 @@ export default function SetDetail() {
             <Link to={`/dj/${set.dj_id}`} className="text-gray-500 hover:text-[#00D9FF] text-sm transition-colors">
               ← 🎵 {set.dj_name}
             </Link>
+          ) : set.artist_id ? (
+            <Link to={`/artist/${set.artist_id}`} className="text-gray-500 hover:text-[#FF006E] text-sm transition-colors">
+              🎤 {set.dj_name}
+            </Link>
           ) : (
             <span className="text-gray-400 text-sm">🎤 {set.dj_name}</span>
           )}

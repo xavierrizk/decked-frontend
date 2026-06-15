@@ -92,6 +92,14 @@ export default function SetCard({ set, rank }) {
               >
                 {set.dj_name}
               </Link>
+            ) : set.artist_id ? (
+              <Link
+                to={`/artist/${set.artist_id}`}
+                onClick={(e) => e.stopPropagation()}
+                className="text-gray-300 text-xs mt-1 hover:text-[#FF006E] transition-colors inline-block"
+              >
+                {set.dj_name}
+              </Link>
             ) : (
               <span className="text-gray-300 text-xs mt-1 inline-block">{set.dj_name}</span>
             )}

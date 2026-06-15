@@ -118,9 +118,10 @@ export default function OnboardingFlow({ onComplete }) {
   const [genres, setGenres] = useState([]);
   const [contentTypes, setContentTypes] = useState([]);
 
-  // Step 2
-  const [djList,  setDjList]  = useState([]);
-  const [selDJs,  setSelDJs]  = useState([]);
+  // Step 2 — mix of DJs + artists
+  const [djList,  setDjList]   = useState([]);
+  const [artistList, setArtistList] = useState([]);
+  const [picks,   setPicks]    = useState([]); // [{ type: 'dj'|'artist', id }]
   const [djsLoading, setDjsLoading] = useState(false);
 
   // Step 3
@@ -138,18 +139,28 @@ export default function OnboardingFlow({ onComplete }) {
       .then(r => {
         if (r.data.favorite_genres?.length)         setGenres(r.data.favorite_genres);
         if (r.data.favorite_content_types?.length)  setContentTypes(r.data.favorite_content_types);
-        if (r.data.favorite_djs?.length)       setSelDJs(r.data.favorite_djs);
+        const restored = [
+          ...(r.data.favorite_djs || []).map(id => ({ type: 'dj', id })),
+          ...(r.data.favorite_artists || []).map(id => ({ type: 'artist', id })),
+        ];
+        if (restored.length) setPicks(restored);
         if (r.data.bio)                        setBio(r.data.bio);
         if (r.data.location)                   setLocation(r.data.location);
         if (r.data.profile_picture_url)        setAvatarUrl(r.data.profile_picture_url);
       })
       .catch(() => {});
 
-    // Load DJs for step 2
+    // Load DJs + artists for step 2
     setDjsLoading(true);
-    axios.get(`${API_URL}/api/djs?limit=30`)
-      .then(r => setDjList(Array.isArray(r.data) ? r.data.slice(0, 30) : (r.data.djs || []).slice(0, 30)))
-      .catch(() => {})
+    Promise.all([
+      axios.get(`${API_URL}/api/djs?limit=30`).catch(() => ({ data: [] })),
+      axios.get(`${API_URL}/api/artists`).catch(() => ({ data: [] })),
+    ])
+      .then(([djRes, artRes]) => {
+        const djs = Array.isArray(djRes.data) ? djRes.data : (djRes.data.djs || []);
+        setDjList(djs.slice(0, 24));
+        setArtistList((artRes.data || []).slice(0, 24));
+      })
       .finally(() => setDjsLoading(false));
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -167,11 +178,14 @@ export default function OnboardingFlow({ onComplete }) {
   const toggleContentType = (t) =>
     setContentTypes(prev => prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t]);
 
-  const toggleDJ = (id) => {
-    setSelDJs(prev => {
-      if (prev.includes(id)) return prev.filter(x => x !== id);
+  const isPicked = (type, id) => picks.some(p => p.type === type && p.id === id);
+
+  const togglePick = (type, id) => {
+    setPicks(prev => {
+      if (prev.some(p => p.type === type && p.id === id))
+        return prev.filter(p => !(p.type === type && p.id === id));
       if (prev.length >= 3) return prev;
-      return [...prev, id];
+      return [...prev, { type, id }];
     });
   };
 
@@ -190,10 +204,13 @@ export default function OnboardingFlow({ onComplete }) {
 
   /* ── Step 2 → 3 ────────────────────────────── */
   const handleStep2 = async () => {
-    if (selDJs.length !== 3) { setError('Select exactly 3 DJs'); return; }
+    if (picks.length !== 3) { setError('Select exactly 3 favourites'); return; }
     setSaving(true);
     try {
-      await axios.patch(`${API_URL}/api/auth/onboarding/step2`, { favorite_djs: selDJs }, { headers });
+      await axios.patch(`${API_URL}/api/auth/onboarding/step2`, {
+        favorite_djs:     picks.filter(p => p.type === 'dj').map(p => p.id),
+        favorite_artists: picks.filter(p => p.type === 'artist').map(p => p.id),
+      }, { headers });
       goTo(3, true);
     } catch {
       setError('Could not save. Try again.');
@@ -310,35 +327,58 @@ export default function OnboardingFlow({ onComplete }) {
               </div>
             )}
 
-            {/* ── STEP 2: DJs ────────────────────── */}
+            {/* ── STEP 2: favourite DJs + artists ─── */}
             {step === 2 && (
               <div>
                 <StepPill step={2} />
                 <h2 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: '"Space Grotesk", sans-serif' }}>
-                  Pick 3 favourite DJs
+                  Pick 3 favourite artists
                 </h2>
                 <p className="text-gray-500 text-sm mb-2">
-                  Select exactly 3 to continue.
+                  Any mix of DJs and live artists — select exactly 3.
                 </p>
-                <p className="text-sm mb-6 font-semibold" style={{ color: selDJs.length === 3 ? '#00D9FF' : 'rgba(255,255,255,0.4)' }}>
-                  {selDJs.length}/3 selected
+                <p className="text-sm mb-6 font-semibold" style={{ color: picks.length === 3 ? '#00D9FF' : 'rgba(255,255,255,0.4)' }}>
+                  {picks.length}/3 selected
                 </p>
                 {djsLoading ? (
                   <div className="flex justify-center py-12">
                     <div className="w-6 h-6 border-2 border-[#00D9FF] border-t-transparent rounded-full animate-spin" />
                   </div>
                 ) : (
-                  <div className="grid grid-cols-3 gap-2">
-                    {djList.map(dj => (
-                      <DJPickCard
-                        key={dj.id}
-                        dj={dj}
-                        selected={selDJs.includes(dj.id)}
-                        disabled={selDJs.length >= 3}
-                        onClick={() => { toggleDJ(dj.id); setError(''); }}
-                      />
-                    ))}
-                  </div>
+                  <>
+                    {djList.length > 0 && (
+                      <>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-600 mb-2">DJs</p>
+                        <div className="grid grid-cols-3 gap-2 mb-6">
+                          {djList.map(dj => (
+                            <DJPickCard
+                              key={`dj-${dj.id}`}
+                              dj={dj}
+                              selected={isPicked('dj', dj.id)}
+                              disabled={picks.length >= 3}
+                              onClick={() => { togglePick('dj', dj.id); setError(''); }}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
+                    {artistList.length > 0 && (
+                      <>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-600 mb-2">Artists & Bands</p>
+                        <div className="grid grid-cols-3 gap-2">
+                          {artistList.map(a => (
+                            <DJPickCard
+                              key={`artist-${a.id}`}
+                              dj={{ id: a.id, name: a.name, profile_image_url: a.image_url }}
+                              selected={isPicked('artist', a.id)}
+                              disabled={picks.length >= 3}
+                              onClick={() => { togglePick('artist', a.id); setError(''); }}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </>
                 )}
               </div>
             )}
@@ -458,7 +498,7 @@ export default function OnboardingFlow({ onComplete }) {
               <button
                 type="button"
                 onClick={handleStep2}
-                disabled={selDJs.length !== 3 || saving}
+                disabled={picks.length !== 3 || saving}
                 className="btn-primary disabled:opacity-40 px-8 py-2.5 text-sm font-semibold"
               >
                 {saving ? 'Saving…' : 'Continue →'}

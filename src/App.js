@@ -37,6 +37,7 @@ import HelpPage           from './pages/HelpPage';
 import ResetPasswordPage  from './pages/ResetPasswordPage';
 import ConcertsPage       from './pages/ConcertsPage';
 import FestivalsPage      from './pages/FestivalsPage';
+import ArtistProfile      from './pages/ArtistProfile';
 
 // Inner component that can use useNavigate (must be inside <Router>)
 function AppInner({ isLoggedIn, setIsLoggedIn }) {
@@ -114,6 +115,7 @@ function AppInner({ isLoggedIn, setIsLoggedIn }) {
               <Route path="/request-dj"     element={<Protected><RequestDJPage /></Protected>} />
               <Route path="/my-djs"         element={<Protected><MyDJsPage /></Protected>} />
               <Route path="/dj/:id"         element={<DJProfile />} />
+              <Route path="/artist/:id"     element={<ArtistProfile />} />
               <Route path="/set/:id"        element={<SetDetail />} />
               <Route path="/profile/:userId" element={<ProfilePage />} />
               <Route path="/rate/:setId"    element={<Protected><RateSet /></Protected>} />
