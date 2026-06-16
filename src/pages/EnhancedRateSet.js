@@ -6,6 +6,7 @@ import { StarRatingInput } from '../components/StarRating';
 import { getCurrentUserId } from '../utils/auth';
 import { useToast } from '../components/Toast';
 import Toast from '../components/Toast';
+import VideoUploader from '../components/VideoUploader';
 
 const LABELS = {
   0.5: '½ star', 1: 'Meh', 1.5: 'Poor', 2: 'OK', 2.5: 'Decent',
@@ -30,6 +31,8 @@ export default function EnhancedRateSet() {
   const [reviewTitle, setReviewTitle] = useState('');
   const [reviewText, setReviewText] = useState('');
   const [isFavorited, setIsFavorited] = useState(false);
+  const [videoFile, setVideoFile] = useState(null);
+  const [videoUploading, setVideoUploading] = useState(false);
 
   const authHeaders = () => ({ Authorization: 'Bearer ' + localStorage.getItem('token') });
 
@@ -74,21 +77,41 @@ export default function EnhancedRateSet() {
     }
     setSubmitting(true);
     try {
+      let reviewId = existingReviewId;
       if (isEditMode && existingReviewId) {
         await axios.patch(
           `${API_URL}/api/reviews/${existingReviewId}`,
           { rating, review_title: reviewTitle, review_text: reviewText },
           { headers: authHeaders() }
         );
-        showToast('Review updated!');
       } else {
-        await axios.post(
+        const res = await axios.post(
           `${API_URL}/api/reviews/set/${setId}`,
           { rating, review_title: reviewTitle, review_text: reviewText, is_favorited: isFavorited },
           { headers: authHeaders() }
         );
-        showToast('Review posted!');
+        reviewId = res.data.id;
       }
+
+      // Upload video if selected
+      if (videoFile && reviewId) {
+        setVideoUploading(true);
+        const fd = new FormData();
+        fd.append('video', videoFile);
+        try {
+          await axios.post(`${API_URL}/api/reviews/${reviewId}/video`, fd, {
+            headers: { ...authHeaders(), 'Content-Type': 'multipart/form-data' },
+          });
+        } catch (vidErr) {
+          showToast(vidErr.response?.data?.error || 'Video upload failed — review saved without video');
+          setVideoUploading(false);
+          setSubmitting(false);
+          return;
+        }
+        setVideoUploading(false);
+      }
+
+      showToast(isEditMode ? 'Review updated!' : 'Review posted!');
       setTimeout(() => navigate(`/set/${setId}`), 1200);
     } catch (err) {
       if (err.response?.status === 409) {
@@ -186,20 +209,23 @@ export default function EnhancedRateSet() {
               />
             </div>
 
-            {/* Coming soon: video */}
-            <div className="relative group">
-              <button
-                disabled
-                type="button"
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.02] border border-white/[0.05] text-gray-600 cursor-not-allowed opacity-50"
-              >
-                <span className="text-lg">🎬</span>
-                <span className="text-sm font-medium">Add Videos</span>
-                <span className="ml-auto text-xs bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full font-semibold">COMING SOON</span>
-              </button>
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-[#1a1a1f] border border-white/10 rounded-xl text-xs text-gray-300 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                🎬 Video reviews launching soon! Upload clips of your favourite moments.
-              </div>
+            {/* Video review */}
+            <div>
+              <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">
+                Video Clip{' '}
+                <span className="text-gray-600 normal-case tracking-normal font-normal">(optional · max 30s · 25MB)</span>
+              </label>
+              <VideoUploader
+                onFileSelected={setVideoFile}
+                onClear={() => setVideoFile(null)}
+                disabled={submitting || videoUploading}
+              />
+              {videoUploading && (
+                <p className="mt-2 text-[#00D9FF] text-xs flex items-center gap-1.5">
+                  <span className="inline-block w-3 h-3 border-2 border-[#00D9FF] border-t-transparent rounded-full animate-spin" />
+                  Uploading video…
+                </p>
+              )}
             </div>
 
             {/* Favorite toggle */}
@@ -219,10 +245,12 @@ export default function EnhancedRateSet() {
             {/* Submit */}
             <button
               type="submit"
-              disabled={submitting}
-              className="w-full btn-primary disabled:opacity-40  font-semibold py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-lg"
+              disabled={submitting || videoUploading}
+              className="w-full btn-primary disabled:opacity-40 font-semibold py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-lg"
             >
-              {submitting ? (isEditMode ? 'Updating…' : 'Posting…') : (isEditMode ? 'Update Review' : 'Post Review')}
+              {videoUploading ? 'Uploading video…'
+                : submitting ? (isEditMode ? 'Updating…' : 'Posting…')
+                : (isEditMode ? 'Update Review' : 'Post Review')}
             </button>
           </form>
         </div>

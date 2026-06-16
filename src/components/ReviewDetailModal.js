@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { StarDisplay } from './StarRating';
+import VideoPlayer from './VideoPlayer';
 
 export default function ReviewDetailModal({ review, open, onClose, onLikeToggle, onEdit, onDelete, currentUserId }) {
   const [likeAnim, setLikeAnim] = useState(false);
@@ -82,11 +83,20 @@ export default function ReviewDetailModal({ review, open, onClose, onLikeToggle,
             <p className="text-gray-600 text-sm italic mb-5">No written review.</p>
           )}
 
-          {/* Video placeholder */}
-          <div className="bg-white/[0.02] border border-white/[0.05] rounded-xl p-6 text-center text-gray-600 mb-5">
-            <p className="text-3xl mb-2">🎬</p>
-            <p className="text-sm">Video reviews coming soon</p>
-          </div>
+          {/* Video */}
+          {review.video_url && (
+            <div className="mb-5">
+              <video
+                src={review.video_url}
+                controls
+                playsInline
+                className="w-full rounded-xl border border-white/10 max-h-72 object-contain bg-black"
+              />
+              {review.video_duration && (
+                <p className="text-gray-600 text-[11px] mt-1">{Math.floor(review.video_duration)}s clip</p>
+              )}
+            </div>
+          )}
 
           {/* Bottom row */}
           <div className="flex items-center justify-between gap-3 flex-wrap">

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { StarDisplay } from './StarRating';
+import VideoPlayer from './VideoPlayer';
 
 export default function ReviewCard({ review, onLikeToggle, onOpen, currentUserId }) {
   const [likeAnim, setLikeAnim] = useState(false);
+  const [videoOpen, setVideoOpen] = useState(false);
 
   const isOwn = review.user?.id === currentUserId;
   const isPopular = (review.like_count || 0) >= 10;
@@ -83,6 +85,30 @@ export default function ReviewCard({ review, onLikeToggle, onOpen, currentUserId
           {previewText}
           {truncated && <span className="text-[#00D9FF] ml-1 text-xs font-medium cursor-pointer">more</span>}
         </p>
+      )}
+
+      {/* Video thumbnail */}
+      {review.video_url && (
+        <div className="mt-3">
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); setVideoOpen(true); }}
+            className="relative w-full rounded-lg overflow-hidden bg-black border border-white/10 group"
+            style={{ aspectRatio: '16/9' }}>
+            <video src={review.video_url} className="w-full h-full object-cover opacity-70 group-hover:opacity-90 transition-opacity" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-[#00D9FF]/20 border border-[#00D9FF]/50 flex items-center justify-center backdrop-blur-sm">
+                <span className="text-[#00D9FF] text-sm ml-0.5">▶</span>
+              </div>
+            </div>
+            {review.video_duration && (
+              <span className="absolute bottom-1.5 right-1.5 text-[10px] bg-black/70 text-white px-1.5 py-0.5 rounded font-mono">
+                {Math.floor(review.video_duration)}s
+              </span>
+            )}
+          </button>
+          <VideoPlayer url={review.video_url} open={videoOpen} onClose={() => setVideoOpen(false)} />
+        </div>
       )}
 
       {/* Footer */}
