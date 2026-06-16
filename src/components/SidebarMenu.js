@@ -8,6 +8,7 @@ const MENU_ITEMS = [
   { to: '/trending',  label: 'Trending',  icon: '🔥', auth: false },
   { to: '/concerts',  label: 'Concerts',  icon: '🎤', auth: false },
   { to: '/festivals', label: 'Festivals', icon: '🎪', auth: false },
+  { to: '/venues',    label: 'Venues',    icon: '🏟️', auth: false },
 ];
 
 export default function SidebarMenu() {

@@ -38,6 +38,8 @@ import ResetPasswordPage  from './pages/ResetPasswordPage';
 import ConcertsPage       from './pages/ConcertsPage';
 import FestivalsPage      from './pages/FestivalsPage';
 import ArtistProfile      from './pages/ArtistProfile';
+import VenuesPage         from './pages/VenuesPage';
+import VenueDetail        from './pages/VenueDetail';
 
 // Inner component that can use useNavigate (must be inside <Router>)
 function AppInner({ isLoggedIn, setIsLoggedIn }) {
@@ -108,6 +110,8 @@ function AppInner({ isLoggedIn, setIsLoggedIn }) {
               <Route path="/trending"       element={<TrendingPage />} />
               <Route path="/concerts"       element={<ConcertsPage />} />
               <Route path="/festivals"      element={<FestivalsPage />} />
+              <Route path="/venues"         element={<VenuesPage />} />
+              <Route path="/venues/:id"     element={<VenueDetail />} />
               <Route path="/search"         element={<SearchPage />} />
               <Route path="/discover"       element={<DiscoveryPage />} />
               <Route path="/verification"   element={<Protected><VerificationRequestPage /></Protected>} />
