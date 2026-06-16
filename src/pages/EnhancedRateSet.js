@@ -2,7 +2,7 @@ import API_URL from '../api';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { StarRatingInput } from '../components/StarRating';
+import { StarRatingInput, StarDisplay } from '../components/StarRating';
 import { getCurrentUserId } from '../utils/auth';
 import { useToast } from '../components/Toast';
 import Toast from '../components/Toast';
@@ -27,12 +27,16 @@ export default function EnhancedRateSet() {
   const [existingReviewId, setExistingReviewId] = useState(null);
 
   // Form state
-  const [rating, setRating] = useState(3);
+  const [performanceRating, setPerformanceRating] = useState(3);
+  const [venueRating, setVenueRating]             = useState(3);
+  const [crowdRating, setCrowdRating]             = useState(3);
   const [reviewTitle, setReviewTitle] = useState('');
   const [reviewText, setReviewText] = useState('');
   const [isFavorited, setIsFavorited] = useState(false);
   const [videoFile, setVideoFile] = useState(null);
   const [videoUploading, setVideoUploading] = useState(false);
+
+  const overallRating = Math.round(((performanceRating + venueRating + crowdRating) / 3) * 2) / 2;
 
   const authHeaders = () => ({ Authorization: 'Bearer ' + localStorage.getItem('token') });
 
@@ -54,7 +58,9 @@ export default function EnhancedRateSet() {
           if (existing) {
             setIsEditMode(true);
             setExistingReviewId(existing.id);
-            setRating(existing.rating);
+            setPerformanceRating(parseFloat(existing.performance_rating) || parseFloat(existing.rating) || 3);
+            setVenueRating(parseFloat(existing.venue_rating) || parseFloat(existing.rating) || 3);
+            setCrowdRating(parseFloat(existing.crowd_rating) || parseFloat(existing.rating) || 3);
             setReviewTitle(existing.review_title || '');
             setReviewText(existing.review_text || '');
             setIsFavorited(existing.is_favorited || false);
@@ -77,17 +83,25 @@ export default function EnhancedRateSet() {
     }
     setSubmitting(true);
     try {
+      const ratingPayload = {
+        performance_rating: performanceRating,
+        venue_rating:       venueRating,
+        crowd_rating:       crowdRating,
+        rating:             overallRating,
+        review_title: reviewTitle,
+        review_text:  reviewText,
+      };
       let reviewId = existingReviewId;
       if (isEditMode && existingReviewId) {
         await axios.patch(
           `${API_URL}/api/reviews/${existingReviewId}`,
-          { rating, review_title: reviewTitle, review_text: reviewText },
+          ratingPayload,
           { headers: authHeaders() }
         );
       } else {
         const res = await axios.post(
           `${API_URL}/api/reviews/set/${setId}`,
-          { rating, review_title: reviewTitle, review_text: reviewText, is_favorited: isFavorited },
+          { ...ratingPayload, is_favorited: isFavorited },
           { headers: authHeaders() }
         );
         reviewId = res.data.id;
@@ -163,13 +177,39 @@ export default function EnhancedRateSet() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Rating */}
-            <div>
-              <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wider mb-3">
-                Your Rating <span className="text-red-400">*</span>
+            {/* 3-Category Ratings */}
+            <div className="space-y-4">
+              <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wider">
+                Your Ratings <span className="text-red-400">*</span>
               </label>
-              <StarRatingInput value={rating} onChange={setRating} size={38} />
-              <p className="text-[#00D9FF] text-sm font-semibold mt-2 h-5">{LABELS[rating] || ''}</p>
+
+              {[
+                { icon: '🎤', label: 'Performance', sub: 'How good was the artist/DJ?', color: '#00D9FF', value: performanceRating, set: setPerformanceRating },
+                { icon: '🏟️', label: 'Venue',       sub: 'Sound, atmosphere, vibe?',    color: '#FF006E', value: venueRating,       set: setVenueRating       },
+                { icon: '👥', label: 'Crowd',       sub: 'Energy and crowd?',           color: '#A020F0', value: crowdRating,       set: setCrowdRating       },
+              ].map(({ icon, label, sub, color, value, set }) => (
+                <div key={label} className="p-4 rounded-xl border border-white/[0.06] bg-white/[0.02]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-base">{icon}</span>
+                    <span className="text-sm font-semibold" style={{ color }}>{label}</span>
+                    <span className="text-gray-600 text-xs">— {sub}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <StarRatingInput value={value} onChange={set} size={30} color={color} />
+                    <span className="text-xs text-gray-600">{LABELS[value] || ''}</span>
+                  </div>
+                </div>
+              ))}
+
+              {/* Overall auto-calculated */}
+              <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+                <span className="text-gray-400 text-sm font-semibold">Overall (auto)</span>
+                <div className="flex items-center gap-2">
+                  <StarDisplay value={overallRating} size={16} />
+                  <span className="text-white font-bold">{overallRating}</span>
+                  <span className="text-gray-600 text-xs">/5</span>
+                </div>
+              </div>
             </div>
 
             {/* Review Title */}

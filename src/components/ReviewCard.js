@@ -68,9 +68,20 @@ export default function ReviewCard({ review, onLikeToggle, onOpen, currentUserId
           </div>
         </div>
 
-        {/* Stars (top-right) */}
-        <div className="flex-shrink-0">
-          <StarDisplay value={review.rating} size={13} />
+        {/* Stars */}
+        <div className="flex-shrink-0 flex flex-col items-end gap-0.5">
+          {review.performance_rating && (
+            <StarDisplay value={review.performance_rating} size={11} color="#00D9FF" />
+          )}
+          {review.venue_rating && (
+            <StarDisplay value={review.venue_rating} size={11} color="#FF006E" />
+          )}
+          {review.crowd_rating && (
+            <StarDisplay value={review.crowd_rating} size={11} color="#A020F0" />
+          )}
+          {!review.performance_rating && (
+            <StarDisplay value={review.rating} size={13} />
+          )}
         </div>
       </div>
 

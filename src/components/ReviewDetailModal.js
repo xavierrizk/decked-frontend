@@ -66,9 +66,33 @@ export default function ReviewDetailModal({ review, open, onClose, onLikeToggle,
             </div>
           </div>
 
-          {/* Stars */}
-          <div className="mb-3">
-            <StarDisplay value={review.rating} size={20} />
+          {/* Ratings */}
+          <div className="mb-4">
+            {review.performance_rating ? (
+              <div className="space-y-1.5 p-3 rounded-xl bg-white/[0.03] border border-white/[0.05]">
+                {[
+                  { icon: '🎤', label: 'Performance', key: 'performance_rating', color: '#00D9FF' },
+                  { icon: '🏟️', label: 'Venue',       key: 'venue_rating',       color: '#FF006E' },
+                  { icon: '👥', label: 'Crowd',       key: 'crowd_rating',       color: '#A020F0' },
+                ].map(({ icon, label, key, color }) => (
+                  review[key] && (
+                    <div key={key} className="flex items-center gap-2">
+                      <span className="text-sm w-5">{icon}</span>
+                      <span className="text-xs font-semibold w-24" style={{ color }}>{label}</span>
+                      <StarDisplay value={review[key]} size={13} color={color} />
+                      <span className="text-xs font-bold ml-1" style={{ color }}>{parseFloat(review[key]).toFixed(1)}</span>
+                    </div>
+                  )
+                ))}
+                <div className="pt-1.5 mt-1.5 border-t border-white/[0.05] flex items-center gap-2">
+                  <span className="text-xs text-gray-500 w-32">Overall</span>
+                  <StarDisplay value={review.rating} size={13} />
+                  <span className="text-xs font-bold text-white ml-1">{parseFloat(review.rating || 0).toFixed(1)}</span>
+                </div>
+              </div>
+            ) : (
+              <StarDisplay value={review.rating} size={20} />
+            )}
           </div>
 
           {/* Title */}

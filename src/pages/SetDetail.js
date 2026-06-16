@@ -346,22 +346,43 @@ export default function SetDetail() {
       )}
 
       {/* Rating bar */}
-      <div className="bg-white/[0.04] border border-white/[0.07] rounded-xl p-4 mb-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div>
-          <div className="flex items-end gap-2 mb-1">
-            <span className="text-5xl font-extrabold text-white">{avg ? avg.toFixed(1) : '—'}</span>
-            <span className="text-gray-600 text-xl mb-1">/5</span>
+      <div className="bg-white/[0.04] border border-white/[0.07] rounded-xl p-4 mb-3">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-end gap-2 mb-1">
+              <span className="text-5xl font-extrabold text-white">{avg ? avg.toFixed(1) : '—'}</span>
+              <span className="text-gray-600 text-xl mb-1">/5</span>
+            </div>
+            {avg && <StarDisplay value={avg} size={20} />}
+            <p className="text-gray-500 text-sm mt-1">{reviewTotal} {reviewTotal === 1 ? 'review' : 'reviews'}</p>
           </div>
-          {avg && <StarDisplay value={avg} size={20} />}
-          <p className="text-gray-500 text-sm mt-1">{reviewTotal} {reviewTotal === 1 ? 'review' : 'reviews'}</p>
+          {isLoggedIn ? (
+            <Link to={`/review/set/${set.id}`}
+              className="px-5 py-2.5 font-semibold transition-all duration-200 hover:scale-105 active:scale-95 text-sm" style={{ background: '#00D9FF', color: '#0a0a0a' }}>
+              {myReview ? 'Edit Review' : 'Write a Review'}
+            </Link>
+          ) : (
+            <Link to="/login" className="text-[#00D9FF] text-sm font-medium transition-colors">Log in to review →</Link>
+          )}
         </div>
-        {isLoggedIn ? (
-          <Link to={`/review/set/${set.id}`}
-            className="px-5 py-2.5 font-semibold transition-all duration-200 hover:scale-105 active:scale-95 text-sm" style={{ background: '#00D9FF', color: '#0a0a0a' }}>
-            {myReview ? 'Edit Review' : 'Write a Review'}
-          </Link>
-        ) : (
-          <Link to="/login" className="text-[#00D9FF] hover:text-[#00D9FF] text-sm font-medium transition-colors">Log in to review →</Link>
+
+        {/* Per-category breakdown */}
+        {(stats?.avg_performance || stats?.avg_venue || stats?.avg_crowd) && (
+          <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-white/[0.05]">
+            {[
+              { icon: '🎤', label: 'Performance', key: 'avg_performance', color: '#00D9FF' },
+              { icon: '🏟️', label: 'Venue',       key: 'avg_venue',       color: '#FF006E' },
+              { icon: '👥', label: 'Crowd',       key: 'avg_crowd',       color: '#A020F0' },
+            ].map(({ icon, label, key, color }) => (
+              stats[key] && (
+                <div key={key} className="flex flex-col items-center gap-1 p-2 rounded-lg bg-white/[0.03]">
+                  <span className="text-sm">{icon}</span>
+                  <span className="text-lg font-bold" style={{ color }}>{parseFloat(stats[key]).toFixed(1)}</span>
+                  <span className="text-[10px] text-gray-500 font-medium">{label}</span>
+                </div>
+              )
+            ))}
+          </div>
         )}
       </div>
 
