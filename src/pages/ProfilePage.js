@@ -13,6 +13,7 @@ import ReviewSection from '../components/profile/ReviewSection';
 import DJGrid from '../components/profile/DJGrid';
 import NetworkGrid from '../components/profile/NetworkGrid';
 import ActivityFeed from '../components/profile/ActivityFeed';
+import SetCard from '../components/cards/SetCard';
 import { relativeTime } from '../components/profile/helpers';
 
 export default function ProfilePage() {
@@ -36,6 +37,7 @@ export default function ProfilePage() {
   const [netState, setNetState]     = useState('idle');
   const [activity, setActivity]     = useState([]);
   const [actState, setActState]     = useState('idle');
+  const [featuredSets, setFeaturedSets] = useState([]);
 
   const [friendData, setFriendData] = useState({ friends: false, friendCount: 0, commonCount: 0 });
   const [friendLoading, setFriendLoading] = useState(false);
@@ -72,6 +74,10 @@ export default function ProfilePage() {
       .then(r => setReviews(r.data))
       .catch(() => {})
       .finally(() => setReviewsLoading(false));
+
+    axios.get(`${API_URL}/api/users/${userId}/featured-sets`)
+      .then(r => setFeaturedSets(r.data || []))
+      .catch(() => setFeaturedSets([]));
   }, [userId]);
 
   // Lazy-load tab data on first visit
@@ -208,6 +214,16 @@ export default function ProfilePage() {
 
       {/* THE VISUAL HERO */}
       <StatsBlock stats={stats} />
+
+      {/* Featured sets — only if the user picked any */}
+      {featuredSets.length > 0 && (
+        <div className="mb-10">
+          <p className="section-label mb-4">⭐ Featured Sets</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-3">
+            {featuredSets.map(s => <SetCard key={s.id} set={s} />)}
+          </div>
+        </div>
+      )}
 
       <ProfileTabs tabs={tabs} active={activeTab} onChange={handleTab} />
 

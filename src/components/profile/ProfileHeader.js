@@ -1,17 +1,48 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+const SOCIAL_META = {
+  instagram:  { label: 'Instagram',  icon: '📸', base: 'https://instagram.com/' },
+  soundcloud: { label: 'SoundCloud', icon: '🔊', base: 'https://soundcloud.com/' },
+  youtube:    { label: 'YouTube',    icon: '▶️', base: 'https://youtube.com/' },
+  spotify:    { label: 'Spotify',    icon: '🎧', base: 'https://open.spotify.com/' },
+  twitter:    { label: 'X',          icon: '🐦', base: 'https://x.com/' },
+  website:    { label: 'Website',    icon: '🌐', base: '' },
+};
+
+function socialHref(key, val) {
+  if (!val) return null;
+  if (/^https?:\/\//i.test(val)) return val;
+  const base = SOCIAL_META[key].base;
+  if (!base) return `https://${val.replace(/^https?:\/\//, '')}`;
+  return base + val.replace(/^@/, '');
+}
+
 export default function ProfileHeader({
   profile, isOwn, isLoggedIn, friendData, friendLoading,
   onFriend, onCopyLink, onReport, joined,
 }) {
+  const genres = profile.favorite_genres || [];
+  const socialLinks = Object.keys(SOCIAL_META)
+    .map(k => ({ key: k, ...SOCIAL_META[k], href: socialHref(k, profile[k]) }))
+    .filter(s => s.href);
+
   return (
     <div className="relative overflow-hidden border border-white/[0.07] bg-[#0f0f1a] mb-6">
-      {/* subtle top accent */}
-      <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, #00D9FF, #FF006E)' }} />
-      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at top left, rgba(0,217,255,0.06), transparent 60%)' }} />
+      {/* Header banner */}
+      {profile.header_image_url ? (
+        <div className="w-full h-40 sm:h-52 bg-cover bg-center"
+          style={{ backgroundImage: `url(${profile.header_image_url})` }}>
+          <div className="w-full h-full bg-gradient-to-t from-[#0f0f1a] via-transparent to-transparent" />
+        </div>
+      ) : (
+        <>
+          <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, #00D9FF, #FF006E)' }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at top left, rgba(0,217,255,0.06), transparent 60%)' }} />
+        </>
+      )}
 
-      <div className="relative flex flex-col sm:flex-row items-center sm:items-start gap-5 p-6">
+      <div className={`relative flex flex-col sm:flex-row items-center sm:items-start gap-5 p-6 ${profile.header_image_url ? '-mt-12 sm:-mt-14' : ''}`}>
         {/* Avatar */}
         <div className="relative flex-shrink-0">
           {profile.profile_picture_url ? (
@@ -51,6 +82,32 @@ export default function ProfileHeader({
               style={{ color: '#00D9FF' }}>
               🎧 View DJ Profile →
             </Link>
+          )}
+
+          {/* Genre tags */}
+          {genres.length > 0 && (
+            <div className="flex flex-wrap justify-center sm:justify-start gap-1.5 mt-3">
+              {genres.map(g => (
+                <span key={g} className="text-[11px] font-medium px-2.5 py-1 rounded-full"
+                  style={{ color: '#00D9FF', background: 'rgba(0,217,255,0.1)', border: '1px solid rgba(0,217,255,0.25)' }}>
+                  {g}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* Social links */}
+          {socialLinks.length > 0 && (
+            <div className="flex flex-wrap justify-center sm:justify-start gap-3 mt-3">
+              {socialLinks.map(s => (
+                <a key={s.key} href={s.href} target="_blank" rel="noopener noreferrer"
+                  title={s.label}
+                  className="text-gray-500 hover:text-white text-sm transition-colors flex items-center gap-1">
+                  <span>{s.icon}</span>
+                  <span className="text-xs">{s.label}</span>
+                </a>
+              ))}
+            </div>
           )}
         </div>
 
