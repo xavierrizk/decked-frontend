@@ -200,7 +200,7 @@ export default function SetDetail() {
   const handleShare = () => {
     const url = window.location.href;
     const avg = stats?.average ? Number(stats.average).toFixed(1) : '?';
-    const text = `I just rated "${set.title}" by ${set.dj_name} ${avg}/5 stars on Decked! 🎵 ${url}`;
+    const text = `I just rated "${set.title}" by ${set.dj_name} ${avg}/5 stars on DECK'D! 🎵 ${url}`;
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
     window.open(twitterUrl, '_blank');
   };

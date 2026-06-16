@@ -180,7 +180,7 @@ export default function SearchPage() {
       {!loading && !searched && (
         <div className="text-center py-20 text-gray-600">
           <p className="text-5xl mb-4">🔍</p>
-          <p className="text-lg font-semibold text-gray-500">Search Decked</p>
+          <p className="text-lg font-semibold text-gray-500">Search DECK'D</p>
           <p className="text-sm mt-1">Find DJs, sets, and users</p>
         </div>
       )}

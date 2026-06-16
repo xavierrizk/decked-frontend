@@ -141,7 +141,7 @@ export default function CreateSet() {
             ) : (
               <button type="submit" disabled={loading}
                 className="w-full btn-primary disabled:opacity-40 font-semibold py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-glow">
-                {loading ? 'Creating…' : 'Add to Decked'}
+                {loading ? 'Creating…' : 'Add to DECK'D'}
               </button>
             )}
           </form>

@@ -145,7 +145,7 @@ function StatusCard({ request }) {
     approved: {
       icon: '✅', color: 'green', label: 'Verified!',
       bg: 'bg-green-500/10', border: 'border-green-500/30', text: 'text-green-300',
-      message: 'Congratulations! Your DJ profile is now verified on Decked.',
+      message: 'Congratulations! Your DJ profile is now verified on DECK'D.',
     },
     rejected: {
       icon: '❌', color: 'red', label: 'Not Approved',

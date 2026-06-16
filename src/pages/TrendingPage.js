@@ -27,7 +27,7 @@ export default function TrendingPage() {
       <PulsingOrbs />
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-white" style={{ fontFamily: '"Space Grotesk", sans-serif', letterSpacing: '-0.02em' }}>Trending</h1>
-        <p className="text-gray-500 mt-1 text-sm">The hottest sets on Decked this week</p>
+        <p className="text-gray-500 mt-1 text-sm">The hottest sets on DECK'D this week</p>
       </div>
 
       {/* Sort tabs */}

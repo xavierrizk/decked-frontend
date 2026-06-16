@@ -63,12 +63,12 @@ export default function VerifyEmailPage() {
                 </div>
               </div>
               <h1 className="text-2xl font-extrabold text-white mb-2">Email Verified!</h1>
-              <p className="text-gray-400 text-sm mb-7">Your account is now active. Welcome to Decked.</p>
+              <p className="text-gray-400 text-sm mb-7">Your account is now active. Welcome to DECK'D.</p>
               <button
                 onClick={() => navigate('/')}
                 className="w-full bg-brand-600 hover:bg-brand-500 text-white font-semibold py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
               >
-                Go to Decked →
+                Go to DECK'D →
               </button>
             </>
           )}

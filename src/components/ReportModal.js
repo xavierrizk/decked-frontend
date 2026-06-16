@@ -36,7 +36,7 @@ export default function ReportModal({ open, onClose, reportType, targetId, targe
       }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
-      showToast('Report submitted. Thank you for keeping Decked safe.');
+      showToast('Report submitted. Thank you for keeping DECK'D safe.');
       setTimeout(() => {
         setDescription('');
         setReason(REASONS[0]);

@@ -423,7 +423,7 @@ function DjRequestCard({ r, tab, actionId, onApprove, onReject, note, onNoteChan
               {r.soundcloud_url && <a href={r.soundcloud_url} target="_blank" rel="noopener noreferrer" className="text-xs text-orange-300 hover:text-orange-200">🎵 SoundCloud →</a>}
               {r.instagram_url  && <a href={r.instagram_url}  target="_blank" rel="noopener noreferrer" className="text-xs text-pink-300  hover:text-pink-200">📸 Instagram →</a>}
             </div>
-            {r.why_decked && <div className="mt-2 bg-black/30 rounded-xl px-3 py-2"><p className="text-gray-600 text-xs font-semibold uppercase tracking-wider mb-1">Why Decked?</p><p className="text-gray-300 text-sm">{r.why_decked}</p></div>}
+            {r.why_decked && <div className="mt-2 bg-black/30 rounded-xl px-3 py-2"><p className="text-gray-600 text-xs font-semibold uppercase tracking-wider mb-1">Why DECK'D?</p><p className="text-gray-300 text-sm">{r.why_decked}</p></div>}
             {r.admin_notes && <div className="mt-2 bg-red-500/5 border border-red-500/20 rounded-xl px-3 py-2"><p className="text-red-300 text-sm">{r.admin_notes}</p></div>}
           </div>
         </div>

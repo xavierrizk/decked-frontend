@@ -118,7 +118,7 @@ export default function EditProfile() {
         <Link to={`/profile/${userId}`} className="text-gray-500 hover:text-[#00D9FF] text-sm transition-colors block mb-6">← Back to profile</Link>
         <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-7 shadow-2xl backdrop-blur-sm">
           <h1 className="text-2xl font-extrabold text-white mb-1">Edit Profile</h1>
-          <p className="text-gray-500 text-sm mb-6">Customise how others see you on Decked</p>
+          <p className="text-gray-500 text-sm mb-6">Customise how others see you on DECK'D</p>
 
           {error && <div className="mb-5 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">{error}</div>}
           {success && <div className="mb-5 px-4 py-3 bg-green-500/10 border border-green-500/20 rounded-xl text-green-400 text-sm flex items-center gap-2"><span>✓</span> {success}</div>}

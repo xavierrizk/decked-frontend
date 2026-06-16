@@ -131,7 +131,7 @@ export default function ExtendedOnboarding({ onComplete }) {
                 <StepLabel step={1} />
                 <div className="text-6xl mb-6">🎵</div>
                 <h1 className="text-3xl font-bold text-white mb-3" style={{ fontFamily: '"Space Grotesk", sans-serif' }}>
-                  Welcome to Decked
+                  Welcome to DECK'D
                 </h1>
                 <p className="text-gray-400 text-base leading-relaxed mb-2">
                   Let's set up your music taste so we can recommend the right DJ sets for you.

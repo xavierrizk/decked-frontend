@@ -31,7 +31,7 @@ export default function Login({ setIsLoggedIn }) {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold text-white">Welcome back</h1>
-          <p className="text-gray-500 mt-1 text-sm">Sign in to your Decked account</p>
+          <p className="text-gray-500 mt-1 text-sm">Sign in to your DECK'D account</p>
         </div>
 
         <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-7 shadow-2xl backdrop-blur-sm">

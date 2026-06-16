@@ -6,7 +6,7 @@ import { StarRatingInput } from '../components/StarRating';
 
 const LABELS = {
   0.5:'½ star', 1:'Meh', 1.5:'Poor', 2:'OK', 2.5:'Decent',
-  3:'Good', 3.5:'Very Good', 4:'Great', 4.5:'Excellent', 5:'🔥 Decked!'
+  3:'Good', 3.5:'Very Good', 4:'Great', 4.5:'Excellent', 5:'🔥 DECK'D!'
 };
 
 export default function RateSet() {

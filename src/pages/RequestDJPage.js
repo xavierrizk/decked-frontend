@@ -51,7 +51,7 @@ export default function RequestDJPage() {
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-600 to-brand-700 text-3xl mb-4 shadow-glow">🎧</div>
         <h1 className="text-3xl font-extrabold text-white mb-2">Request a DJ Profile</h1>
         <p className="text-gray-500 max-w-sm mx-auto">
-          Submit a request to add a DJ to Decked. Our team reviews every request within 24 hours.
+          Submit a request to add a DJ to DECK'D. Our team reviews every request within 24 hours.
         </p>
       </div>
 
@@ -109,7 +109,7 @@ export default function RequestDJPage() {
             <input value={form.instagram_url} onChange={set('instagram_url')} placeholder="https://instagram.com/djname" className={inp} />
           </div>
           <div>
-            <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1.5">Why should this DJ be on Decked? <span className="text-gray-600 font-normal normal-case">(optional)</span></label>
+            <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1.5">Why should this DJ be on DECK'D? <span className="text-gray-600 font-normal normal-case">(optional)</span></label>
             <textarea value={form.why_decked} onChange={set('why_decked')} placeholder="Tell us about their impact, notable gigs, releases…" rows={4} className={inp + ' resize-none'} />
           </div>
           <button type="submit" disabled={submitting}

@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 
 const FAQS = [
   // Getting Started
-  { category: 'Getting Started', q: 'What is Decked?', a: 'Decked is a community platform where ravers and music fans rate, review, and discover DJ sets. Think of it like Letterboxd but for DJ mixes.' },
+  { category: 'Getting Started', q: 'What is DECK'D?', a: 'DECK'D is a community platform where ravers and music fans rate, review, and discover DJ sets. Think of it like Letterboxd but for DJ mixes.' },
   { category: 'Getting Started', q: 'How do I sign up?', a: "Click 'Sign Up' on the home page. Verify your email, then you're ready to start rating!" },
-  { category: 'Getting Started', q: 'Is Decked free?', a: 'Yes! Decked is completely free to use. Rate sets, follow DJs, and connect with the community at no cost.' },
-  // Using Decked
-  { category: 'Using Decked', q: 'How do I rate a set?', a: 'Click on any set to view it. Click the stars to rate it 1–5 (you can give half stars). Optionally add a written review.' },
-  { category: 'Using Decked', q: 'Can I edit or delete my rating?', a: "Yes! Go to the set and click 'Delete' on your rating. You can then rate it again with a new one." },
-  { category: 'Using Decked', q: 'What do the half stars mean?', a: 'Half stars let you give more specific ratings, e.g. 4.5 stars for a set that was great but not perfect.' },
-  { category: 'Using Decked', q: 'How do I follow a DJ?', a: "Go to a DJ's profile and click the 'Follow' button. You'll see their new sets in your activity feed." },
-  { category: 'Using Decked', q: "What's the activity feed?", a: "Your feed shows new sets from DJs you follow. Visit /feed to see what's new from artists you care about." },
+  { category: 'Getting Started', q: 'Is DECK'D free?', a: 'Yes! DECK'D is completely free to use. Rate sets, follow DJs, and connect with the community at no cost.' },
+  // Using DECK'D
+  { category: 'Using DECK'D', q: 'How do I rate a set?', a: 'Click on any set to view it. Click the stars to rate it 1–5 (you can give half stars). Optionally add a written review.' },
+  { category: 'Using DECK'D', q: 'Can I edit or delete my rating?', a: "Yes! Go to the set and click 'Delete' on your rating. You can then rate it again with a new one." },
+  { category: 'Using DECK'D', q: 'What do the half stars mean?', a: 'Half stars let you give more specific ratings, e.g. 4.5 stars for a set that was great but not perfect.' },
+  { category: 'Using DECK'D', q: 'How do I follow a DJ?', a: "Go to a DJ's profile and click the 'Follow' button. You'll see their new sets in your activity feed." },
+  { category: 'Using DECK'D', q: "What's the activity feed?", a: "Your feed shows new sets from DJs you follow. Visit /feed to see what's new from artists you care about." },
   // DJ Profiles
   { category: 'DJ Profiles', q: 'How do I create a DJ profile?', a: "Go to 'Become a DJ' and fill out a request. Include links to your Instagram, SoundCloud, etc. so we can verify you're a real DJ. We'll review and approve your profile." },
   { category: 'DJ Profiles', q: 'Why was my DJ profile rejected?', a: 'We verify DJs to keep the platform authentic. Common reasons: invalid social links, no history as a DJ, or incomplete information. You can re-request after 7 days.' },
@@ -27,10 +27,10 @@ const FAQS = [
   { category: 'Account & Profile', q: "What's the difference between following and friending?", a: "Follow = see new sets from DJs you love. Friend = connect with other users to see what they're rating and reviewing." },
   // Technical
   { category: 'Technical', q: 'What video formats do you support?', a: 'We currently support YouTube links. Paste a YouTube URL when creating a set.' },
-  { category: 'Technical', q: 'Is Decked available on mobile?', a: 'Yes! Decked works great in your phone browser. Native iOS/Android apps are coming soon.' },
-  { category: 'Technical', q: 'Do you have an app?', a: 'Not yet, but you can save Decked to your home screen. iOS: tap Share → Add to Home Screen. Android: tap Menu → Install app.' },
+  { category: 'Technical', q: 'Is DECK'D available on mobile?', a: 'Yes! DECK'D works great in your phone browser. Native iOS/Android apps are coming soon.' },
+  { category: 'Technical', q: 'Do you have an app?', a: 'Not yet, but you can save DECK'D to your home screen. iOS: tap Share → Add to Home Screen. Android: tap Menu → Install app.' },
   // Safety & Moderation
-  { category: 'Safety & Moderation', q: 'How does Decked handle inappropriate content?', a: 'You can report sets, comments, or users using the report button. Our team reviews all reports and removes content that violates our guidelines.' },
+  { category: 'Safety & Moderation', q: 'How does DECK'D handle inappropriate content?', a: 'You can report sets, comments, or users using the report button. Our team reviews all reports and removes content that violates our guidelines.' },
   { category: 'Safety & Moderation', q: 'What happens if I get reported?', a: 'Our team reviews every report. Violations result in a warning, suspension, or permanent ban depending on severity.' },
   // Support
   { category: 'Support', q: 'Who should I contact with questions?', a: "Email us at support@decked.com. We'll get back to you within 24 hours." },
@@ -72,7 +72,7 @@ export default function HelpPage() {
             How can we help?
           </h1>
           <p className="text-gray-500 text-base mb-8">
-            Find answers to common questions about Decked.
+            Find answers to common questions about DECK'D.
           </p>
 
           {/* Search bar */}

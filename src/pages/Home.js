@@ -381,7 +381,7 @@ export default function Home() {
             Beta
           </div>
           <h1 style={{ fontFamily: '"Space Grotesk", sans-serif', letterSpacing: '-0.02em' }} className="text-4xl md:text-6xl font-bold text-white mb-3 leading-tight">
-            Rate the sets that <span className="text-purple-gradient">decked</span> you
+            Rate the sets that <span className="text-purple-gradient">DECK'D</span> you
           </h1>
           <p className="text-gray-500 text-base mb-5 max-w-sm mx-auto">
             The community platform for discovering and reviewing DJ sets.
