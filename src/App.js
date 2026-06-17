@@ -38,6 +38,7 @@ import ResetPasswordPage  from './pages/ResetPasswordPage';
 import ConcertsPage       from './pages/ConcertsPage';
 import FestivalsPage      from './pages/FestivalsPage';
 import ConcertArtistPage  from './pages/ArtistProfile';
+import EditArtistProfile  from './pages/EditArtistProfile';
 import VenuesPage         from './pages/VenuesPage';
 import VenueDetail        from './pages/VenueDetail';
 
@@ -119,6 +120,7 @@ function AppInner({ isLoggedIn, setIsLoggedIn }) {
               <Route path="/request-artist"  element={<Protected><RequestDJPage /></Protected>} />
               <Route path="/my-artists"      element={<Protected><MyDJsPage /></Protected>} />
               <Route path="/artist/:id"      element={<ArtistProfilePage />} />
+              <Route path="/artist/:id/edit" element={<Protected><EditArtistProfile /></Protected>} />
               <Route path="/concert-artist/:id" element={<ConcertArtistPage />} />
               <Route path="/set/:id"        element={<SetDetail />} />
               <Route path="/profile/:userId" element={<ProfilePage />} />

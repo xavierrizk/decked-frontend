@@ -75,57 +75,109 @@ export default function ArtistProfilePage() {
       <GradientParticles />
       <Toast message={toast} />
 
-      {/* Hero */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-brand-900/60 to-black border border-white/[0.07] rounded-2xl p-8 mb-6">
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-600/10 to-brand-700/10 pointer-events-none" />
-        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-4xl flex-shrink-0 shadow-glow">
-            🎧
-          </div>
-          <div className="flex-1 text-center sm:text-left">
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1">
-              <h1 className="text-3xl font-extrabold text-white">{artistProfile.name}</h1>
-              <span className="text-lg" title="Artist">🎵</span>
-              {stats?.verified && (
-                <span className="flex items-center gap-1 bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold px-2.5 py-1 rounded-full">
-                  ✅ Verified
-                </span>
+      {/* Hero card */}
+      <div className="relative overflow-hidden bg-[#111114] border border-white/[0.07] rounded-2xl mb-6">
+        {/* Banner */}
+        <div className="relative h-40 sm:h-52 bg-gradient-to-br from-brand-900/60 to-black overflow-hidden">
+          {artistProfile.banner_image_url ? (
+            <img
+              src={artistProfile.banner_image_url}
+              alt="Banner"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-r from-brand-600/20 to-brand-900/40" />
+          )}
+          {/* Edit button — top right of banner */}
+          {isOwnDj && (
+            <Link
+              to={`/artist/${id}/edit`}
+              className="absolute top-3 right-3 px-3 py-1.5 bg-black/60 backdrop-blur-sm border border-white/20 text-white text-xs font-semibold rounded-lg hover:bg-black/80 transition-colors"
+            >
+              ✏️ Edit Profile
+            </Link>
+          )}
+        </div>
+
+        {/* Profile picture + info row */}
+        <div className="px-5 pb-6">
+          {/* Avatar overlapping banner */}
+          <div className="flex items-end gap-4 -mt-10 mb-4">
+            <div className="w-20 h-20 rounded-2xl border-4 border-[#111114] overflow-hidden flex-shrink-0 bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-lg">
+              {artistProfile.profile_image_url ? (
+                <img
+                  src={artistProfile.profile_image_url}
+                  alt={artistProfile.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-3xl">🎧</span>
               )}
             </div>
-            <p className="text-gray-400 mt-1 max-w-lg">{artistProfile.bio || 'No bio available'}</p>
-
-            {/* Verification status for own Artist profile */}
-            {isOwnDj && (
-              <div className="mt-2">
-                {verifStatus?.request?.status === 'pending' && (
-                  <span className="inline-flex items-center gap-1.5 text-xs bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 px-3 py-1 rounded-full font-medium">
-                    ⏳ Verification under review
-                  </span>
-                )}
-                {verifStatus?.request?.status === 'approved' && (
-                  <span className="inline-flex items-center gap-1.5 text-xs bg-green-500/10 border border-green-500/30 text-green-300 px-3 py-1 rounded-full font-medium">
-                    ✅ Verified Artist
-                  </span>
-                )}
-                {(!verifStatus?.request || verifStatus?.request?.status === 'rejected') && (
-                  <Link to="/verification"
-                    className="inline-flex items-center gap-1.5 text-xs bg-white/[0.05] border border-white/10 text-gray-400 hover:text-white hover:border-brand-500/40 px-3 py-1 rounded-full font-medium transition-all duration-200">
-                    ✅ Request Verification
-                  </Link>
-                )}
-              </div>
-            )}
-
-            {/* Stats row */}
-            <div className="flex flex-wrap justify-center sm:justify-start gap-4 mt-4">
-              <Stat label="Followers" value={follow.count} />
-              <Stat label="Sets" value={stats?.total_sets || sets.length} />
-              {stats?.avg_rating && <Stat label="Avg Rating" value={`${stats.avg_rating}/5`} />}
+            {/* Follow button next to avatar */}
+            <div className="pb-1 ml-auto">
+              <FollowButton follow={follow} followLoading={followLoading} isLoggedIn={isLoggedIn} isOwnDj={isOwnDj} djName={artistProfile.name} onFollow={handleFollow} />
             </div>
           </div>
 
-          {/* Follow button (hero top-right) */}
-          <FollowButton follow={follow} followLoading={followLoading} isLoggedIn={isLoggedIn} isOwnDj={isOwnDj} djName={artistProfile.name} onFollow={handleFollow} />
+          {/* Name + badges */}
+          <div className="flex flex-wrap items-center gap-2 mb-1">
+            <h1 className="text-2xl font-extrabold text-white">{artistProfile.name}</h1>
+            {stats?.verified && (
+              <span className="flex items-center gap-1 bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold px-2.5 py-1 rounded-full">
+                ✅ Verified
+              </span>
+            )}
+          </div>
+
+          {/* Genre / location / website */}
+          <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3">
+            {artistProfile.genre && (
+              <span className="text-[#00D9FF] text-xs font-semibold uppercase tracking-widest">{artistProfile.genre}</span>
+            )}
+            {artistProfile.location && (
+              <span className="text-gray-500 text-xs flex items-center gap-1">📍 {artistProfile.location}</span>
+            )}
+            {artistProfile.website && (
+              <a href={artistProfile.website} target="_blank" rel="noreferrer" className="text-[#00D9FF] text-xs hover:underline">
+                🌐 Website
+              </a>
+            )}
+          </div>
+
+          {/* Bio */}
+          {artistProfile.bio && (
+            <p className="text-gray-400 text-sm leading-relaxed mb-4 max-w-xl">{artistProfile.bio}</p>
+          )}
+
+          {/* Verification status for own Artist profile */}
+          {isOwnDj && (
+            <div className="mb-4">
+              {verifStatus?.request?.status === 'pending' && (
+                <span className="inline-flex items-center gap-1.5 text-xs bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 px-3 py-1 rounded-full font-medium">
+                  ⏳ Verification under review
+                </span>
+              )}
+              {verifStatus?.request?.status === 'approved' && (
+                <span className="inline-flex items-center gap-1.5 text-xs bg-green-500/10 border border-green-500/30 text-green-300 px-3 py-1 rounded-full font-medium">
+                  ✅ Verified Artist
+                </span>
+              )}
+              {(!verifStatus?.request || verifStatus?.request?.status === 'rejected') && (
+                <Link to="/verification"
+                  className="inline-flex items-center gap-1.5 text-xs bg-white/[0.05] border border-white/10 text-gray-400 hover:text-white hover:border-brand-500/40 px-3 py-1 rounded-full font-medium transition-all duration-200">
+                  ✅ Request Verification
+                </Link>
+              )}
+            </div>
+          )}
+
+          {/* Stats row */}
+          <div className="flex flex-wrap gap-6">
+            <Stat label="Followers" value={follow.count} />
+            <Stat label="Sets" value={stats?.total_sets || sets.length} />
+            {stats?.avg_rating && <Stat label="Avg Rating" value={`${stats.avg_rating}/5`} />}
+          </div>
         </div>
       </div>
 
