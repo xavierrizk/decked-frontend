@@ -9,13 +9,13 @@ const FAQS = [
   { category: "Using DECK'D", q: "How do I rate a set?", a: "Click on any set to view it. Click the stars to rate it 1–5 (you can give half stars). Optionally add a written review." },
   { category: "Using DECK'D", q: "Can I edit or delete my rating?", a: "Yes! Go to the set and click 'Delete' on your rating. You can then rate it again with a new one." },
   { category: "Using DECK'D", q: "What do the half stars mean?", a: "Half stars let you give more specific ratings, e.g. 4.5 stars for a set that was great but not perfect." },
-  { category: "Using DECK'D", q: "How do I follow a DJ?", a: "Go to a DJ's profile and click the 'Follow' button. You'll see their new sets in your activity feed." },
+  { category: "Using DECK'D", q: "How do I follow an Artist?", a: "Go to an Artist's profile and click the 'Follow' button. You'll see their new sets in your activity feed." },
   { category: "Using DECK'D", q: "What's the activity feed?", a: "Your feed shows new sets from DJs you follow. Visit /feed to see what's new from artists you care about." },
-  // DJ Profiles
-  { category: 'DJ Profiles', q: 'How do I create a DJ profile?', a: "Go to 'Become a DJ' and fill out a request. Include links to your Instagram, SoundCloud, etc. so we can verify you're a real DJ. We'll review and approve your profile." },
-  { category: 'DJ Profiles', q: 'Why was my DJ profile rejected?', a: 'We verify DJs to keep the platform authentic. Common reasons: invalid social links, no history as a DJ, or incomplete information. You can re-request after 7 days.' },
-  { category: 'DJ Profiles', q: 'What does the verified badge mean?', a: "A verified badge (✅) means we've confirmed this is an official DJ profile. It helps users trust the profile." },
-  { category: 'DJ Profiles', q: 'Can I upload sets to my DJ profile?', a: "Once your DJ profile is approved, go to 'My DJs' and click 'Add Set'. You can link to a YouTube video and add details like location, genre, and duration." },
+  // Artist Profiles
+  { category: 'Artist Profiles', q: 'How do I create an Artist profile?', a: "Go to 'Become an Artist' and fill out a request. Include links to your Instagram, SoundCloud, etc. so we can verify you're a real DJ. We'll review and approve your profile." },
+  { category: 'Artist Profiles', q: 'Why was my DJ profile rejected?', a: 'We verify DJs to keep the platform authentic. Common reasons: invalid social links, no history as an Artist, or incomplete information. You can re-request after 7 days.' },
+  { category: 'Artist Profiles', q: 'What does the verified badge mean?', a: "A verified badge (✅) means we've confirmed this is an official DJ profile. It helps users trust the profile." },
+  { category: 'Artist Profiles', q: 'Can I upload sets to my DJ profile?', a: "Once your DJ profile is approved, go to 'My DJs' and click 'Add Set'. You can link to a YouTube video and add details like location, genre, and duration." },
   // Ratings & Reviews
   { category: 'Ratings & Reviews', q: 'Can I rate a set multiple times?', a: 'No, you can only have one rating per set. You can delete your existing rating and submit a new one if you change your mind.' },
   { category: 'Ratings & Reviews', q: 'What should I write in a review?', a: "Be honest! Tell other ravers what you thought. Mention tracks you loved, the energy, the flow — anything that stood out. The community trusts your opinion." },

@@ -86,7 +86,7 @@ export default function SetCard({ set, rank }) {
             <p className="text-white font-bold text-base leading-tight line-clamp-2">{set.title}</p>
             {isDjSet && set.dj_id ? (
               <Link
-                to={`/dj/${set.dj_id}`}
+                to={`/artist/${set.dj_id}`}
                 onClick={(e) => e.stopPropagation()}
                 className="text-gray-300 text-xs mt-1 hover:text-[#00D9FF] transition-colors inline-block"
               >

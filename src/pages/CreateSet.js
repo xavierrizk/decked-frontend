@@ -32,7 +32,7 @@ export default function CreateSet() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    axios.get(`${API_URL}/api/dj-requests/my-djs`, { headers: { Authorization: `Bearer ${token}` } })
+    axios.get(`${API_URL}/api/artist-requests/my-artist-profiles`, { headers: { Authorization: `Bearer ${token}` } })
       .then(res => {
         setMyDjs(res.data);
         const preselect = searchParams.get('dj');
@@ -75,7 +75,7 @@ export default function CreateSet() {
   return (
     <div className="min-h-[85vh] flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-sm">
-        <Link to="/my-djs" className="text-gray-500 hover:text-brand-400 text-sm transition-colors block mb-6">← My DJs</Link>
+        <Link to="/my-artists" className="text-gray-500 hover:text-brand-400 text-sm transition-colors block mb-6">← My Artists</Link>
         <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-7 shadow-2xl backdrop-blur-sm">
           <h1 className="text-2xl font-extrabold text-white mb-1">Add Live Music</h1>
           <p className="text-gray-500 text-sm mb-6">Add a performance for the community to rate</p>
@@ -103,7 +103,7 @@ export default function CreateSet() {
                 {loadingDjs ? (
                   <div className="h-10 bg-white/[0.04] border border-white/10 rounded-xl animate-pulse" />
                 ) : myDjs.length === 0 ? (
-                  <p className="text-gray-500 text-sm">No DJ profiles yet.</p>
+                  <p className="text-gray-500 text-sm">No Artist profiles yet.</p>
                 ) : (
                   <select value={djId} onChange={e => setDjId(e.target.value)} required className={inp + ' appearance-none'}>
                     <option value="" className="bg-[#111]">Select a DJ</option>
@@ -133,7 +133,7 @@ export default function CreateSet() {
             {blockedNoDj ? (
               <div className="text-center py-2">
                 <p className="text-gray-400 text-sm mb-3">You need a DJ profile to add a DJ set. Adding a concert or other live show? Switch the Type above.</p>
-                <Link to="/request-dj"
+                <Link to="/request-artist"
                   className="inline-block px-5 py-2 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl text-sm transition-all duration-200 hover:scale-105 shadow-glow">
                   Request a DJ Profile
                 </Link>

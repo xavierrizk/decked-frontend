@@ -38,7 +38,7 @@ export default function ProfileReviewCard({ review, onOpen }) {
             </h3>
             {review.dj_name && (
               <Link
-                to={`/dj/${review.dj_id}`}
+                to={`/artist/${review.dj_id}`}
                 onClick={e => e.stopPropagation()}
                 className="text-gray-500 hover:text-gray-300 text-sm transition-colors"
               >

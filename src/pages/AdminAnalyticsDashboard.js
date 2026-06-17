@@ -29,7 +29,7 @@ const TABS = [
   { id: 'overview', icon: '📊', label: 'Overview' },
   { id: 'content',  icon: '🎵', label: 'Content'  },
   { id: 'users',    icon: '👥', label: 'Users'    },
-  { id: 'djs',      icon: '🎧', label: 'DJs'      },
+  { id: 'djs',      icon: '🎧', label: 'Artists'      },
   { id: 'reviews',  icon: '⭐', label: 'Reviews'  },
   { id: 'growth',   icon: '📈', label: 'Growth'   },
 ];

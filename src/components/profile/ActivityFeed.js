@@ -24,7 +24,7 @@ function ActivityRow({ item }) {
     content = (
       <span>
         Followed{' '}
-        <Link to={`/dj/${item.dj_id}`} className="text-white hover:text-[#00D9FF] font-medium transition-colors">
+        <Link to={`/artist/${item.dj_id}`} className="text-white hover:text-[#00D9FF] font-medium transition-colors">
           {item.dj_name}
         </Link>
       </span>

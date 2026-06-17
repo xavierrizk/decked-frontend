@@ -4,7 +4,7 @@ import axios from 'axios';
 import './App.css';
 import API_URL from './api';
 import Home              from './pages/Home';
-import DJProfile         from './pages/DJProfile';
+import ArtistProfilePage  from './pages/DJProfile';
 import SetDetail         from './pages/SetDetail';
 import RateSet           from './pages/RateSet';
 import EnhancedRateSet   from './pages/EnhancedRateSet';
@@ -37,7 +37,7 @@ import HelpPage           from './pages/HelpPage';
 import ResetPasswordPage  from './pages/ResetPasswordPage';
 import ConcertsPage       from './pages/ConcertsPage';
 import FestivalsPage      from './pages/FestivalsPage';
-import ArtistProfile      from './pages/ArtistProfile';
+import ConcertArtistPage  from './pages/ArtistProfile';
 import VenuesPage         from './pages/VenuesPage';
 import VenueDetail        from './pages/VenueDetail';
 
@@ -116,15 +116,15 @@ function AppInner({ isLoggedIn, setIsLoggedIn }) {
               <Route path="/discover"       element={<DiscoveryPage />} />
               <Route path="/verification"   element={<Protected><VerificationRequestPage /></Protected>} />
               <Route path="/admin"          element={<Protected><AdminDashboard /></Protected>} />
-              <Route path="/request-dj"     element={<Protected><RequestDJPage /></Protected>} />
-              <Route path="/my-djs"         element={<Protected><MyDJsPage /></Protected>} />
-              <Route path="/dj/:id"         element={<DJProfile />} />
-              <Route path="/artist/:id"     element={<ArtistProfile />} />
+              <Route path="/request-artist"  element={<Protected><RequestDJPage /></Protected>} />
+              <Route path="/my-artists"      element={<Protected><MyDJsPage /></Protected>} />
+              <Route path="/artist/:id"      element={<ArtistProfilePage />} />
+              <Route path="/concert-artist/:id" element={<ConcertArtistPage />} />
               <Route path="/set/:id"        element={<SetDetail />} />
               <Route path="/profile/:userId" element={<ProfilePage />} />
               <Route path="/rate/:setId"    element={<Protected><RateSet /></Protected>} />
               <Route path="/review/set/:setId" element={<Protected><EnhancedRateSet /></Protected>} />
-              <Route path="/create-dj"      element={<Protected><CreateDJ /></Protected>} />
+              <Route path="/create-artist"   element={<Protected><CreateDJ /></Protected>} />
               <Route path="/create-set"     element={<Protected><CreateSet /></Protected>} />
               <Route path="/profile/edit"   element={<Protected><EditProfile /></Protected>} />
               <Route path="/feed"           element={<Protected><FeedPage /></Protected>} />

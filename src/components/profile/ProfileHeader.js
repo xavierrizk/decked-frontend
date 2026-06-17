@@ -55,7 +55,7 @@ export default function ProfileHeader({
             </div>
           )}
           {profile.is_dj && (
-            <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-black border border-white/10 flex items-center justify-center text-xs" title="DJ">
+            <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-black border border-white/10 flex items-center justify-center text-xs" title="Artist">
               🎵
             </div>
           )}
@@ -67,7 +67,7 @@ export default function ProfileHeader({
             <h1 className="text-2xl font-bold text-white" style={{ fontFamily: '"Space Grotesk", sans-serif' }}>
               {profile.username}
             </h1>
-            {profile.dj_verified && <span className="text-base" title="Verified DJ">✅</span>}
+            {profile.dj_verified && <span className="text-base" title="Verified Artist">✅</span>}
           </div>
           <div className="flex flex-wrap justify-center sm:justify-start gap-3 mt-1.5 text-gray-500 text-xs">
             {profile.location && <span>📍 {profile.location}</span>}
@@ -77,10 +77,10 @@ export default function ProfileHeader({
             <p className="text-gray-400 mt-2.5 text-sm leading-relaxed max-w-lg line-clamp-3">{profile.bio}</p>
           )}
           {profile.is_dj && profile.dj_id && (
-            <Link to={`/dj/${profile.dj_id}`}
+            <Link to={`/artist/${profile.dj_id}`}
               className="inline-flex items-center gap-1 mt-2 text-xs font-semibold transition-colors"
               style={{ color: '#00D9FF' }}>
-              🎧 View DJ Profile →
+              🎧 View Artist Profile →
             </Link>
           )}
 

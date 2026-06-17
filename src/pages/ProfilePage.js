@@ -10,7 +10,7 @@ import ProfileHeader from '../components/profile/ProfileHeader';
 import StatsBlock from '../components/profile/StatsBlock';
 import ProfileTabs from '../components/profile/ProfileTabs';
 import ReviewSection from '../components/profile/ReviewSection';
-import DJGrid from '../components/profile/DJGrid';
+import ArtistGrid from '../components/profile/DJGrid';
 import NetworkGrid from '../components/profile/NetworkGrid';
 import ActivityFeed from '../components/profile/ActivityFeed';
 import SetCard from '../components/cards/SetCard';
@@ -257,7 +257,7 @@ export default function ProfilePage() {
       {activeTab === 'following' && (
         <div>
           <p className="section-label mb-4">Following {stats.following ? `(${stats.following})` : ''}</p>
-          <DJGrid djs={following} loading={followState === 'loading'} isOwn={isOwn} />
+          <ArtistGrid djs={following} loading={followState === 'loading'} isOwn={isOwn} />
         </div>
       )}
 

@@ -43,7 +43,7 @@ export default function FeedPage() {
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <Link to={`/dj/${set.dj_id}`} onClick={e => e.stopPropagation()}
+                    <Link to={`/artist/${set.dj_id}`} onClick={e => e.stopPropagation()}
                       className="text-brand-400 hover:text-brand-300 text-xs font-semibold transition-colors">
                       {set.dj_name}
                     </Link>

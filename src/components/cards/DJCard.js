@@ -15,7 +15,7 @@ const accentColors = [
   '#059669, #064e3b',
 ];
 
-export default function DJCard({ dj, onFollow, isFollowing, showFollow = true }) {
+export default function ArtistCard({ dj, onFollow, isFollowing, showFollow = true }) {
   const initial = dj.name?.[0]?.toUpperCase() || '?';
   const profileImage = dj.profile_image_url || dj.profile_picture_url;
 
@@ -27,7 +27,7 @@ export default function DJCard({ dj, onFollow, isFollowing, showFollow = true })
         style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(90,100,112,0.15) 0%, transparent 70%)' }}
       />
 
-      <Link to={`/dj/${dj.id}`} className="block p-5 pb-4">
+      <Link to={`/artist/${dj.id}`} className="block p-5 pb-4">
         {/* Avatar */}
         <div className="flex flex-col items-center text-center mb-4">
           <div className="w-20 h-20 rounded-full border-2 border-purple-500/40 flex items-center justify-center text-2xl font-black text-white mb-3 flex-shrink-0 overflow-hidden">

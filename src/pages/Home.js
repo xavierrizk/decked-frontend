@@ -31,7 +31,7 @@ function FeaturedDJCard({ dj, className = '' }) {
 
   return (
     <Link
-      to={`/dj/${dj.id}`}
+      to={`/artist/${dj.id}`}
       className={`relative overflow-hidden group cursor-pointer ${className}`}
       style={{ backgroundImage: bg, backgroundSize: 'cover', backgroundPosition: 'center' }}
     >
@@ -76,7 +76,7 @@ function FeaturedDJCard({ dj, className = '' }) {
 function SmallDJCard({ dj, className = '' }) {
   return (
     <Link
-      to={`/dj/${dj.id}`}
+      to={`/artist/${dj.id}`}
       className={`flex items-center gap-3 bg-[#111114] border border-white/[0.07] hover:border-[#00D9FF]/30 rounded p-3 group transition-all duration-200 hover:-translate-y-0.5 overflow-hidden ${className}`}
     >
       {/* Square image */}
@@ -113,7 +113,7 @@ function SmallDJCard({ dj, className = '' }) {
 function MediumDJCardA({ dj }) {
   return (
     <Link
-      to={`/dj/${dj.id}`}
+      to={`/artist/${dj.id}`}
       className="relative overflow-hidden group cursor-pointer border border-white/[0.07] hover:border-[#00D9FF]/30 transition-all duration-300 hover:-translate-y-1 flex flex-col"
       style={{ height: '100%' }}
     >
@@ -162,7 +162,7 @@ function MediumDJCardB({ dj }) {
   const accent = accentSolids[dj.id % accentSolids.length];
   return (
     <Link
-      to={`/dj/${dj.id}`}
+      to={`/artist/${dj.id}`}
       className="relative overflow-hidden group cursor-pointer transition-all duration-300 hover:scale-[1.02]"
       style={{
         height: '100%',
@@ -194,7 +194,7 @@ function MediumDJCardB({ dj }) {
 function MediumDJCardC({ dj }) {
   return (
     <Link
-      to={`/dj/${dj.id}`}
+      to={`/artist/${dj.id}`}
       className="flex overflow-hidden group cursor-pointer bg-[#111114] border border-white/[0.07] hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
       style={{ height: '100%' }}
     >
@@ -249,7 +249,7 @@ function MediumDJCardC({ dj }) {
 function CompactDJCard({ dj }) {
   return (
     <Link
-      to={`/dj/${dj.id}`}
+      to={`/artist/${dj.id}`}
       className="relative overflow-hidden group cursor-pointer transition-all duration-300 hover:scale-[1.03]"
       style={{
         height: '100%',
@@ -326,7 +326,7 @@ export default function Home() {
 
   useEffect(() => {
     const base = [
-      axios.get(API_URL + '/api/djs/featured'),
+      axios.get(API_URL + '/api/artist-profiles/featured'),
       axios.get(API_URL + '/api/feed/trending?sort=likes'),
     ];
     const personalizedReq = isLoggedIn

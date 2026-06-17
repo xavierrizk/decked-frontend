@@ -56,7 +56,7 @@ export default function ExtendedOnboarding({ onComplete }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`${API_URL}/api/djs/featured`)
+    axios.get(`${API_URL}/api/artist-profiles/featured`)
       .then(r => setDjList(r.data.slice(0, 18)))
       .catch(() => {});
   }, []);

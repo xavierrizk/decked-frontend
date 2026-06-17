@@ -17,7 +17,7 @@ function DJImageUpload({ djId, currentImage, onUpload }) {
     formData.append('image', file);
     try {
       const res = await axios.patch(
-        `${API_URL}/api/djs/${djId}/profile-image`,
+        `${API_URL}/api/artist-profiles/${djId}/profile-image`,
         formData,
         {
           headers: {
@@ -40,7 +40,7 @@ function DJImageUpload({ djId, currentImage, onUpload }) {
         onClick={() => fileRef.current?.click()}
       >
         {preview ? (
-          <img src={preview} alt="DJ profile" className="w-full h-full object-cover" />
+          <img src={preview} alt="Artist profile" className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center text-gray-600">
             <span className="text-3xl">📸</span>
@@ -78,8 +78,8 @@ export default function MyDJsPage() {
     if (!token) return;
     const headers = { Authorization: `Bearer ${token}` };
     Promise.all([
-      axios.get(`${API_URL}/api/dj-requests/my-djs`,   { headers }),
-      axios.get(`${API_URL}/api/dj-requests/my-status`, { headers }),
+      axios.get(`${API_URL}/api/artist-requests/my-artist-profiles`,   { headers }),
+      axios.get(`${API_URL}/api/artist-requests/my-status`, { headers }),
     ]).then(([djsRes, reqRes]) => {
       setDjs(djsRes.data);
       setRequests(reqRes.data);
@@ -100,7 +100,7 @@ export default function MyDJsPage() {
           <h1 className="text-3xl font-extrabold text-white">My DJs</h1>
           <p className="text-gray-500 text-sm mt-1">DJ profiles you own and manage</p>
         </div>
-        <Link to="/request-dj"
+        <Link to="/request-artist"
           className="px-5 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 shadow-glow text-sm">
           + Request New DJ
         </Link>
@@ -110,9 +110,9 @@ export default function MyDJsPage() {
       {djs.length === 0 && pendingRequests.length === 0 ? (
         <div className="text-center py-20 border border-white/[0.05] rounded-2xl text-gray-600">
           <p className="text-5xl mb-4">🎧</p>
-          <p className="text-lg font-semibold text-gray-500">You don't own any DJ profiles yet</p>
-          <p className="text-sm mt-1 mb-6">Request a DJ profile to start uploading sets</p>
-          <Link to="/request-dj"
+          <p className="text-lg font-semibold text-gray-500">You don't own any Artist profiles yet</p>
+          <p className="text-sm mt-1 mb-6">Request an Artist profile to start uploading sets</p>
+          <Link to="/request-artist"
             className="inline-block px-6 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl transition-all duration-200 hover:scale-105 shadow-glow">
             Request a DJ Profile
           </Link>
@@ -141,7 +141,7 @@ export default function MyDJsPage() {
                           <span>👥 {dj.follower_count} followers</span>
                         </div>
                         <div className="flex gap-2 flex-wrap">
-                          <Link to={`/dj/${dj.id}`}
+                          <Link to={`/artist/${dj.id}`}
                             className="text-xs px-3 py-1.5 rounded-lg border border-white/10 text-gray-300 hover:border-brand-500/40 hover:text-white transition-all duration-200">
                             View Profile
                           </Link>

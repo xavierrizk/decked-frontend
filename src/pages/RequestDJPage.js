@@ -14,7 +14,7 @@ export default function RequestDJPage() {
 
   useEffect(() => {
     if (!token) return;
-    axios.get(`${API_URL}/api/dj-requests/my-status`, { headers: { Authorization: `Bearer ${token}` } })
+    axios.get(`${API_URL}/api/artist-requests/my-status`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => { setRequests(r.data); setLoading(false); })
       .catch(() => setLoading(false));
   }, [token]);
@@ -25,11 +25,11 @@ export default function RequestDJPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.dj_name.trim())      { setError('DJ name is required'); return; }
+    if (!form.dj_name.trim())      { setError('Artist name is required'); return; }
     if (!form.soundcloud_url.trim()) { setError('SoundCloud link is required'); return; }
     setSubmitting(true); setError('');
     try {
-      const res = await axios.post(`${API_URL}/api/dj-requests`, form,
+      const res = await axios.post(`${API_URL}/api/artist-requests`, form,
         { headers: { Authorization: `Bearer ${token}` } });
       setRequests(prev => [res.data, ...prev]);
       setSuccess(true);
@@ -51,13 +51,13 @@ export default function RequestDJPage() {
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-600 to-brand-700 text-3xl mb-4 shadow-glow">🎧</div>
         <h1 className="text-3xl font-extrabold text-white mb-2">Request a DJ Profile</h1>
         <p className="text-gray-500 max-w-sm mx-auto">
-          Submit a request to add a DJ to DECK'D. Our team reviews every request within 24 hours.
+          Submit a request to add an Artist to DECK'D. Our team reviews every request within 24 hours.
         </p>
       </div>
 
       {/* How it works */}
       <div className="grid grid-cols-3 gap-3 mb-8">
-        {[['📝', 'Submit', 'Fill in the DJ details and links'],
+        {[['📝', 'Submit', 'Fill in the Artist details and links'],
           ['⏳', 'Review', 'We verify your links and info'],
           ['✅', 'Approved', 'Start uploading sets immediately']].map(([icon, title, desc]) => (
           <div key={title} className="bg-white/[0.03] border border-white/[0.07] rounded-xl p-4 text-center">
@@ -98,18 +98,18 @@ export default function RequestDJPage() {
           </div>
           <div>
             <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1.5">Bio</label>
-            <textarea value={form.bio} onChange={set('bio')} placeholder="Brief description of the DJ…" rows={3} className={inp + ' resize-none'} />
+            <textarea value={form.bio} onChange={set('bio')} placeholder="Brief description of the Artist…" rows={3} className={inp + ' resize-none'} />
           </div>
           <div>
             <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1.5">SoundCloud Link <span className="text-red-400">*</span></label>
-            <input value={form.soundcloud_url} onChange={set('soundcloud_url')} placeholder="https://soundcloud.com/djname" className={inp} />
+            <input value={form.soundcloud_url} onChange={set('soundcloud_url')} placeholder="https://soundcloud.com/artistname" className={inp} />
           </div>
           <div>
             <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1.5">Instagram <span className="text-gray-600 font-normal normal-case">(optional)</span></label>
-            <input value={form.instagram_url} onChange={set('instagram_url')} placeholder="https://instagram.com/djname" className={inp} />
+            <input value={form.instagram_url} onChange={set('instagram_url')} placeholder="https://instagram.com/artistname" className={inp} />
           </div>
           <div>
-            <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1.5">Why should this DJ be on DECK'D? <span className="text-gray-600 font-normal normal-case">(optional)</span></label>
+            <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1.5">Why should this Artist be on DECK'D? <span className="text-gray-600 font-normal normal-case">(optional)</span></label>
             <textarea value={form.why_decked} onChange={set('why_decked')} placeholder="Tell us about their impact, notable gigs, releases…" rows={4} className={inp + ' resize-none'} />
           </div>
           <button type="submit" disabled={submitting}
@@ -153,8 +153,8 @@ function RequestStatusCard({ r }) {
         </div>
       )}
       {r.status === 'approved' && r.dj_id && (
-        <Link to={`/dj/${r.dj_id}`} className="inline-block mt-3 text-brand-400 hover:text-brand-300 text-xs font-semibold transition-colors">
-          View DJ Profile →
+        <Link to={`/artist/${r.dj_id}`} className="inline-block mt-3 text-brand-400 hover:text-brand-300 text-xs font-semibold transition-colors">
+          View Artist Profile →
         </Link>
       )}
     </div>

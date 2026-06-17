@@ -249,7 +249,7 @@ export default function AdminDashboard() {
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-brand-700 flex items-center justify-center text-xl flex-shrink-0">🎧</div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <Link to={`/dj/${dj.id}`} className="text-white font-bold hover:text-brand-400 transition-colors truncate">{dj.name}</Link>
+                            <Link to={`/artist/${dj.id}`} className="text-white font-bold hover:text-brand-400 transition-colors truncate">{dj.name}</Link>
                             {dj.verified && <span className="text-xs">✅</span>}
                           </div>
                           <p className="text-gray-500 text-xs mt-0.5">
@@ -444,7 +444,7 @@ function VerifCard({ r, tab, actionId, onApprove, onReject, note, onNoteChange }
           }
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2 mb-1">
-              <Link to={`/dj/${r.dj_id}`} className="text-white font-extrabold hover:text-brand-400 transition-colors">{r.dj_name}</Link>
+              <Link to={`/artist/${r.dj_id}`} className="text-white font-extrabold hover:text-brand-400 transition-colors">{r.dj_name}</Link>
               <span className="text-gray-500 text-sm">by @{r.username}</span>
             </div>
             <p className="text-gray-500 text-xs mb-2">👥 {r.follower_count} followers · 🎵 {r.set_count} sets · 📅 {new Date(r.requested_at).toLocaleDateString()}</p>

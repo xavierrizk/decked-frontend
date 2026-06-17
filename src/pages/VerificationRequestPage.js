@@ -29,9 +29,9 @@ export default function VerificationRequestPage() {
       <div className="max-w-2xl mx-auto px-5 py-20 text-center">
         <p className="text-5xl mb-4">🎧</p>
         <h1 className="text-2xl font-extrabold text-white mb-3">DJs Only</h1>
-        <p className="text-gray-500 mb-6">You need a DJ profile to request verification.</p>
-        <Link to="/create-dj" className="px-6 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl transition-all duration-200 hover:scale-105 shadow-glow">
-          Create DJ Profile
+        <p className="text-gray-500 mb-6">You need an Artist profile to request verification.</p>
+        <Link to="/create-artist" className="px-6 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl transition-all duration-200 hover:scale-105 shadow-glow">
+          Create Artist Profile
         </Link>
       </div>
     );
@@ -145,7 +145,7 @@ function StatusCard({ request }) {
     approved: {
       icon: '✅', color: 'green', label: 'Verified!',
       bg: 'bg-green-500/10', border: 'border-green-500/30', text: 'text-green-300',
-      message: `Congratulations! Your DJ profile is now verified on DECK'D.`,
+      message: `Congratulations! Your Artist profile is now verified on DECK'D.`,
     },
     rejected: {
       icon: '❌', color: 'red', label: 'Not Approved',

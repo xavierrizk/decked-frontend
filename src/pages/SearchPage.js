@@ -3,11 +3,11 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import VisualizerBackground from '../components/backgrounds/VisualizerBackground';
-import DJCard from '../components/cards/DJCard';
+import ArtistCard from '../components/cards/DJCard';
 import SetCard from '../components/cards/SetCard';
 import UserCard from '../components/cards/UserCard';
 
-const TABS = ['All', 'DJs', 'Sets', 'Users'];
+const TABS = ['All', 'Artists', 'Sets', 'Users'];
 
 
 export default function SearchPage() {
@@ -15,7 +15,7 @@ export default function SearchPage() {
   const initialQ = searchParams.get('q') || '';
   const [query, setQuery]         = useState(initialQ);
   const [tab, setTab]             = useState('All');
-  const [results, setResults]     = useState({ djs: [], sets: [], users: [] });
+  const [results, setResults]     = useState({ artistProfiles: [], sets: [], users: [] });
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading]     = useState(false);
   const [searched, setSearched]   = useState(false);
@@ -34,7 +34,7 @@ export default function SearchPage() {
   };
 
   const doSearch = useCallback(async (q) => {
-    if (!q.trim()) { setResults({ djs: [], sets: [], users: [] }); setSearched(false); return; }
+    if (!q.trim()) { setResults({ artistProfiles: [], sets: [], users: [] }); setSearched(false); return; }
     setLoading(true);
     setSearched(true);
     setSearchParams({ q });
@@ -76,10 +76,10 @@ export default function SearchPage() {
     doSearch(label);
   };
 
-  const djs   = results.djs   || [];
+  const artistProfiles = results.artistProfiles || [];
   const sets  = results.sets  || [];
   const users = results.users || [];
-  const total = djs.length + sets.length + users.length;
+  const total = artistProfiles.length + sets.length + users.length;
 
   const recentSearches = getRecent();
 
@@ -97,11 +97,11 @@ export default function SearchPage() {
               onChange={e => { setQuery(e.target.value); setShowSugg(true); }}
               onFocus={() => setShowSugg(true)}
               onBlur={() => setTimeout(() => setShowSugg(false), 150)}
-              placeholder="Search DJs, sets, users…"
+              placeholder="Search Artists, sets, users…"
               className="flex-1 bg-transparent text-white text-lg placeholder-gray-600 outline-none"
             />
             {query && (
-              <button type="button" onClick={() => { setQuery(''); setResults({ djs: [], sets: [], users: [] }); setSearched(false); setSearchParams({}); }}
+              <button type="button" onClick={() => { setQuery(''); setResults({ artistProfiles: [], sets: [], users: [] }); setSearched(false); setSearchParams({}); }}
                 className="text-gray-600 hover:text-gray-400 transition-colors text-xl">×</button>
             )}
             <button type="submit"
@@ -155,7 +155,7 @@ export default function SearchPage() {
                   tab === t ? 'bg-brand-600 text-white' : 'text-gray-500 hover:text-white'
                 }`}>
                 {t}
-                {t === 'DJs'   && djs.length   > 0 && <span className="ml-1 text-xs opacity-60">({djs.length})</span>}
+                {t === 'Artists'   && artistProfiles.length   > 0 && <span className="ml-1 text-xs opacity-60">({artistProfiles.length})</span>}
                 {t === 'Sets'  && sets.length  > 0 && <span className="ml-1 text-xs opacity-60">({sets.length})</span>}
                 {t === 'Users' && users.length > 0 && <span className="ml-1 text-xs opacity-60">({users.length})</span>}
               </button>
@@ -181,7 +181,7 @@ export default function SearchPage() {
         <div className="text-center py-20 text-gray-600">
           <p className="text-5xl mb-4">🔍</p>
           <p className="text-lg font-semibold text-gray-500">Search DECK'D</p>
-          <p className="text-sm mt-1">Find DJs, sets, and users</p>
+          <p className="text-sm mt-1">Find Artists, sets, and users</p>
         </div>
       )}
 
@@ -197,12 +197,12 @@ export default function SearchPage() {
       {!loading && searched && total > 0 && (
         <div className="space-y-8">
           {/* DJs */}
-          {(tab === 'All' || tab === 'DJs') && djs.length > 0 && (
+          {(tab === 'All' || tab === 'Artists') && artistProfiles.length > 0 && (
             <section>
-              {tab === 'All' && <SectionLabel>🎧 DJs ({djs.length})</SectionLabel>}
+              {tab === 'All' && <SectionLabel>🎧 DJs ({artistProfiles.length})</SectionLabel>}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {djs.map(dj => (
-                  <DJCard key={dj.id} dj={dj} showFollow={false} />
+                {artistProfiles.map(dj => (
+                  <ArtistCard key={dj.id} dj={dj} showFollow={false} />
                 ))}
               </div>
             </section>

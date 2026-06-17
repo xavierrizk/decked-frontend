@@ -248,7 +248,7 @@ export default function SetDetail() {
       {set.dj_name && (
         <div className="flex items-center justify-between mb-3">
           {isDjSet && set.dj_id ? (
-            <Link to={`/dj/${set.dj_id}`} className="text-gray-500 hover:text-[#00D9FF] text-sm transition-colors">
+            <Link to={`/artist/${set.dj_id}`} className="text-gray-500 hover:text-[#00D9FF] text-sm transition-colors">
               ← 🎵 {set.dj_name}
             </Link>
           ) : set.artist_id ? (

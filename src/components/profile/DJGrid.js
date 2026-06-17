@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { fmt, gradFor } from './helpers';
 
-export default function DJGrid({ djs, loading, isOwn }) {
+export default function ArtistGrid({ djs, loading, isOwn }) {
   if (loading) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -20,9 +20,9 @@ export default function DJGrid({ djs, loading, isOwn }) {
     return (
       <div className="text-center py-16 border border-white/[0.05]">
         <p className="text-3xl mb-2">🎧</p>
-        <p className="text-gray-500">Not following any DJs yet.</p>
+        <p className="text-gray-500">Not following any Artists yet.</p>
         <Link to="/discover" className="inline-block mt-3 text-sm font-medium transition-colors" style={{ color: '#00D9FF' }}>
-          Discover DJs →
+          Discover Artists →
         </Link>
       </div>
     );
@@ -31,7 +31,7 @@ export default function DJGrid({ djs, loading, isOwn }) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
       {djs.map(dj => (
-        <Link key={dj.id} to={`/dj/${dj.id}`} className="group">
+        <Link key={dj.id} to={`/artist/${dj.id}`} className="group">
           <div
             className="relative aspect-square overflow-hidden border border-white/[0.07] group-hover:border-[#00D9FF]/40 transition-all duration-200"
             style={{

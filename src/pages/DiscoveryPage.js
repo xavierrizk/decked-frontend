@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import VisualizerBackground from '../components/backgrounds/VisualizerBackground';
-import DJCard from '../components/cards/DJCard';
+import ArtistCard from '../components/cards/DJCard';
 import SetCard from '../components/cards/SetCard';
 
 export default function DiscoveryPage() {
@@ -78,7 +78,7 @@ export default function DiscoveryPage() {
       {topDjs.length > 0 && (
         <Section title="🎧 Top DJs" subtitle="Most followed artists on DECK'D">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {topDjs.map((dj) => <DJCard key={dj.id} dj={dj} showFollow={false} />)}
+            {topDjs.map((dj) => <ArtistCard key={dj.id} dj={dj} showFollow={false} />)}
           </div>
         </Section>
       )}

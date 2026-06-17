@@ -7,9 +7,9 @@ import { StarDisplay } from '../components/StarRating';
 import { getCurrentUserId } from '../utils/auth';
 import Toast, { useToast } from '../components/Toast';
 
-export default function DJProfile() {
+export default function ArtistProfilePage() {
   const { id } = useParams();
-  const [dj, setDJ]           = useState(null);
+  const [artistProfile, setArtistProfile]           = useState(null);
   const [sets, setSets]       = useState([]);
   const [stats, setStats]     = useState(null);
   const [follow, setFollow]   = useState({ count: 0, following: false });
@@ -28,13 +28,13 @@ export default function DJProfile() {
       : Promise.resolve({ data: null });
 
     Promise.all([
-      axios.get(`${API_URL}/api/djs/${id}`),
+      axios.get(`${API_URL}/api/artist-profiles/${id}`),
       axios.get(`${API_URL}/api/sets/dj/${id}`),
-      axios.get(`${API_URL}/api/djs/${id}/stats`),
+      axios.get(`${API_URL}/api/artist-profiles/${id}/stats`),
       axios.get(`${API_URL}/api/follows/${id}`, { headers }),
       verifPromise,
     ]).then(([djRes, setsRes, statsRes, followRes, verifRes]) => {
-      setDJ(djRes.data);
+      setArtistProfile(djRes.data);
       setSets(setsRes.data);
       setStats(statsRes.data);
       setFollow(followRes.data);
@@ -46,7 +46,7 @@ export default function DJProfile() {
   const handleFollow = async () => {
     if (!isLoggedIn) return;
     if (follow.following) {
-      if (!window.confirm(`Unfollow ${dj?.name}?`)) return;
+      if (!window.confirm(`Unfollow ${artistProfile?.name}?`)) return;
     }
     setFollowLoading(true);
     const token = localStorage.getItem('token');
@@ -55,18 +55,18 @@ export default function DJProfile() {
       if (follow.following) {
         const res = await axios.delete(`${API_URL}/api/follows/${id}`, { headers });
         setFollow(res.data);
-        showToast(`Unfollowed ${dj?.name}`);
+        showToast(`Unfollowed ${artistProfile?.name}`);
       } else {
         const res = await axios.post(`${API_URL}/api/follows/${id}`, {}, { headers });
         setFollow(res.data);
-        showToast(`You're now following ${dj?.name}! 🎵`);
+        showToast(`You're now following ${artistProfile?.name}! 🎵`);
       }
     } catch (err) { console.error(err); }
     setFollowLoading(false);
   };
 
   if (loading) return <Spinner />;
-  if (!dj) return <div className="text-center py-20 text-gray-600">DJ not found</div>;
+  if (!artistProfile) return <div className="text-center py-20 text-gray-600">DJ not found</div>;
 
   const isOwnDj = dj.user_id === currentUserId;
 
@@ -84,7 +84,7 @@ export default function DJProfile() {
           </div>
           <div className="flex-1 text-center sm:text-left">
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1">
-              <h1 className="text-3xl font-extrabold text-white">{dj.name}</h1>
+              <h1 className="text-3xl font-extrabold text-white">{artistProfile.name}</h1>
               <span className="text-lg" title="DJ">🎵</span>
               {stats?.verified && (
                 <span className="flex items-center gap-1 bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold px-2.5 py-1 rounded-full">
@@ -92,7 +92,7 @@ export default function DJProfile() {
                 </span>
               )}
             </div>
-            <p className="text-gray-400 mt-1 max-w-lg">{dj.bio || 'No bio available'}</p>
+            <p className="text-gray-400 mt-1 max-w-lg">{artistProfile.bio || 'No bio available'}</p>
 
             {/* Verification status for own DJ profile */}
             {isOwnDj && (
@@ -125,7 +125,7 @@ export default function DJProfile() {
           </div>
 
           {/* Follow button (hero top-right) */}
-          <FollowButton follow={follow} followLoading={followLoading} isLoggedIn={isLoggedIn} isOwnDj={isOwnDj} djName={dj.name} onFollow={handleFollow} />
+          <FollowButton follow={follow} followLoading={followLoading} isLoggedIn={isLoggedIn} isOwnDj={isOwnDj} djName={artistProfile.name} onFollow={handleFollow} />
         </div>
       </div>
 

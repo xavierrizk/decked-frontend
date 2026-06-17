@@ -153,7 +153,7 @@ export default function OnboardingFlow({ onComplete }) {
     // Load DJs + artists for step 2
     setDjsLoading(true);
     Promise.all([
-      axios.get(`${API_URL}/api/djs?limit=30`).catch(() => ({ data: [] })),
+      axios.get(`${API_URL}/api/artist-profiles?limit=30`).catch(() => ({ data: [] })),
       axios.get(`${API_URL}/api/artists`).catch(() => ({ data: [] })),
     ])
       .then(([djRes, artRes]) => {

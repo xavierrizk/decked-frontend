@@ -35,8 +35,8 @@ const Divider = () => <div className="my-2 mx-4 border-t border-white/[0.07]" />
 export default function ProfileDropdown({ userId, username, isAdmin, onLogout }) {
   const [open, setOpen]       = useState(false);
   const [profilePic, setPic]  = useState(null);
-  const [isDJ, setIsDJ]       = useState(false);
-  const [djId, setDjId]       = useState(null);
+  const [isArtist, setIsArtist]       = useState(false);
+  const [artistId, setArtistId]       = useState(null);
   const closeTimer = useRef(null);
   const wrapRef    = useRef(null);
   const navigate   = useNavigate();
@@ -47,8 +47,8 @@ export default function ProfileDropdown({ userId, username, isAdmin, onLogout })
     axios.get(`${API_URL}/api/users/${userId}`)
       .then(r => {
         setPic(r.data.profile_picture_url || null);
-        setIsDJ(!!r.data.is_dj);
-        setDjId(r.data.dj_id || null);
+        setIsArtist(!!r.data.is_dj);
+        setArtistId(r.data.dj_id || null);
       })
       .catch(() => {});
   }, [userId]);
@@ -150,10 +150,10 @@ export default function ProfileDropdown({ userId, username, isAdmin, onLogout })
           <MenuItem to={`/profile/${userId}?tab=favorites`}    onClick={close} icon={<IconHeart />} label="Favorite Reviews" />
 
           {/* Section 2: Creator */}
-          {isDJ && djId && (
+          {isArtist && artistId && (
             <>
               <Divider />
-              <MenuItem to={`/dj/${djId}`} onClick={close} icon={<IconVinyl />} label="My DJ Profile" />
+              <MenuItem to={`/artist/${artistId}`} onClick={close} icon={<IconVinyl />} label="My Artist Profile" />
             </>
           )}
 

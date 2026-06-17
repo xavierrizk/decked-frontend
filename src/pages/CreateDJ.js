@@ -14,11 +14,11 @@ export default function CreateDJ() {
     e.preventDefault();
     setLoading(true); setError('');
     try {
-      await axios.post(`${API_URL}/api/djs`, { name, bio },
+      await axios.post(`${API_URL}/api/artist-profiles`, { name, bio },
         { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to create DJ');
+      setError(err.response?.data?.error || 'Failed to create Artist');
       setLoading(false);
     }
   };
@@ -36,18 +36,18 @@ export default function CreateDJ() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <Field label="DJ Name" type="text" value={name} onChange={setName} placeholder="DJ Example" required />
+            <Field label="Artist Name" type="text" value={name} onChange={setName} placeholder="Artist Name" required />
             <div>
               <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1.5">
                 Bio <span className="text-gray-700 normal-case tracking-normal font-normal">(optional)</span>
               </label>
               <textarea value={bio} onChange={(e) => setBio(e.target.value)}
                 className="w-full bg-white/[0.04] border border-white/10 focus:border-brand-500 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 text-sm outline-none transition-colors duration-200 resize-none h-28"
-                placeholder="Tell us about this DJ…" />
+                placeholder="Tell us about this Artist…" />
             </div>
             <button type="submit" disabled={loading}
               className="w-full btn-primary disabled:opacity-40  font-semibold py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-glow">
-              {loading ? 'Creating…' : 'Create DJ'}
+              {loading ? 'Creating…' : 'Create Artist'}
             </button>
           </form>
         </div>

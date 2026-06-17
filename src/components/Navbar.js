@@ -15,7 +15,7 @@ const NAV_LINKS = [
 
 const AUTH_LINKS = [
   { to: '/feed',      label: 'Feed',    icon: '📰' },
-  { to: '/my-djs',   label: 'My DJs',  icon: '🎧' },
+  { to: '/my-artists', label: 'My Artists',  icon: '🎧' },
   { to: '/create-set', label: 'Add Set', icon: '+' },
 ];
 
@@ -94,7 +94,7 @@ export default function Navbar({ isLoggedIn, onLogout }) {
     setShowSugg(false);
     setSearchOpen(false);
     setSearchQuery('');
-    if (s.type === 'dj')   navigate(`/dj/${s.id}`);
+    if (s.type === 'dj')   navigate(`/artist/${s.id}`);
     if (s.type === 'set')  navigate(`/set/${s.id}`);
     if (s.type === 'user') navigate(`/profile/${s.id}`);
   };
