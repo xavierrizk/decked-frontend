@@ -126,7 +126,7 @@ export default function Navbar({ isLoggedIn, onLogout }) {
               backgroundClip: 'text',
             }}
           >
-            DECKED
+            DECK&apos;D
           </span>
         </Link>
 
