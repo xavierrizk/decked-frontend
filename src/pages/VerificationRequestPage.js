@@ -28,7 +28,7 @@ export default function VerificationRequestPage() {
     return (
       <div className="max-w-2xl mx-auto px-5 py-20 text-center">
         <p className="text-5xl mb-4">🎧</p>
-        <h1 className="text-2xl font-extrabold text-white mb-3">DJs Only</h1>
+        <h1 className="text-2xl font-extrabold text-white mb-3">Artists Only</h1>
         <p className="text-gray-500 mb-6">You need an Artist profile to request verification.</p>
         <Link to="/create-artist" className="px-6 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl transition-all duration-200 hover:scale-105 shadow-glow">
           Create Artist Profile
@@ -66,7 +66,7 @@ export default function VerificationRequestPage() {
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-brand-700 text-3xl mb-4 shadow-glow">
           ✅
         </div>
-        <h1 className="text-3xl font-extrabold text-white mb-2">DJ Verification</h1>
+        <h1 className="text-3xl font-extrabold text-white mb-2">Artist Verification</h1>
         <p className="text-gray-500 max-w-sm mx-auto">
           Verified DJs get a ✅ badge on their profile, sets, and comments — building trust with the community.
         </p>
@@ -108,7 +108,7 @@ export default function VerificationRequestPage() {
               </label>
               <textarea
                 value={whyVerify} onChange={e => setWhyVerify(e.target.value)}
-                placeholder="Tell us about your DJ career, experience, notable gigs, releases…"
+                placeholder="Tell us about your Artist career, experience, notable gigs, releases…"
                 rows={5}
                 className="w-full bg-white/[0.04] border border-white/10 focus:border-brand-500 rounded-xl px-4 py-3 text-white placeholder-gray-600 text-sm outline-none transition-colors resize-none"
               />

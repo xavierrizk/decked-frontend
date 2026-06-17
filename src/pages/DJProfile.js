@@ -85,7 +85,7 @@ export default function ArtistProfilePage() {
           <div className="flex-1 text-center sm:text-left">
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-1">
               <h1 className="text-3xl font-extrabold text-white">{artistProfile.name}</h1>
-              <span className="text-lg" title="DJ">🎵</span>
+              <span className="text-lg" title="Artist">🎵</span>
               {stats?.verified && (
                 <span className="flex items-center gap-1 bg-blue-500/20 border border-blue-400/30 text-blue-300 text-xs font-bold px-2.5 py-1 rounded-full">
                   ✅ Verified
@@ -94,7 +94,7 @@ export default function ArtistProfilePage() {
             </div>
             <p className="text-gray-400 mt-1 max-w-lg">{artistProfile.bio || 'No bio available'}</p>
 
-            {/* Verification status for own DJ profile */}
+            {/* Verification status for own Artist profile */}
             {isOwnDj && (
               <div className="mt-2">
                 {verifStatus?.request?.status === 'pending' && (
@@ -104,7 +104,7 @@ export default function ArtistProfilePage() {
                 )}
                 {verifStatus?.request?.status === 'approved' && (
                   <span className="inline-flex items-center gap-1.5 text-xs bg-green-500/10 border border-green-500/30 text-green-300 px-3 py-1 rounded-full font-medium">
-                    ✅ Verified DJ
+                    ✅ Verified Artist
                   </span>
                 )}
                 {(!verifStatus?.request || verifStatus?.request?.status === 'rejected') && (

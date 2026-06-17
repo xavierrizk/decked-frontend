@@ -18,7 +18,7 @@ export default function StatsBlock({ stats }) {
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
       <StatBox value={s.sets_rated}      label="Sets Rated" />
       <StatBox value={s.reviews_written} label="Reviews" />
-      <StatBox value={s.following}       label="DJs Following" />
+      <StatBox value={s.following}       label="Artists Following" />
       <StatBox value={s.friends}         label="Friends" />
     </div>
   );

@@ -76,7 +76,7 @@ export default function DiscoveryPage() {
 
       {/* Top DJs */}
       {topDjs.length > 0 && (
-        <Section title="🎧 Top DJs" subtitle="Most followed artists on DECK'D">
+        <Section title="🎧 Top Artists" subtitle="Most followed Artists on DECK'D">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {topDjs.map((dj) => <ArtistCard key={dj.id} dj={dj} showFollow={false} />)}
           </div>

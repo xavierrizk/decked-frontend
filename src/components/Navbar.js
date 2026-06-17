@@ -152,7 +152,7 @@ export default function Navbar({ isLoggedIn, onLogout }) {
                 value={searchQuery}
                 onChange={e => { setSearchQuery(e.target.value); setShowSugg(true); }}
                 onBlur={() => { setTimeout(() => { setShowSugg(false); if (!searchQuery) setSearchOpen(false); }, 150); }}
-                placeholder="Search DJs, sets…"
+                placeholder="Search Artists, sets…"
                 className="flex-1 bg-transparent text-white text-sm placeholder-gray-600 outline-none"
               />
               <button type="button" onClick={() => { setSearchOpen(false); setSearchQuery(''); setSuggestions([]); }}

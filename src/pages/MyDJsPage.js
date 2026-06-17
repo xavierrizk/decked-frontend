@@ -97,8 +97,8 @@ export default function MyDJsPage() {
     <div className="max-w-4xl mx-auto px-5 py-10">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-extrabold text-white">My DJs</h1>
-          <p className="text-gray-500 text-sm mt-1">DJ profiles you own and manage</p>
+          <h1 className="text-3xl font-extrabold text-white">My Artists</h1>
+          <p className="text-gray-500 text-sm mt-1">Artist profiles you own and manage</p>
         </div>
         <Link to="/request-artist"
           className="px-5 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 shadow-glow text-sm">
@@ -114,14 +114,14 @@ export default function MyDJsPage() {
           <p className="text-sm mt-1 mb-6">Request an Artist profile to start uploading sets</p>
           <Link to="/request-artist"
             className="inline-block px-6 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl transition-all duration-200 hover:scale-105 shadow-glow">
-            Request a DJ Profile
+            Request an Artist Profile
           </Link>
         </div>
       ) : (
         <>
           {djs.length > 0 && (
             <div className="mb-8">
-              <p className="text-gray-600 text-xs font-semibold uppercase tracking-widest mb-4">Your DJ Profiles</p>
+              <p className="text-gray-600 text-xs font-semibold uppercase tracking-widest mb-4">Your Artist Profiles</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {djs.map(dj => (
                   <div key={dj.id} className="bg-white/[0.03] border border-white/[0.07] hover:border-brand-500/30 rounded-2xl p-5 transition-all duration-200">

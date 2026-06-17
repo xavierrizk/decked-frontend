@@ -99,14 +99,14 @@ export default function CreateSet() {
             {/* DJ set → DJ picker; otherwise → artist name */}
             {isDjSet ? (
               <div>
-                <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1.5">DJ</label>
+                <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1.5">Artist</label>
                 {loadingDjs ? (
                   <div className="h-10 bg-white/[0.04] border border-white/10 rounded-xl animate-pulse" />
                 ) : myDjs.length === 0 ? (
                   <p className="text-gray-500 text-sm">No Artist profiles yet.</p>
                 ) : (
                   <select value={djId} onChange={e => setDjId(e.target.value)} required className={inp + ' appearance-none'}>
-                    <option value="" className="bg-[#111]">Select a DJ</option>
+                    <option value="" className="bg-[#111]">Select an Artist</option>
                     {myDjs.map(dj => (
                       <option key={dj.id} value={dj.id} className="bg-[#111]">{dj.name}{dj.verified ? ' ✅' : ''}</option>
                     ))}
@@ -135,7 +135,7 @@ export default function CreateSet() {
                 <p className="text-gray-400 text-sm mb-3">You need a DJ profile to add a DJ set. Adding a concert or other live show? Switch the Type above.</p>
                 <Link to="/request-artist"
                   className="inline-block px-5 py-2 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl text-sm transition-all duration-200 hover:scale-105 shadow-glow">
-                  Request a DJ Profile
+                  Request an Artist Profile
                 </Link>
               </div>
             ) : (

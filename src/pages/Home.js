@@ -433,14 +433,14 @@ export default function Home() {
 
       {/* ── DJ Bento Grid ─────────────────────────────── */}
       <div className="flex items-center justify-between mb-3">
-        <h2 className="section-label">DJs</h2>
+        <h2 className="section-label">Artists</h2>
         <span className="text-gray-600 text-sm">{djs.length} total</span>
       </div>
 
       {djs.length === 0 ? (
         <div className="text-center py-24 border border-white/5">
           <p className="text-5xl mb-4">🎛️</p>
-          <p className="text-gray-500">No DJs yet. Be the first to add one!</p>
+          <p className="text-gray-500">No Artists yet. Be the first to add one!</p>
         </div>
       ) : (
         <>

@@ -23,14 +23,14 @@ export default function FeedPage() {
       <PulsingOrbs />
       <div className="mb-8">
         <h1 className="text-3xl font-extrabold text-white">Your Feed</h1>
-        <p className="text-gray-500 mt-1 text-sm">New sets from DJs you follow</p>
+        <p className="text-gray-500 mt-1 text-sm">New sets from Artists you follow</p>
       </div>
 
       {sets.length === 0 ? (
         <div className="text-center py-20 border border-white/[0.05] rounded-2xl text-gray-600">
           <p className="text-5xl mb-4">🎛️</p>
           <p className="font-semibold text-gray-400 mb-1">Nothing here yet</p>
-          <p className="text-sm">Follow some DJs to see their sets here</p>
+          <p className="text-sm">Follow some Artists to see their sets here</p>
           <Link to="/" className="inline-block mt-5 px-5 py-2 bg-brand-600 hover:bg-brand-500 text-white text-sm font-semibold rounded-xl transition-all hover:scale-105">
             Browse DJs
           </Link>

@@ -184,14 +184,14 @@ export default function ExtendedOnboarding({ onComplete }) {
                       <button
                         key={dj.id}
                         onClick={() => {
-                          if (!selected && selectedDJs.length >= 5) return;
+                          if (!selected && selectedArtists.length >= 5) return;
                           toggleDJ(dj.id);
                         }}
                         className={`relative overflow-hidden aspect-square flex flex-col items-end justify-end p-2 border transition-all duration-150 ${
                           selected
                             ? 'border-[#00D9FF]'
                             : 'border-white/[0.06] hover:border-white/20'
-                        } ${!selected && selectedDJs.length >= 5 ? 'opacity-40' : ''}`}
+                        } ${!selected && selectedArtists.length >= 5 ? 'opacity-40' : ''}`}
                         style={{
                           backgroundImage: dj.profile_image_url ? `url(${dj.profile_image_url})` : undefined,
                           backgroundSize: 'cover',
@@ -212,8 +212,8 @@ export default function ExtendedOnboarding({ onComplete }) {
                     );
                   })}
                 </div>
-                {selectedDJs.length > 0 && (
-                  <p className="text-[#00D9FF] text-xs mt-4">{selectedDJs.length}/5 selected</p>
+                {selectedArtists.length > 0 && (
+                  <p className="text-[#00D9FF] text-xs mt-4">{selectedArtists.length}/5 selected</p>
                 )}
               </div>
             )}
@@ -283,7 +283,7 @@ export default function ExtendedOnboarding({ onComplete }) {
                 <h2 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: '"Space Grotesk", sans-serif' }}>
                   Where are you based?
                 </h2>
-                <p className="text-gray-500 text-sm mb-6">Optional. Helps surface local DJs.</p>
+                <p className="text-gray-500 text-sm mb-6">Optional. Helps surface local Artists.</p>
                 <input
                   type="text"
                   value={location}
@@ -308,8 +308,8 @@ export default function ExtendedOnboarding({ onComplete }) {
                     onEdit={() => goTo(2)}
                   />
                   <SummaryRow
-                    label="Favourite DJs"
-                    value={selectedDJs.length ? `${selectedDJs.length} selected` : 'None selected'}
+                    label="Favourite Artists"
+                    value={selectedArtists.length ? `${selectedArtists.length} selected` : 'None selected'}
                     onEdit={() => goTo(3)}
                   />
                   <SummaryRow

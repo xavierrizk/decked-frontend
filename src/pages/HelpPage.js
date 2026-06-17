@@ -4,18 +4,18 @@ const FAQS = [
   // Getting Started
   { category: 'Getting Started', q: "What is DECK'D?", a: "DECK'D is a community platform where ravers and music fans rate, review, and discover DJ sets. Think of it like Letterboxd but for DJ mixes." },
   { category: 'Getting Started', q: 'How do I sign up?', a: "Click 'Sign Up' on the home page. Verify your email, then you're ready to start rating!" },
-  { category: 'Getting Started', q: "Is DECK'D free?", a: "Yes! DECK'D is completely free to use. Rate sets, follow DJs, and connect with the community at no cost." },
+  { category: 'Getting Started', q: "Is DECK'D free?", a: "Yes! DECK'D is completely free to use. Rate sets, follow Artists, and connect with the community at no cost." },
   // Using DECK'D
   { category: "Using DECK'D", q: "How do I rate a set?", a: "Click on any set to view it. Click the stars to rate it 1–5 (you can give half stars). Optionally add a written review." },
   { category: "Using DECK'D", q: "Can I edit or delete my rating?", a: "Yes! Go to the set and click 'Delete' on your rating. You can then rate it again with a new one." },
   { category: "Using DECK'D", q: "What do the half stars mean?", a: "Half stars let you give more specific ratings, e.g. 4.5 stars for a set that was great but not perfect." },
   { category: "Using DECK'D", q: "How do I follow an Artist?", a: "Go to an Artist's profile and click the 'Follow' button. You'll see their new sets in your activity feed." },
-  { category: "Using DECK'D", q: "What's the activity feed?", a: "Your feed shows new sets from DJs you follow. Visit /feed to see what's new from artists you care about." },
+  { category: "Using DECK'D", q: "What's the activity feed?", a: "Your feed shows new sets from Artists you follow. Visit /feed to see what's new from artists you care about." },
   // Artist Profiles
-  { category: 'Artist Profiles', q: 'How do I create an Artist profile?', a: "Go to 'Become an Artist' and fill out a request. Include links to your Instagram, SoundCloud, etc. so we can verify you're a real DJ. We'll review and approve your profile." },
-  { category: 'Artist Profiles', q: 'Why was my DJ profile rejected?', a: 'We verify DJs to keep the platform authentic. Common reasons: invalid social links, no history as an Artist, or incomplete information. You can re-request after 7 days.' },
-  { category: 'Artist Profiles', q: 'What does the verified badge mean?', a: "A verified badge (✅) means we've confirmed this is an official DJ profile. It helps users trust the profile." },
-  { category: 'Artist Profiles', q: 'Can I upload sets to my DJ profile?', a: "Once your DJ profile is approved, go to 'My DJs' and click 'Add Set'. You can link to a YouTube video and add details like location, genre, and duration." },
+  { category: 'Artist Profiles', q: 'How do I create an Artist profile?', a: "Go to 'Become an Artist' and fill out a request. Include links to your Instagram, SoundCloud, etc. so we can verify you're a real Artist. We'll review and approve your profile." },
+  { category: 'Artist Profiles', q: 'Why was my Artist profile rejected?', a: 'We verify Artists to keep the platform authentic. Common reasons: invalid social links, no history as an Artist, or incomplete information. You can re-request after 7 days.' },
+  { category: 'Artist Profiles', q: 'What does the verified badge mean?', a: "A verified badge (✅) means we've confirmed this is an official Artist profile. It helps users trust the profile." },
+  { category: 'Artist Profiles', q: 'Can I upload sets to my Artist profile?', a: "Once your Artist profile is approved, go to 'My Artists' and click 'Add Set'. You can link to a YouTube video and add details like location, genre, and duration." },
   // Ratings & Reviews
   { category: 'Ratings & Reviews', q: 'Can I rate a set multiple times?', a: 'No, you can only have one rating per set. You can delete your existing rating and submit a new one if you change your mind.' },
   { category: 'Ratings & Reviews', q: 'What should I write in a review?', a: "Be honest! Tell other ravers what you thought. Mention tracks you loved, the energy, the flow — anything that stood out. The community trusts your opinion." },
@@ -24,7 +24,7 @@ const FAQS = [
   { category: 'Account & Profile', q: 'How do I edit my profile?', a: "Click your username in the navbar, then 'Edit Profile'. You can upload a profile picture, write a bio, add your location and more." },
   { category: 'Account & Profile', q: 'Can I delete my account?', a: "We don't have a self-service option yet. Email support@decked.com with your request and we'll delete your account within 7 days." },
   { category: 'Account & Profile', q: 'How do I friend someone?', a: "Go to their profile and click 'Add Friend'. They'll show up in your friends list and you can see what they're rating." },
-  { category: 'Account & Profile', q: "What's the difference between following and friending?", a: "Follow = see new sets from DJs you love. Friend = connect with other users to see what they're rating and reviewing." },
+  { category: 'Account & Profile', q: "What's the difference between following and friending?", a: "Follow = see new sets from Artists you love. Friend = connect with other users to see what they're rating and reviewing." },
   // Technical
   { category: 'Technical', q: 'What video formats do you support?', a: 'We currently support YouTube links. Paste a YouTube URL when creating a set.' },
   { category: 'Technical', q: "Is DECK'D available on mobile?", a: "Yes! DECK'D works great in your phone browser. Native iOS/Android apps are coming soon." },

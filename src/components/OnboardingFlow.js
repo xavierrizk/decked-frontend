@@ -348,7 +348,7 @@ export default function OnboardingFlow({ onComplete }) {
                   <>
                     {djList.length > 0 && (
                       <>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-600 mb-2">DJs</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-600 mb-2">Artists</p>
                         <div className="grid grid-cols-3 gap-2 mb-6">
                           {djList.map(dj => (
                             <DJPickCard

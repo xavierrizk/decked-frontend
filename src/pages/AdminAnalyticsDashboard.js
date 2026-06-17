@@ -150,7 +150,7 @@ function OverviewSection({ headers }) {
         <StatCard icon="👥" label="Total Users"     value={data ? fmtNum(data.totalUsers) : null} />
         <StatCard icon="🎵" label="Total Content"   value={data ? fmtNum(data.totalContent) : null} />
         <StatCard icon="✍️" label="Reviews Written" value={data ? fmtNum(data.totalReviews) : null} />
-        <StatCard icon="✅" label="Verified DJs"    value={data ? fmtNum(data.verifiedDJs) : null} />
+        <StatCard icon="✅" label="Verified Artists"    value={data ? fmtNum(data.verifiedDJs) : null} />
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <StatCard icon="🆕" label="New Users (7d)"    value={data ? fmtNum(data.newUsersThisWeek) : null}
@@ -288,16 +288,16 @@ function DJsSection({ headers }) {
   return (
     <>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
-        <StatCard icon="🎧" label="Total DJs"     value={data ? fmtNum(data.totalDJs) : null} />
-        <StatCard icon="📦" label="Avg Sets / DJ" value={data ? data.avgSetsPerDJ.toFixed(1) : null} />
+        <StatCard icon="🎧" label="Total Artists"     value={data ? fmtNum(data.totalDJs) : null} />
+        <StatCard icon="📦" label="Avg Sets / Artist" value={data ? data.avgSetsPerDJ.toFixed(1) : null} />
       </div>
 
-      <Section title="Top 10 DJs by Followers">
+      <Section title="Top 10 Artists by Followers">
         <SortableTable
           loading={loading}
           defaultSort="follower_count"
           cols={[
-            { key: 'name',           label: 'DJ Name',            render: v => <span className="text-white font-semibold">{v}</span> },
+            { key: 'name',           label: 'Artist Name',            render: v => <span className="text-white font-semibold">{v}</span> },
             { key: 'follower_count', label: 'Followers',          render: v => <span className="text-cyan-400 font-semibold">{v}</span> },
             { key: 'set_count',      label: 'Sets' },
             { key: 'total_ratings',  label: 'Ratings Received' },

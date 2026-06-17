@@ -49,7 +49,7 @@ export default function RequestDJPage() {
       {/* Header */}
       <div className="text-center mb-10">
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-600 to-brand-700 text-3xl mb-4 shadow-glow">🎧</div>
-        <h1 className="text-3xl font-extrabold text-white mb-2">Request a DJ Profile</h1>
+        <h1 className="text-3xl font-extrabold text-white mb-2">Request an Artist Profile</h1>
         <p className="text-gray-500 max-w-sm mx-auto">
           Submit a request to add an Artist to DECK'D. Our team reviews every request within 24 hours.
         </p>
@@ -93,7 +93,7 @@ export default function RequestDJPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1.5">DJ Name <span className="text-red-400">*</span></label>
+            <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1.5">Artist Name <span className="text-red-400">*</span></label>
             <input value={form.dj_name} onChange={set('dj_name')} placeholder="e.g. Fisher, Charlotte de Witte" className={inp} required />
           </div>
           <div>

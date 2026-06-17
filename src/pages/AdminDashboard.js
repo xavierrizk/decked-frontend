@@ -15,9 +15,9 @@ import CommentModerationQueue from './CommentModerationQueue';
 const STATUS_TABS = ['pending', 'approved', 'rejected'];
 const NAV = [
   { id: 'overview',      icon: '📊', label: 'Overview' },
-  { id: 'dj-requests',   icon: '🎧', label: 'DJ Requests' },
+  { id: 'dj-requests',   icon: '🎧', label: 'Artist Requests' },
   { id: 'verifications', icon: '✅', label: 'Verifications' },
-  { id: 'manage-djs',    icon: '🗑️', label: 'Manage DJs' },
+  { id: 'manage-djs',    icon: '🗑️', label: 'Manage Artists' },
   { id: 'manage-sets',   icon: '🎵', label: 'Manage Sets' },
   { id: 'reports',       icon: '🚩', label: 'Reports & Moderation' },
   { id: 'ban-users',     icon: '🔒', label: 'Ban Users' },
@@ -94,7 +94,7 @@ export default function AdminDashboard() {
     fetchSection(section);
   };
 
-  const approveDjReq = async (id) => { setActionId(id); try { await act(`/api/admin/dj-requests/${id}/approve`, 'patch'); showToast('DJ profile approved!'); } catch {} setActionId(null); };
+  const approveDjReq = async (id) => { setActionId(id); try { await act(`/api/admin/dj-requests/${id}/approve`, 'patch'); showToast('Artist profile approved!'); } catch {} setActionId(null); };
   const rejectDjReq  = async (id) => { setActionId(id); try { await act(`/api/admin/dj-requests/${id}/reject`, 'patch', { admin_notes: rejectNotes[id] || '' }); showToast('Request rejected'); } catch {} setActionId(null); };
   const approveVerif = async (id) => { setActionId(id); try { await act(`/api/admin/verification-requests/${id}/approve`, 'patch'); showToast('Verification approved! ✅'); } catch {} setActionId(null); };
   const rejectVerif  = async (id) => { setActionId(id); try { await act(`/api/admin/verification-requests/${id}/reject`, 'patch', { admin_notes: rejectNotes[id] || '' }); showToast('Verification rejected'); } catch {} setActionId(null); };
@@ -115,7 +115,7 @@ export default function AdminDashboard() {
       const { type, item } = deleteModal;
       if (type === 'dj') {
         await axios.delete(`${API_URL}/api/admin/djs/${item.id}`, { headers });
-        showToast(`Deleted DJ "${item.name}" and all their sets`);
+        showToast(`Deleted Artist "${item.name}" and all their sets`);
         setAllDjs(prev => prev.filter(d => d.id !== item.id));
       } else {
         await axios.delete(`${API_URL}/api/admin/sets/${item.id}`, { headers });
@@ -142,10 +142,10 @@ export default function AdminDashboard() {
         onConfirm={confirmDelete}
         loading={deleteLoading}
         title={deleteModal.type === 'dj'
-          ? `Delete DJ "${deleteModal.item?.name}"?`
+          ? `Delete Artist "${deleteModal.item?.name}"?`
           : `Delete "${deleteModal.item?.title}"?`}
         warning={deleteModal.type === 'dj'
-          ? `This will permanently delete this DJ and ALL their sets, ratings, comments, and likes. This cannot be undone.`
+          ? `This will permanently delete this Artist and ALL their sets, ratings, comments, and likes. This cannot be undone.`
           : `This will permanently delete this set and all its ratings, comments, and likes. This cannot be undone.`}
         stats={deleteModal.type === 'dj' && deleteModal.stats ? [
           { label: 'Sets',      value: deleteModal.stats.set_count },
@@ -211,11 +211,11 @@ export default function AdminDashboard() {
         {/* DJ Requests */}
         {section === 'dj-requests' && (
           <div>
-            <SectionHeader title="🎧 DJ Requests" subtitle="Review and approve DJ profile requests" />
-            <Toolbar tabs={STATUS_TABS} active={djReqTab} onChange={t => { setDjReqTab(t); setSearchQ(''); }} searchQ={searchQ} onSearch={setSearchQ} placeholder="Filter by DJ name or user…" />
+            <SectionHeader title="🎧 Artist Requests" subtitle="Review and approve Artist profile requests" />
+            <Toolbar tabs={STATUS_TABS} active={djReqTab} onChange={t => { setDjReqTab(t); setSearchQ(''); }} searchQ={searchQ} onSearch={setSearchQ} placeholder="Filter by Artist name or user…" />
             {loading ? <Skeletons /> : (() => {
               const rows = filtered(djRequests, ['dj_name', 'username']);
-              return rows.length === 0 ? <Empty label={`No ${djReqTab} DJ requests`} icon={STATUS_ICON[djReqTab]} />
+              return rows.length === 0 ? <Empty label={`No ${djReqTab} Artist requests`} icon={STATUS_ICON[djReqTab]} />
                 : <div className="space-y-4">{rows.map(r => <DjRequestCard key={r.id} r={r} tab={djReqTab} actionId={actionId} onApprove={() => approveDjReq(r.id)} onReject={() => rejectDjReq(r.id)} note={rejectNotes[r.id] || ''} onNoteChange={v => setRejectNotes(p => ({...p,[r.id]:v}))} />)}</div>;
             })()}
           </div>
@@ -224,8 +224,8 @@ export default function AdminDashboard() {
         {/* Verifications */}
         {section === 'verifications' && (
           <div>
-            <SectionHeader title="✅ Verifications" subtitle="Badge requests from DJs" />
-            <Toolbar tabs={STATUS_TABS} active={verifTab} onChange={t => { setVerifTab(t); setSearchQ(''); }} searchQ={searchQ} onSearch={setSearchQ} placeholder="Filter by DJ name…" />
+            <SectionHeader title="✅ Verifications" subtitle="Badge requests from Artists" />
+            <Toolbar tabs={STATUS_TABS} active={verifTab} onChange={t => { setVerifTab(t); setSearchQ(''); }} searchQ={searchQ} onSearch={setSearchQ} placeholder="Filter by Artist name…" />
             {loading ? <Skeletons /> : (() => {
               const rows = filtered(verifRequests, ['dj_name', 'username']);
               return rows.length === 0 ? <Empty label={`No ${verifTab} verification requests`} icon={STATUS_ICON[verifTab]} />
@@ -237,11 +237,11 @@ export default function AdminDashboard() {
         {/* Manage DJs */}
         {section === 'manage-djs' && (
           <div>
-            <SectionHeader title="🗑️ Manage DJs" subtitle="Delete DJ profiles and all associated content" danger />
-            <Toolbar searchQ={searchQ} onSearch={setSearchQ} placeholder="Search DJs…" />
+            <SectionHeader title="🗑️ Manage Artists" subtitle="Delete Artist profiles and all associated content" danger />
+            <Toolbar searchQ={searchQ} onSearch={setSearchQ} placeholder="Search Artists…" />
             {loading ? <Skeletons /> : (() => {
               const rows = filtered(allDjs, ['name']);
-              return rows.length === 0 ? <Empty label="No DJs found" icon="🎧" />
+              return rows.length === 0 ? <Empty label="No Artists found" icon="🎧" />
                 : (
                   <div className="space-y-2">
                     {rows.map(dj => (
@@ -272,7 +272,7 @@ export default function AdminDashboard() {
         {section === 'manage-sets' && (
           <div>
             <SectionHeader title="🎵 Manage Sets" subtitle="Delete individual sets" danger />
-            <Toolbar searchQ={searchQ} onSearch={setSearchQ} placeholder="Search by title or DJ…" />
+            <Toolbar searchQ={searchQ} onSearch={setSearchQ} placeholder="Search by title or Artist…" />
             {loading ? <Skeletons /> : (() => {
               const rows = filtered(allSets, ['title', 'dj_name']);
               return rows.length === 0 ? <Empty label="No sets found" icon="🎵" />

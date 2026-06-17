@@ -199,7 +199,7 @@ export default function SearchPage() {
           {/* DJs */}
           {(tab === 'All' || tab === 'Artists') && artistProfiles.length > 0 && (
             <section>
-              {tab === 'All' && <SectionLabel>🎧 DJs ({artistProfiles.length})</SectionLabel>}
+              {tab === 'All' && <SectionLabel>🎧 Artists ({artistProfiles.length})</SectionLabel>}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {artistProfiles.map(dj => (
                   <ArtistCard key={dj.id} dj={dj} showFollow={false} />
