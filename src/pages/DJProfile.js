@@ -66,9 +66,9 @@ export default function ArtistProfilePage() {
   };
 
   if (loading) return <Spinner />;
-  if (!artistProfile) return <div className="text-center py-20 text-gray-600">DJ not found</div>;
+  if (!artistProfile) return <div className="text-center py-20 text-gray-600">Artist not found</div>;
 
-  const isOwnDj = dj.user_id === currentUserId;
+  const isOwnDj = artistProfile.user_id === currentUserId;
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
