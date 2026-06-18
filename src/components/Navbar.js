@@ -6,41 +6,62 @@ import { getCurrentUserId, getIsAdmin, getCurrentUsername } from '../utils/auth'
 import ProfileDropdown from './ProfileDropdown';
 
 const NAV_LINKS = [
-  { to: '/discover',  label: 'Discover',  icon: '🧭' },
-  { to: '/trending',  label: 'Trending',  icon: '🔥' },
-  { to: '/concerts',  label: 'Concerts',  icon: '🎤' },
-  { to: '/festivals', label: 'Festivals', icon: '🎪' },
-  { to: '/help',      label: 'Help',      icon: '❓' },
+  { to: '/discover',   label: 'DISCOVER'   },
+  { to: '/sets',       label: 'SETS'        },
+  { to: '/artists',    label: 'ARTISTS'     },
+  { to: '/venues',     label: 'VENUES'      },
+  { to: '/trending',   label: 'TRENDING'    },
+  { to: '/community',  label: 'COMMUNITY'   },
 ];
 
-const AUTH_LINKS = [
-  { to: '/feed',      label: 'Feed',    icon: '📰' },
-  { to: '/my-artists', label: 'My Artists',  icon: '🎧' },
-  { to: '/create-set', label: 'Add Set', icon: '+' },
-];
+const SearchIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8" />
+    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+  </svg>
+);
 
-function NavIconBtn({ to, label, icon, badge, className = '' }) {
+const BellIcon = ({ badge }) => (
+  <span className="relative">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+    </svg>
+    {badge > 0 && (
+      <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[#FF006E] text-white text-[8px] font-bold rounded-full flex items-center justify-center">
+        {badge > 9 ? '9+' : badge}
+      </span>
+    )}
+  </span>
+);
+
+const MenuIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="3" y1="6" x2="21" y2="6" />
+    <line x1="3" y1="12" x2="21" y2="12" />
+    <line x1="3" y1="18" x2="21" y2="18" />
+  </svg>
+);
+
+const CloseIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+);
+
+function NavLink({ to, label }) {
   const location = useLocation();
-  const active = location.pathname === to;
+  const active = location.pathname === to || (to !== '/' && location.pathname.startsWith(to));
   return (
     <Link
       to={to}
-      title={label}
-      aria-label={label}
-      className={`relative flex items-center justify-center w-8 h-8 rounded transition-all duration-150 group
-        ${active ? 'text-white bg-white/10' : 'text-gray-500 hover:text-white hover:bg-white/[0.06]'}
-        ${className}`}
+      className={`text-[11px] font-bold tracking-[0.12em] transition-colors duration-150 whitespace-nowrap ${
+        active ? 'text-[#00D9FF]' : 'text-[#8a8f97] hover:text-[#F5F5F5]'
+      }`}
+      style={{ fontFamily: '"Space Grotesk", sans-serif' }}
     >
-      <span className="text-base leading-none select-none">{icon}</span>
-      {badge > 0 && (
-        <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center">
-          {badge > 9 ? '9+' : badge}
-        </span>
-      )}
-      {/* Tooltip */}
-      <span className="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 mt-1.5 px-2 py-0.5 text-[10px] font-semibold text-white bg-black/90 border border-white/10 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-50">
-        {label}
-      </span>
+      {label}
     </Link>
   );
 }
@@ -54,9 +75,14 @@ export default function Navbar({ isLoggedIn, onLogout }) {
   const [suggestions, setSuggestions] = useState([]);
   const [showSugg, setShowSugg]       = useState(false);
   const [searchOpen, setSearchOpen]   = useState(false);
-  const debounceRef = useRef(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const debounceRef    = useRef(null);
   const searchInputRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Close mobile menu on route change
+  useEffect(() => { setMobileMenuOpen(false); }, [location.pathname]);
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -104,124 +130,199 @@ export default function Navbar({ isLoggedIn, onLogout }) {
     setTimeout(() => searchInputRef.current?.focus(), 50);
   };
 
+  const closeSearch = () => {
+    setSearchOpen(false);
+    setSearchQuery('');
+    setSuggestions([]);
+  };
+
   return (
-    <nav className="relative z-20 border-b border-white/[0.06] bg-black/70 backdrop-blur-md" style={{ height: '44px' }}>
-      <div className="max-w-7xl mx-auto px-4 h-full flex items-center gap-3">
+    <>
+      <nav
+        className="relative z-20 border-b border-white/[0.06] backdrop-blur-md"
+        style={{ height: '60px', background: '#0a0a0a' }}
+      >
+        <div className="max-w-7xl mx-auto px-5 h-full flex items-center gap-6">
 
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-1.5 group flex-shrink-0 mr-1">
-          <div className="relative w-5 h-5 flex-shrink-0">
-            <div className="absolute inset-0 rounded-full opacity-90" style={{ background: 'linear-gradient(135deg, #5A6470, #00D9FF)' }} />
-            <div className="absolute inset-[3px] rounded-full bg-[#0a0a0a]" />
-            <div className="absolute inset-[6.5px] rounded-full opacity-80" style={{ background: 'linear-gradient(135deg, #00D9FF, #FF006E)' }} />
-            <div className="absolute inset-[8.5px] rounded-full bg-[#0a0a0a]" />
-          </div>
-          <span
-            className="text-sm font-bold tracking-tight leading-none"
-            style={{
-              fontFamily: '"Space Grotesk", sans-serif',
-              background: 'linear-gradient(135deg, #F5F5F5, #00D9FF)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
-          >
-            DECK&apos;D
-          </span>
-        </Link>
-
-        {/* Divider */}
-        <div className="w-px h-5 bg-white/[0.08] flex-shrink-0 hidden sm:block" />
-
-        {/* Nav icon buttons */}
-        <div className="hidden sm:flex items-center gap-0.5 flex-shrink-0">
-          {NAV_LINKS.map(l => <NavIconBtn key={l.to} {...l} />)}
-          {isLoggedIn && AUTH_LINKS.map(l => <NavIconBtn key={l.to} {...l} />)}
-        </div>
-
-        {/* Divider */}
-        <div className="w-px h-5 bg-white/[0.08] flex-shrink-0 hidden sm:block" />
-
-        {/* Search — expands inline */}
-        <div className="flex-1 relative hidden sm:block" style={{ maxWidth: '280px' }}>
-          {searchOpen ? (
-            <form onSubmit={handleSearch} className="flex items-center gap-2 bg-white/[0.07] border border-brand-600/30 rounded px-2.5 py-1 transition-all duration-200">
-              <span className="text-gray-500 text-xs">🔍</span>
-              <input
-                ref={searchInputRef}
-                value={searchQuery}
-                onChange={e => { setSearchQuery(e.target.value); setShowSugg(true); }}
-                onBlur={() => { setTimeout(() => { setShowSugg(false); if (!searchQuery) setSearchOpen(false); }, 150); }}
-                placeholder="Search Artists, sets…"
-                className="flex-1 bg-transparent text-white text-sm placeholder-gray-600 outline-none"
-              />
-              <button type="button" onClick={() => { setSearchOpen(false); setSearchQuery(''); setSuggestions([]); }}
-                className="text-gray-600 hover:text-white text-xs transition-colors">✕</button>
-            </form>
-          ) : (
-            <button onClick={openSearch}
-              className="flex items-center gap-2 w-full bg-white/[0.04] border border-white/[0.06] hover:border-white/10 rounded px-2.5 py-1 text-gray-600 hover:text-gray-400 text-sm transition-all duration-200">
-              <span className="text-xs">🔍</span>
-              <span className="text-xs">Search…</span>
-            </button>
-          )}
-
-          {/* Autocomplete */}
-          {showSugg && suggestions.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-1 bg-[#0d0d0f] border border-white/10 rounded overflow-hidden z-50 shadow-xl">
-              {suggestions.map((s, i) => (
-                <button key={i} onMouseDown={() => handleSuggClick(s)}
-                  className="w-full flex items-center gap-2 px-3 py-2 hover:bg-white/[0.05] transition-colors text-left">
-                  <span className="text-xs">{s.type === 'dj' ? '🎧' : s.type === 'set' ? '🎵' : '👤'}</span>
-                  <span className="text-white text-xs truncate">{s.label}</span>
-                  <span className="text-gray-600 text-[10px] ml-auto capitalize flex-shrink-0">{s.type}</span>
-                </button>
-              ))}
-              <button onMouseDown={() => { navigate(`/search?q=${encodeURIComponent(searchQuery)}`); setSearchQuery(''); setShowSugg(false); setSearchOpen(false); }}
-                className="w-full flex items-center gap-2 px-3 py-2 border-t border-white/[0.06] hover:bg-white/[0.05] transition-colors text-left">
-                <span className="text-gray-500 text-xs">🔍</span>
-                <span className="text-gray-400 text-xs">All results for "{searchQuery}"</span>
-              </button>
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-2 group flex-shrink-0">
+            <div className="relative w-6 h-6 flex-shrink-0">
+              <div className="absolute inset-0 rounded-full" style={{ background: 'linear-gradient(135deg, #5A6470, #00D9FF)' }} />
+              <div className="absolute inset-[3.5px] rounded-full bg-[#0a0a0a]" />
+              <div className="absolute inset-[7px] rounded-full" style={{ background: 'linear-gradient(135deg, #00D9FF, #FF006E)' }} />
+              <div className="absolute inset-[9.5px] rounded-full bg-[#0a0a0a]" />
             </div>
-          )}
-        </div>
-
-        {/* Spacer */}
-        <div className="flex-1" />
-
-        {/* Right actions */}
-        <div className="flex items-center gap-1">
-          {/* Mobile search */}
-          <Link to="/search" className="sm:hidden flex items-center justify-center w-8 h-8 text-gray-500 hover:text-white transition-colors">
-            <span className="text-sm">🔍</span>
+            <span
+              className="text-sm font-black tracking-tight leading-none"
+              style={{
+                fontFamily: '"Space Grotesk", sans-serif',
+                background: 'linear-gradient(135deg, #F5F5F5 30%, #00D9FF)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
+              DECK&apos;D
+            </span>
           </Link>
 
-          {isLoggedIn ? (
-            <>
-              <NavIconBtn to="/notifications" label="Notifications" icon="🔔" badge={unread} />
-              <div className="ml-1">
+          {/* Divider */}
+          <div className="w-px h-4 bg-white/[0.1] flex-shrink-0 hidden lg:block" />
+
+          {/* Desktop nav links */}
+          <div className="hidden lg:flex items-center gap-5">
+            {NAV_LINKS.map(l => <NavLink key={l.to} {...l} />)}
+          </div>
+
+          {/* Spacer */}
+          <div className="flex-1" />
+
+          {/* Search */}
+          <div className="relative hidden sm:block">
+            {searchOpen ? (
+              <form onSubmit={handleSearch} className="flex items-center gap-2 border border-[#00D9FF]/40 rounded-md px-3 py-1.5 bg-white/[0.05] transition-all duration-200" style={{ minWidth: '220px' }}>
+                <SearchIcon />
+                <input
+                  ref={searchInputRef}
+                  value={searchQuery}
+                  onChange={e => { setSearchQuery(e.target.value); setShowSugg(true); }}
+                  onBlur={() => { setTimeout(() => { setShowSugg(false); if (!searchQuery) closeSearch(); }, 150); }}
+                  placeholder="Search artists, sets…"
+                  className="flex-1 bg-transparent text-white text-sm placeholder-gray-600 outline-none"
+                />
+                <button type="button" onClick={closeSearch} className="text-gray-600 hover:text-white transition-colors">
+                  <CloseIcon />
+                </button>
+              </form>
+            ) : (
+              <button
+                onClick={openSearch}
+                className="flex items-center justify-center w-8 h-8 text-[#8a8f97] hover:text-[#F5F5F5] transition-colors duration-150"
+                aria-label="Search"
+              >
+                <SearchIcon />
+              </button>
+            )}
+
+            {/* Autocomplete dropdown */}
+            {showSugg && suggestions.length > 0 && (
+              <div className="absolute top-full right-0 mt-2 w-72 bg-[#0d0d0f] border border-white/10 rounded-lg overflow-hidden z-50 shadow-2xl">
+                {suggestions.map((s, i) => (
+                  <button key={i} onMouseDown={() => handleSuggClick(s)}
+                    className="w-full flex items-center gap-2.5 px-3 py-2.5 hover:bg-white/[0.05] transition-colors text-left">
+                    <span className="text-xs text-gray-500">{s.type === 'dj' ? '🎧' : s.type === 'set' ? '🎵' : '👤'}</span>
+                    <span className="text-white text-sm truncate">{s.label}</span>
+                    <span className="text-gray-600 text-[10px] ml-auto capitalize flex-shrink-0">{s.type}</span>
+                  </button>
+                ))}
+                <button
+                  onMouseDown={() => { navigate(`/search?q=${encodeURIComponent(searchQuery)}`); setSearchQuery(''); setShowSugg(false); closeSearch(); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2.5 border-t border-white/[0.06] hover:bg-white/[0.05] transition-colors text-left"
+                >
+                  <SearchIcon />
+                  <span className="text-gray-400 text-xs">All results for "{searchQuery}"</span>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Right actions */}
+          <div className="flex items-center gap-2">
+            {isLoggedIn ? (
+              <>
+                <Link
+                  to="/notifications"
+                  className="flex items-center justify-center w-8 h-8 text-[#8a8f97] hover:text-[#F5F5F5] transition-colors duration-150"
+                  aria-label="Notifications"
+                >
+                  <BellIcon badge={unread} />
+                </Link>
                 <ProfileDropdown
                   userId={userId}
                   username={username}
                   isAdmin={isAdmin}
                   onLogout={onLogout}
                 />
+              </>
+            ) : (
+              <div className="hidden sm:flex items-center gap-2">
+                <Link
+                  to="/login"
+                  className="text-[11px] font-bold tracking-[0.1em] text-[#8a8f97] hover:text-[#F5F5F5] transition-colors duration-150"
+                  style={{ fontFamily: '"Space Grotesk", sans-serif' }}
+                >
+                  LOG IN
+                </Link>
+                <Link
+                  to="/signup"
+                  className="text-[11px] font-bold tracking-[0.1em] px-3 py-1.5 rounded transition-all duration-150 hover:opacity-90 active:scale-95"
+                  style={{ background: '#00D9FF', color: '#0a0a0a', fontFamily: '"Space Grotesk", sans-serif' }}
+                >
+                  SIGN UP
+                </Link>
               </div>
-            </>
-          ) : (
-            <>
-              <Link to="/login"
-                className="flex items-center h-7 px-3 text-gray-400 hover:text-white text-xs font-medium transition-colors">
-                Login
-              </Link>
-              <Link to="/signup"
-                className="flex items-center h-7 px-3 text-xs font-semibold transition-all duration-150 hover:scale-105 active:scale-95" style={{ background: '#00D9FF', color: '#0a0a0a' }}>
-                Sign Up
-              </Link>
-            </>
+            )}
+
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setMobileMenuOpen(o => !o)}
+              className="lg:hidden flex items-center justify-center w-8 h-8 text-[#8a8f97] hover:text-[#F5F5F5] transition-colors duration-150"
+              aria-label="Menu"
+            >
+              {mobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile menu overlay */}
+      {mobileMenuOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-[19] bg-black/60 backdrop-blur-sm"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Mobile menu drawer */}
+      <div
+        className={`lg:hidden fixed top-[60px] left-0 right-0 z-[18] border-b border-white/[0.08] transition-all duration-200 ${
+          mobileMenuOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'
+        }`}
+        style={{ background: '#0a0a0a' }}
+      >
+        <div className="px-5 py-4 flex flex-col gap-1">
+          {/* Search on mobile */}
+          <form onSubmit={handleSearch} className="flex items-center gap-2 border border-white/[0.1] rounded-md px-3 py-2 mb-3 bg-white/[0.04]">
+            <SearchIcon />
+            <input
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Search artists, sets…"
+              className="flex-1 bg-transparent text-white text-sm placeholder-gray-600 outline-none"
+            />
+          </form>
+
+          {NAV_LINKS.map(l => (
+            <Link
+              key={l.to}
+              to={l.to}
+              className="text-[12px] font-bold tracking-[0.12em] text-[#8a8f97] hover:text-[#00D9FF] py-2.5 border-b border-white/[0.04] transition-colors duration-150"
+              style={{ fontFamily: '"Space Grotesk", sans-serif' }}
+            >
+              {l.label}
+            </Link>
+          ))}
+
+          {!isLoggedIn && (
+            <div className="flex gap-3 pt-3">
+              <Link to="/login" className="flex-1 text-center text-[11px] font-bold tracking-[0.1em] py-2 border border-white/20 rounded text-[#8a8f97] hover:text-white hover:border-white/40 transition-colors"
+                style={{ fontFamily: '"Space Grotesk", sans-serif' }}>LOG IN</Link>
+              <Link to="/signup" className="flex-1 text-center text-[11px] font-bold tracking-[0.1em] py-2 rounded transition-opacity hover:opacity-90"
+                style={{ background: '#00D9FF', color: '#0a0a0a', fontFamily: '"Space Grotesk", sans-serif' }}>SIGN UP</Link>
+            </div>
           )}
         </div>
       </div>
-    </nav>
+    </>
   );
 }
