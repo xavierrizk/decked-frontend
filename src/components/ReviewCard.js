@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { StarDisplay } from './StarRating';
-import VideoPlayer from './VideoPlayer';
 
 export default function ReviewCard({ review, onLikeToggle, onOpen, currentUserId }) {
   const [likeAnim, setLikeAnim] = useState(false);
-  const [videoOpen, setVideoOpen] = useState(false);
 
   const isOwn = review.user?.id === currentUserId;
   const isPopular = (review.like_count || 0) >= 10;
@@ -98,27 +96,23 @@ export default function ReviewCard({ review, onLikeToggle, onOpen, currentUserId
         </p>
       )}
 
-      {/* Video thumbnail */}
+      {/* Video clip */}
       {review.video_url && (
-        <div className="mt-3">
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); setVideoOpen(true); }}
-            className="relative w-full rounded-lg overflow-hidden bg-black border border-white/10 group"
-            style={{ aspectRatio: '16/9' }}>
-            <video src={review.video_url} className="w-full h-full object-cover opacity-70 group-hover:opacity-90 transition-opacity" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-10 h-10 rounded-full bg-[#00D9FF]/20 border border-[#00D9FF]/50 flex items-center justify-center backdrop-blur-sm">
-                <span className="text-[#00D9FF] text-sm ml-0.5">▶</span>
-              </div>
-            </div>
+        <div className="mt-3 rounded-xl overflow-hidden border border-[#00D9FF]/20 bg-black">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-[#00D9FF]/10 border-b border-[#00D9FF]/20">
+            <span className="text-[#00D9FF] text-xs">▶</span>
+            <span className="text-[#00D9FF] text-xs font-semibold uppercase tracking-wider">Video Clip</span>
             {review.video_duration && (
-              <span className="absolute bottom-1.5 right-1.5 text-[10px] bg-black/70 text-white px-1.5 py-0.5 rounded font-mono">
-                {Math.floor(review.video_duration)}s
-              </span>
+              <span className="ml-auto text-gray-500 text-[10px] font-mono">{Math.floor(review.video_duration)}s</span>
             )}
-          </button>
-          <VideoPlayer url={review.video_url} open={videoOpen} onClose={() => setVideoOpen(false)} />
+          </div>
+          <video
+            src={review.video_url}
+            controls
+            playsInline
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-h-56 object-contain bg-black"
+          />
         </div>
       )}
 

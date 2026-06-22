@@ -34,6 +34,7 @@ export default function EnhancedRateSet() {
   const [reviewText, setReviewText] = useState('');
   const [isFavorited, setIsFavorited] = useState(false);
   const [videoFile, setVideoFile] = useState(null);
+  const [existingVideoUrl, setExistingVideoUrl] = useState(null);
   const [videoUploading, setVideoUploading] = useState(false);
 
   const overallRating = Math.round(((performanceRating + venueRating + crowdRating) / 3) * 2) / 2;
@@ -64,6 +65,7 @@ export default function EnhancedRateSet() {
             setReviewTitle(existing.review_title || '');
             setReviewText(existing.review_text || '');
             setIsFavorited(existing.is_favorited || false);
+            setExistingVideoUrl(existing.video_url || null);
           }
         }
       } catch (err) {
@@ -253,10 +255,35 @@ export default function EnhancedRateSet() {
             <div>
               <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wider mb-2">
                 Video Clip{' '}
-                <span className="text-gray-600 normal-case tracking-normal font-normal">(optional · max 30s · 25MB)</span>
+                <span className="text-gray-600 normal-case tracking-normal font-normal">(optional · max 30s · 500MB)</span>
               </label>
+
+              {/* Show existing video in edit mode (until user picks a new one) */}
+              {existingVideoUrl && !videoFile && (
+                <div className="mb-2 rounded-xl overflow-hidden border border-white/10 bg-black">
+                  <video src={existingVideoUrl} controls playsInline className="w-full max-h-48 object-contain" />
+                  <div className="flex items-center justify-between px-3 py-2 bg-[#111114]">
+                    <span className="text-gray-400 text-xs">Current video</span>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        if (!window.confirm('Remove this video?')) return;
+                        const token = localStorage.getItem('token');
+                        await axios.delete(`${API_URL}/api/reviews/${existingReviewId}/video`, {
+                          headers: { Authorization: `Bearer ${token}` },
+                        }).catch(() => {});
+                        setExistingVideoUrl(null);
+                      }}
+                      className="text-red-400 hover:text-red-300 text-xs font-semibold"
+                    >
+                      ✕ Remove
+                    </button>
+                  </div>
+                </div>
+              )}
+
               <VideoUploader
-                onFileSelected={setVideoFile}
+                onFileSelected={(f) => { setVideoFile(f); if (f) setExistingVideoUrl(null); }}
                 onClear={() => setVideoFile(null)}
                 disabled={submitting || videoUploading}
               />
