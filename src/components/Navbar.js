@@ -292,7 +292,7 @@ export default function Navbar({ isLoggedIn, onLogout }) {
 
       {/* Mobile menu drawer */}
       <div
-        className={`lg:hidden fixed top-[60px] left-0 right-0 z-[18] border-b border-white/[0.08] transition-all duration-200 ${
+        className={`lg:hidden fixed top-[60px] left-0 right-0 z-[20] border-b border-white/[0.08] transition-all duration-200 ${
           mobileMenuOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 -translate-y-2 pointer-events-none'
         }`}
         style={{ background: '#0a0a0a' }}
