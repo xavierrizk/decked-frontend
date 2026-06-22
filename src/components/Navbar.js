@@ -231,6 +231,13 @@ export default function Navbar({ isLoggedIn, onLogout }) {
             {isLoggedIn ? (
               <>
                 <Link
+                  to="/create-set"
+                  className="hidden sm:flex items-center gap-1.5 h-7 px-3 rounded text-[11px] font-bold tracking-[0.08em] transition-all duration-150 hover:opacity-90 active:scale-95 flex-shrink-0"
+                  style={{ background: '#FF006E', color: '#fff', fontFamily: '"Space Grotesk", sans-serif' }}
+                >
+                  + Add Set
+                </Link>
+                <Link
                   to="/notifications"
                   className="flex items-center justify-center w-8 h-8 text-[#8a8f97] hover:text-[#F5F5F5] transition-colors duration-150"
                   aria-label="Notifications"
@@ -312,6 +319,16 @@ export default function Navbar({ isLoggedIn, onLogout }) {
               {l.label}
             </Link>
           ))}
+
+          {isLoggedIn && (
+            <Link
+              to="/create-set"
+              className="mt-2 block text-center text-[11px] font-bold tracking-[0.1em] py-2.5 rounded transition-opacity hover:opacity-90"
+              style={{ background: '#FF006E', color: '#fff', fontFamily: '"Space Grotesk", sans-serif' }}
+            >
+              + ADD SET
+            </Link>
+          )}
 
           {!isLoggedIn && (
             <div className="flex gap-3 pt-3">

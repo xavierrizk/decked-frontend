@@ -150,10 +150,11 @@ export default function ProfileDropdown({ userId, username, isAdmin, onLogout })
           <MenuItem to={`/profile/${userId}?tab=favorites`}    onClick={close} icon={<IconHeart />} label="Favorite Reviews" />
 
           {/* Section 2: Creator */}
-          {isArtist && artistId && (
+          {isArtist && (
             <>
               <Divider />
-              <MenuItem to={`/artist/${artistId}`} onClick={close} icon={<IconVinyl />} label="My Artist Profile" />
+              <MenuItem to="/my-artists"    onClick={close} icon={<IconVinyl />} label="My Artists" />
+              <MenuItem to="/create-set"    onClick={close} icon={<IconStar />}  label="Add Set" />
             </>
           )}
 
