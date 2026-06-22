@@ -21,243 +21,89 @@ const accentGrads = [
   '#059669, #064e3b',
 ];
 
-const accentSolids = ['#5A6470', '#3b82f6', '#06b6d4', '#ec4899'];
-
 /* ─── card sub-components ─────────────────────────── */
+
+// Large hero card for the featured artist
 function FeaturedDJCard({ dj, className = '' }) {
   const bg = dj.profile_image_url
     ? `url(${dj.profile_image_url})`
     : `linear-gradient(135deg, ${accentGrads[dj.id % accentGrads.length]})`;
-
   return (
     <Link
       to={`/artist/${dj.id}`}
       className={`relative overflow-hidden group cursor-pointer ${className}`}
-      style={{ backgroundImage: bg, backgroundSize: 'cover', backgroundPosition: 'center' }}
+      style={{ backgroundImage: bg, backgroundSize: 'cover', backgroundPosition: 'center top' }}
     >
-      {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-      {/* Featured badge */}
-      <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-black/40 backdrop-blur-md border border-white/20 rounded-full px-3 py-1">
-        <span className="text-yellow-400 text-xs">⭐</span>
-        <span className="text-white text-xs font-semibold">Featured</span>
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+      <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-black/50 backdrop-blur-md border border-white/20 rounded-full px-3 py-1">
+        <span className="text-yellow-400 text-xs">★</span>
+        <span className="text-white text-xs font-semibold tracking-wide">Featured</span>
       </div>
-      {/* Verified */}
       {dj.verified && (
-        <div className="absolute top-4 right-4 bg-black/40 backdrop-blur-md border border-white/20 rounded-full px-3 py-1">
-          <span className="text-xs text-white">✅ Verified</span>
+        <div className="absolute top-4 right-4 bg-black/50 backdrop-blur-md border border-white/20 rounded-full px-2.5 py-1">
+          <span className="text-xs text-white">✅</span>
         </div>
       )}
-      {/* Bottom info */}
       <div className="absolute bottom-0 left-0 right-0 p-6">
-        {dj.genre && (
-          <p className="text-[#00D9FF] text-xs font-semibold uppercase tracking-widest mb-1">{dj.genre}</p>
-        )}
-        <h2 className="text-white text-3xl font-black leading-tight mb-1 group-hover:text-[#00D9FF] transition-colors">
+        {dj.genre && <p className="text-gray-400 text-xs font-medium uppercase tracking-widest mb-1">{dj.genre}</p>}
+        <h2 className="text-white text-3xl font-black leading-tight mb-2 group-hover:text-[#00D9FF] transition-colors duration-200">
           {dj.name}
         </h2>
-        <div className="flex items-center gap-4 mt-2">
-          <span className="text-gray-300 text-sm">
-            <span className="text-white font-bold">{fmt(dj.follower_count)}</span> followers
-          </span>
-          <span className="text-gray-300 text-sm">
-            <span className="text-white font-bold">{dj.set_count}</span> sets
-          </span>
+        <div className="flex items-center gap-4">
+          <span className="text-gray-400 text-sm"><span className="text-white font-bold">{fmt(dj.follower_count)}</span> followers</span>
+          <span className="text-gray-400 text-sm"><span className="text-white font-bold">{dj.set_count}</span> sets</span>
         </div>
-        {dj.bio && (
-          <p className="text-gray-400 text-sm mt-2 line-clamp-2 leading-relaxed">{dj.bio}</p>
-        )}
+        {dj.bio && <p className="text-gray-500 text-sm mt-2 line-clamp-2">{dj.bio}</p>}
       </div>
-      <div className="absolute inset-0 bg-purple-600/0 group-hover:bg-brand-500/5 transition-colors duration-300" />
     </Link>
   );
 }
 
+// One unified card used for ALL non-featured slots — full-bleed image, text overlay at bottom
+function ArtistGridCard({ dj, className = '' }) {
+  const bg = dj.profile_image_url
+    ? `url(${dj.profile_image_url})`
+    : `linear-gradient(135deg, ${accentGrads[dj.id % accentGrads.length]})`;
+  return (
+    <Link
+      to={`/artist/${dj.id}`}
+      className={`relative overflow-hidden group cursor-pointer ${className}`}
+      style={{ backgroundImage: bg, backgroundSize: 'cover', backgroundPosition: 'center top' }}
+    >
+      {/* Gradient: transparent top, heavy black bottom */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent group-hover:from-black/90 transition-all duration-300" />
+      {dj.verified && (
+        <div className="absolute top-2 right-2 text-xs bg-black/40 backdrop-blur-sm rounded-full px-1.5 py-0.5 border border-white/10">✅</div>
+      )}
+      <div className="absolute bottom-0 left-0 right-0 p-3">
+        <p className="text-white font-bold text-sm leading-tight truncate group-hover:text-[#00D9FF] transition-colors duration-200">{dj.name}</p>
+        {dj.genre && <p className="text-gray-500 text-[11px] mt-0.5 truncate">{dj.genre}</p>}
+        <p className="text-gray-500 text-[11px] mt-0.5">{fmt(dj.follower_count)} followers</p>
+      </div>
+    </Link>
+  );
+}
+
+// Mobile-only list row
 function SmallDJCard({ dj, className = '' }) {
   return (
     <Link
       to={`/artist/${dj.id}`}
-      className={`flex items-center gap-3 bg-[#111114] border border-white/[0.07] hover:border-[#00D9FF]/30 rounded p-3 group transition-all duration-200 hover:-translate-y-0.5 overflow-hidden ${className}`}
+      className={`flex items-center gap-3 bg-[#111114] border border-white/[0.07] hover:border-[#00D9FF]/30 rounded p-3 group transition-all duration-200 overflow-hidden ${className}`}
     >
-      {/* Square image */}
-      <div className="w-16 h-16 rounded-sm overflow-hidden flex-shrink-0">
+      <div className="w-14 h-14 rounded overflow-hidden flex-shrink-0">
         {dj.profile_image_url ? (
-          <img
-            src={dj.profile_image_url}
-            alt={dj.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          />
+          <img src={dj.profile_image_url} alt={dj.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
         ) : (
-          <div
-            className="w-full h-full flex items-center justify-center text-xl font-black text-white"
-            style={{ background: `linear-gradient(135deg, ${accentGrads[dj.id % accentGrads.length]})` }}
-          >
+          <div className="w-full h-full flex items-center justify-center text-lg font-black text-white" style={{ background: `linear-gradient(135deg, ${accentGrads[dj.id % accentGrads.length]})` }}>
             {dj.name[0]}
           </div>
         )}
       </div>
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-1">
-          <p className="text-white font-bold text-sm truncate group-hover:text-[#00D9FF] transition-colors">
-            {dj.name}
-          </p>
-          {dj.verified && <span className="text-xs flex-shrink-0">✅</span>}
-        </div>
+        <p className="text-white font-bold text-sm truncate group-hover:text-[#00D9FF] transition-colors">{dj.name}</p>
         <p className="text-gray-500 text-xs mt-0.5">{fmt(dj.follower_count)} followers</p>
-        {dj.genre && <p className="text-[#00D9FF] text-xs mt-0.5 truncate">{dj.genre}</p>}
-      </div>
-    </Link>
-  );
-}
-
-function MediumDJCardA({ dj }) {
-  return (
-    <Link
-      to={`/artist/${dj.id}`}
-      className="relative overflow-hidden group cursor-pointer border border-white/[0.07] hover:border-[#00D9FF]/30 transition-all duration-300 hover:-translate-y-1 flex flex-col"
-      style={{ height: '100%' }}
-    >
-      {/* Image fills top 65% */}
-      <div className="overflow-hidden" style={{ height: '65%' }}>
-        {dj.profile_image_url ? (
-          <img
-            src={dj.profile_image_url}
-            alt={dj.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        ) : (
-          <div
-            className="w-full h-full flex items-center justify-center text-5xl font-black text-white/30"
-            style={{ background: `linear-gradient(135deg, ${accentGrads[dj.id % accentGrads.length]})` }}
-          >
-            {dj.name[0]}
-          </div>
-        )}
-      </div>
-      {/* Text section */}
-      <div className="bg-[#111114] p-4 flex flex-col justify-between flex-1">
-        <div>
-          <div className="flex items-center gap-1.5 mb-0.5">
-            <p className="text-white font-black text-base truncate">{dj.name}</p>
-            {dj.verified && <span className="text-sm">✅</span>}
-          </div>
-          {dj.genre && <p className="text-[#00D9FF] text-xs">{dj.genre}</p>}
-        </div>
-        <div className="flex gap-4 mt-2">
-          <div>
-            <p className="text-white font-black text-lg leading-none">{fmt(dj.follower_count)}</p>
-            <p className="text-gray-600 text-xs">followers</p>
-          </div>
-          <div>
-            <p className="text-white font-black text-lg leading-none">{dj.set_count}</p>
-            <p className="text-gray-600 text-xs">sets</p>
-          </div>
-        </div>
-      </div>
-    </Link>
-  );
-}
-
-function MediumDJCardB({ dj }) {
-  const accent = accentSolids[dj.id % accentSolids.length];
-  return (
-    <Link
-      to={`/artist/${dj.id}`}
-      className="relative overflow-hidden group cursor-pointer transition-all duration-300 hover:scale-[1.02]"
-      style={{
-        height: '100%',
-        backgroundImage: dj.profile_image_url
-          ? `url(${dj.profile_image_url})`
-          : `linear-gradient(135deg, ${accentGrads[dj.id % accentGrads.length]})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        borderLeft: `3px solid ${accent}`,
-      }}
-    >
-      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
-      {dj.verified && (
-        <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm rounded-full px-2 py-0.5 text-xs text-white border border-white/20">
-          ✅
-        </div>
-      )}
-      <div className="absolute bottom-0 p-4">
-        <p className="text-white font-black text-xl leading-tight">{dj.name}</p>
-        <p className="text-white font-black leading-none mt-1" style={{ fontSize: '28px' }}>
-          {fmt(dj.follower_count)}
-        </p>
-        <p className="text-gray-400 text-xs">followers</p>
-      </div>
-    </Link>
-  );
-}
-
-function MediumDJCardC({ dj }) {
-  return (
-    <Link
-      to={`/artist/${dj.id}`}
-      className="relative overflow-hidden group cursor-pointer border border-white/[0.07] hover:border-[#00D9FF]/30 transition-all duration-300 hover:-translate-y-1 flex flex-col bg-[#111114]"
-      style={{ height: '100%' }}
-    >
-      {/* Image fills top 65% */}
-      <div className="overflow-hidden" style={{ height: '65%' }}>
-        {dj.profile_image_url ? (
-          <img
-            src={dj.profile_image_url}
-            alt={dj.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        ) : (
-          <div
-            className="w-full h-full flex items-center justify-center text-5xl font-black text-white/30"
-            style={{ background: `linear-gradient(135deg, ${accentGrads[dj.id % accentGrads.length]})` }}
-          >
-            {dj.name[0]}
-          </div>
-        )}
-      </div>
-      {/* Text section */}
-      <div className="bg-[#111114] p-4 flex flex-col justify-between flex-1">
-        <div>
-          <div className="flex items-center gap-1.5 mb-0.5">
-            <p className="text-white font-black text-base truncate">{dj.name}</p>
-            {dj.verified && <span className="text-sm">✅</span>}
-          </div>
-          {dj.genre && <p className="text-gray-400 text-xs">{dj.genre}</p>}
-        </div>
-        <div className="flex gap-4 mt-2">
-          <div>
-            <p className="text-white font-black text-lg leading-none">{fmt(dj.follower_count)}</p>
-            <p className="text-gray-600 text-xs">followers</p>
-          </div>
-          <div>
-            <p className="text-white font-black text-lg leading-none">{dj.set_count}</p>
-            <p className="text-gray-600 text-xs">sets</p>
-          </div>
-        </div>
-      </div>
-    </Link>
-  );
-}
-
-function CompactDJCard({ dj }) {
-  return (
-    <Link
-      to={`/artist/${dj.id}`}
-      className="relative overflow-hidden group cursor-pointer transition-all duration-300 hover:scale-[1.03]"
-      style={{
-        height: '100%',
-        backgroundImage: dj.profile_image_url
-          ? `url(${dj.profile_image_url})`
-          : `linear-gradient(135deg, ${accentGrads[dj.id % accentGrads.length]})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}
-    >
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-      {dj.verified && <div className="absolute top-2 right-2 text-sm">✅</div>}
-      <div className="absolute bottom-0 p-3">
-        <p className="text-white font-bold text-sm leading-tight">{dj.name}</p>
-        <p className="text-gray-400 text-xs">{fmt(dj.follower_count)} followers</p>
+        {dj.genre && <p className="text-gray-600 text-xs mt-0.5 truncate">{dj.genre}</p>}
       </div>
     </Link>
   );
@@ -268,36 +114,43 @@ function BentoDJGrid({ djs }) {
   if (!djs.length) return null;
 
   const [featured, ...rest] = djs;
-  const top = rest.slice(0, 3);
-  const remaining = rest.slice(3);
+  // row1: 2 stacked beside the hero
+  const row1Side = rest.slice(0, 2);
+  // row2: 3 equal cards
+  const row2 = rest.slice(2, 5);
+  // row3: 4 equal cards
+  const row3 = rest.slice(5, 9);
+  // row4: remaining
+  const row4 = rest.slice(9, 14);
 
   return (
-    <div className="space-y-3">
-      {/* Row 1: Featured (2 cols) + 2 small stacked (1 col) */}
-      <div className="grid grid-cols-3 gap-3" style={{ gridTemplateRows: '270px' }}>
-        <FeaturedDJCard dj={featured} className="col-span-2" />
-        <div className="flex flex-col gap-3">
-          {top.slice(0, 2).map((dj) => (
-            <SmallDJCard key={dj.id} dj={dj} className="flex-1" />
-          ))}
+    <div className="space-y-2">
+      {/* Row 1 — hero (2/3) + 2 stacked (1/3) */}
+      <div className="grid gap-2" style={{ gridTemplateColumns: '2fr 1fr', height: '300px' }}>
+        <FeaturedDJCard dj={featured} />
+        <div className="grid gap-2" style={{ gridTemplateRows: '1fr 1fr' }}>
+          {row1Side.map(dj => <ArtistGridCard key={dj.id} dj={dj} />)}
         </div>
       </div>
 
-      {/* Row 2: 3 medium cards */}
-      {top[2] && (
-        <div className="grid grid-cols-3 gap-3" style={{ gridTemplateRows: '220px' }}>
-          <MediumDJCardA dj={top[2]} />
-          {remaining[0] && <MediumDJCardB dj={remaining[0]} />}
-          {remaining[1] && <MediumDJCardC dj={remaining[1]} />}
+      {/* Row 2 — 3 equal */}
+      {row2.length > 0 && (
+        <div className="grid grid-cols-3 gap-2" style={{ height: '220px' }}>
+          {row2.map(dj => <ArtistGridCard key={dj.id} dj={dj} />)}
         </div>
       )}
 
-      {/* Row 3: 4 compact cards */}
-      {remaining.length > 2 && (
-        <div className="grid grid-cols-4 gap-3" style={{ gridTemplateRows: '160px' }}>
-          {remaining.slice(2, 6).map((dj) => (
-            <CompactDJCard key={dj.id} dj={dj} />
-          ))}
+      {/* Row 3 — 4 equal */}
+      {row3.length > 0 && (
+        <div className="grid grid-cols-4 gap-2" style={{ height: '180px' }}>
+          {row3.map(dj => <ArtistGridCard key={dj.id} dj={dj} />)}
+        </div>
+      )}
+
+      {/* Row 4 — 5 equal (remaining) */}
+      {row4.length > 0 && (
+        <div className="grid grid-cols-5 gap-2" style={{ height: '150px' }}>
+          {row4.map(dj => <ArtistGridCard key={dj.id} dj={dj} />)}
         </div>
       )}
     </div>
