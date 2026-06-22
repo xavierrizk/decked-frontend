@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 
-const MAX_SIZE_MB = 25;
+const MAX_SIZE_MB = 500;
 const MAX_DURATION_S = 30;
 const ALLOWED = ['video/mp4', 'video/quicktime', 'video/webm'];
 
