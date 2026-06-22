@@ -76,9 +76,9 @@ export default function ArtistProfilePage() {
       <Toast message={toast} />
 
       {/* Hero card */}
-      <div className="relative overflow-hidden bg-[#111114] border border-white/[0.07] rounded-2xl mb-6">
+      <div className="relative bg-[#111114] border border-white/[0.07] rounded-2xl mb-6 overflow-hidden">
         {/* Banner */}
-        <div className="relative h-40 sm:h-52 bg-gradient-to-br from-brand-900/60 to-black overflow-hidden">
+        <div className="relative h-40 sm:h-52 bg-gradient-to-br from-brand-900/60 to-black">
           {artistProfile.banner_image_url ? (
             <img
               src={artistProfile.banner_image_url}
@@ -92,18 +92,20 @@ export default function ArtistProfilePage() {
           {isOwnDj && (
             <Link
               to={`/artist/${id}/edit`}
-              className="absolute top-3 right-3 px-3 py-1.5 bg-black/60 backdrop-blur-sm border border-white/20 text-white text-xs font-semibold rounded-lg hover:bg-black/80 transition-colors"
+              className="absolute top-3 right-3 px-3 py-1.5 bg-black/60 backdrop-blur-sm border border-white/20 text-white text-xs font-semibold rounded-lg hover:bg-black/80 transition-colors z-10"
             >
               ✏️ Edit Profile
             </Link>
           )}
+          {/* Gradient fade at bottom so avatar blends in */}
+          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#111114] to-transparent" />
         </div>
 
         {/* Profile picture + info row */}
         <div className="px-5 pb-6">
-          {/* Avatar overlapping banner */}
-          <div className="flex items-end gap-4 -mt-10 mb-4">
-            <div className="w-20 h-20 rounded-2xl border-4 border-[#111114] overflow-hidden flex-shrink-0 bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-lg">
+          {/* Avatar overlapping banner — z-10 keeps it above the banner */}
+          <div className="flex items-end gap-4 -mt-12 mb-4 relative z-10">
+            <div className="w-24 h-24 rounded-2xl border-4 border-[#111114] overflow-hidden flex-shrink-0 bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-2xl ring-1 ring-white/10">
               {artistProfile.profile_image_url ? (
                 <img
                   src={artistProfile.profile_image_url}
