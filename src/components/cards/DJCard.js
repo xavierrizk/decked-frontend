@@ -8,71 +8,80 @@ function fmt(n) {
 }
 
 const accentColors = [
-  '#5A6470, #252D34',
-  '#1d4ed8, #1e3a8a',
-  '#0891b2, #164e63',
-  '#be185d, #831843',
-  '#059669, #064e3b',
+  ['#5A6470', '#252D34'],
+  ['#1d4ed8', '#1e3a8a'],
+  ['#0891b2', '#164e63'],
+  ['#be185d', '#831843'],
+  ['#059669', '#064e3b'],
 ];
 
 export default function ArtistCard({ dj, onFollow, isFollowing, showFollow = true }) {
   const initial = dj.name?.[0]?.toUpperCase() || '?';
   const profileImage = dj.profile_image_url || dj.profile_picture_url;
+  const hasBanner = !!dj.banner_image_url;
+  // When no banner, use profile pic as the full-width top image
+  const topImage = dj.banner_image_url || profileImage;
+  const [c1, c2] = accentColors[dj.id % accentColors.length];
 
   return (
-    <div className="relative group border border-white/[0.07] hover:border-[#00D9FF]/30 rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-purple-900/20 bg-[#111114]">
-      <Link to={`/artist/${dj.id}`} className="block">
-        {/* Banner */}
-        <div className="relative h-20 bg-gradient-to-br from-brand-900/60 to-black overflow-hidden">
-          {dj.banner_image_url ? (
-            <img src={dj.banner_image_url} alt="" className="w-full h-full object-cover" />
+    <div className="relative group border border-white/[0.07] hover:border-[#00D9FF]/30 rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-purple-900/20 bg-[#111114] flex flex-col">
+      <Link to={`/artist/${dj.id}`} className="block flex-1">
+
+        {/* Top image */}
+        <div className={`relative overflow-hidden ${hasBanner ? 'h-24' : 'h-44'}`}>
+          {topImage ? (
+            <>
+              <img
+                src={topImage}
+                alt={dj.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              {/* Bottom fade so text reads cleanly */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#111114] via-transparent to-transparent" style={{ backgroundSize: '100% 60%', backgroundRepeat: 'no-repeat', backgroundPosition: 'bottom' }} />
+            </>
           ) : (
             <div
-              className="absolute inset-0 opacity-30"
-              style={{ background: `linear-gradient(135deg, ${accentColors[dj.id % accentColors.length]})` }}
-            />
+              className="w-full h-full flex items-center justify-center text-5xl font-black"
+              style={{ background: `linear-gradient(135deg, ${c1}, ${c2})`, color: 'rgba(255,255,255,0.2)' }}
+            >
+              {initial}
+            </div>
+          )}
+          {dj.verified && (
+            <span className="absolute top-2 right-2 text-xs bg-black/50 backdrop-blur-sm rounded-full px-1.5 py-0.5 border border-white/10">✅</span>
           )}
         </div>
 
-        {/* Avatar overlapping banner */}
-        <div className="px-4 pb-4">
-          <div className="flex items-end justify-between -mt-7 mb-3">
-            <div className="w-14 h-14 rounded-xl border-2 border-[#111114] overflow-hidden flex-shrink-0 bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center">
+        {/* Avatar overlapping — only when a real separate banner exists */}
+        {hasBanner && (
+          <div className="px-4 -mt-6 mb-2 relative z-10">
+            <div className="w-12 h-12 rounded-xl border-2 border-[#111114] overflow-hidden bg-[#111114] shadow-lg">
               {profileImage ? (
                 <img src={profileImage} alt={dj.name} className="w-full h-full object-cover" />
               ) : (
-                <div
-                  className="w-full h-full flex items-center justify-center text-xl font-black text-white"
-                  style={{ background: `linear-gradient(135deg, ${accentColors[dj.id % accentColors.length]})` }}
-                >
+                <div className="w-full h-full flex items-center justify-center font-black text-white text-lg" style={{ background: `linear-gradient(135deg, ${c1}, ${c2})` }}>
                   {initial}
                 </div>
               )}
             </div>
-            {dj.verified && <span title="Verified" className="text-sm pb-1">✅</span>}
           </div>
+        )}
 
-          {/* Name + genre */}
-          <div className="flex items-center gap-1.5 flex-wrap mb-1">
-            <span className="text-base font-black text-white tracking-tight leading-tight">{dj.name}</span>
-          </div>
+        {/* Info */}
+        <div className={`px-4 pb-4 ${hasBanner ? 'pt-1' : 'pt-3'}`}>
+          <p className="text-base font-black text-white tracking-tight leading-tight mb-1 truncate">{dj.name}</p>
           {dj.genre && (
-            <span className="text-xs bg-brand-600/15 text-[#00D9FF] px-2 py-0.5 rounded-full border border-brand-600/20">
-              {dj.genre}
-            </span>
-          )}
-          {dj.location && !dj.genre && (
-            <span className="text-xs text-gray-600">📍 {dj.location}</span>
+            <p className="text-xs text-gray-400 mb-3 truncate">{dj.genre}</p>
           )}
 
           {/* Stats */}
-          <div className="grid grid-cols-2 gap-2 mt-3 text-center">
+          <div className="grid grid-cols-2 gap-2 text-center">
             <div>
-              <p className="text-2xl font-black text-white leading-none" style={{ fontFamily: '"IBM Plex Mono", monospace' }}>{fmt(dj.follower_count)}</p>
+              <p className="text-xl font-black text-white leading-none" style={{ fontFamily: '"IBM Plex Mono", monospace' }}>{fmt(dj.follower_count)}</p>
               <p className="text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">Followers</p>
             </div>
             <div>
-              <p className="text-2xl font-black text-white leading-none" style={{ fontFamily: '"IBM Plex Mono", monospace' }}>{fmt(dj.set_count)}</p>
+              <p className="text-xl font-black text-white leading-none" style={{ fontFamily: '"IBM Plex Mono", monospace' }}>{fmt(dj.set_count)}</p>
               <p className="text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">Sets</p>
             </div>
           </div>

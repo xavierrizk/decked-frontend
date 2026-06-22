@@ -182,7 +182,7 @@ function MediumDJCardB({ dj }) {
       )}
       <div className="absolute bottom-0 p-4">
         <p className="text-white font-black text-xl leading-tight">{dj.name}</p>
-        <p className="font-black leading-none mt-1" style={{ color: accent, fontSize: '28px' }}>
+        <p className="text-white font-black leading-none mt-1" style={{ fontSize: '28px' }}>
           {fmt(dj.follower_count)}
         </p>
         <p className="text-gray-400 text-xs">followers</p>
@@ -195,11 +195,11 @@ function MediumDJCardC({ dj }) {
   return (
     <Link
       to={`/artist/${dj.id}`}
-      className="flex overflow-hidden group cursor-pointer bg-[#111114] border border-white/[0.07] hover:border-white/20 transition-all duration-300 hover:-translate-y-1"
+      className="relative overflow-hidden group cursor-pointer border border-white/[0.07] hover:border-[#00D9FF]/30 transition-all duration-300 hover:-translate-y-1 flex flex-col bg-[#111114]"
       style={{ height: '100%' }}
     >
-      {/* Image — left 45% */}
-      <div className="flex-shrink-0 overflow-hidden" style={{ width: '45%' }}>
+      {/* Image fills top 65% */}
+      <div className="overflow-hidden" style={{ height: '65%' }}>
         {dj.profile_image_url ? (
           <img
             src={dj.profile_image_url}
@@ -208,37 +208,30 @@ function MediumDJCardC({ dj }) {
           />
         ) : (
           <div
-            className="w-full h-full flex items-center justify-center text-4xl font-black text-white/40"
+            className="w-full h-full flex items-center justify-center text-5xl font-black text-white/30"
             style={{ background: `linear-gradient(135deg, ${accentGrads[dj.id % accentGrads.length]})` }}
           >
             {dj.name[0]}
           </div>
         )}
       </div>
-      {/* Info — right 55% */}
-      <div className="flex-1 p-4 flex flex-col justify-between">
+      {/* Text section */}
+      <div className="bg-[#111114] p-4 flex flex-col justify-between flex-1">
         <div>
-          <div className="flex items-center gap-1 flex-wrap mb-1">
-            <p className="text-white font-black text-base leading-tight">{dj.name}</p>
+          <div className="flex items-center gap-1.5 mb-0.5">
+            <p className="text-white font-black text-base truncate">{dj.name}</p>
             {dj.verified && <span className="text-sm">✅</span>}
           </div>
-          {dj.genre && (
-            <span className="text-xs bg-brand-600/15 text-[#00D9FF] px-2 py-0.5 rounded-full">
-              {dj.genre}
-            </span>
-          )}
-          {dj.bio && (
-            <p className="text-gray-500 text-xs mt-2 line-clamp-3 leading-relaxed">{dj.bio}</p>
-          )}
+          {dj.genre && <p className="text-gray-400 text-xs">{dj.genre}</p>}
         </div>
-        <div className="flex gap-3 mt-2">
+        <div className="flex gap-4 mt-2">
           <div>
             <p className="text-white font-black text-lg leading-none">{fmt(dj.follower_count)}</p>
-            <p className="text-gray-600 text-[10px] uppercase tracking-wide">followers</p>
+            <p className="text-gray-600 text-xs">followers</p>
           </div>
           <div>
             <p className="text-white font-black text-lg leading-none">{dj.set_count}</p>
-            <p className="text-gray-600 text-[10px] uppercase tracking-wide">sets</p>
+            <p className="text-gray-600 text-xs">sets</p>
           </div>
         </div>
       </div>
