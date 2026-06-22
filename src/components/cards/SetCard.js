@@ -56,6 +56,7 @@ export default function SetCard({ set, rank }) {
   const badge = TYPE_BADGE[set.performance_type] || null;
   const isDjSet = set.performance_type === 'dj_set' || (!set.performance_type && set.dj_id);
   const ytId = getYouTubeId(set.video_url);
+  const artistImage = set.dj_profile_image_url;
 
   return (
     <div className="relative">
@@ -68,9 +69,9 @@ export default function SetCard({ set, rank }) {
       </div>
 
       <Link to={`/set/${set.id}`}>
-        <div className={`rounded overflow-hidden relative aspect-[4/3] group cursor-pointer hover:scale-[1.02] transition-all duration-300 ${!ytId ? `bg-gradient-to-br ${gradient}` : 'bg-black'}`}>
+        <div className={`rounded overflow-hidden relative aspect-[4/3] group cursor-pointer hover:scale-[1.02] transition-all duration-300 ${!ytId && !artistImage ? `bg-gradient-to-br ${gradient}` : 'bg-black'}`}>
 
-          {/* YouTube thumbnail */}
+          {/* YouTube thumbnail — highest priority */}
           {ytId ? (
             <>
               <YouTubeThumbnail
@@ -78,21 +79,28 @@ export default function SetCard({ set, rank }) {
                 alt={set.title}
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              {/* Dark overlay so text is readable */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
             </>
-          ) : (
+          ) : artistImage ? (
+            /* Artist profile picture fallback */
             <>
-              {/* Vinyl SVG fallback */}
-              <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full opacity-[0.06] pointer-events-none">
-                <circle cx="50" cy="50" r="48" fill="white" />
-                <circle cx="50" cy="50" r="36" fill="#111" />
-                <circle cx="50" cy="50" r="24" fill="white" />
-                <circle cx="50" cy="50" r="16" fill="#111" />
-                <circle cx="50" cy="50" r="6" fill="white" />
-                <circle cx="50" cy="50" r="2" fill="#111" />
-              </svg>
+              <img
+                src={artistImage}
+                alt={set.dj_name}
+                className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
             </>
+          ) : (
+            /* Genre gradient + vinyl as last resort */
+            <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full opacity-[0.06] pointer-events-none">
+              <circle cx="50" cy="50" r="48" fill="white" />
+              <circle cx="50" cy="50" r="36" fill="#111" />
+              <circle cx="50" cy="50" r="24" fill="white" />
+              <circle cx="50" cy="50" r="16" fill="#111" />
+              <circle cx="50" cy="50" r="6" fill="white" />
+              <circle cx="50" cy="50" r="2" fill="#111" />
+            </svg>
           )}
 
           {/* Rank number */}
