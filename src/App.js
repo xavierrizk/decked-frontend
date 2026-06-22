@@ -41,6 +41,7 @@ import EditArtistProfile  from './pages/EditArtistProfile';
 import VenuesPage         from './pages/VenuesPage';
 import VenueDetail        from './pages/VenueDetail';
 import ArtistsPage        from './pages/ArtistsPage';
+import SetsPage           from './pages/SetsPage';
 
 // Inner component that can use useNavigate (must be inside <Router>)
 function AppInner({ isLoggedIn, setIsLoggedIn }) {
@@ -110,6 +111,7 @@ function AppInner({ isLoggedIn, setIsLoggedIn }) {
               <Route path="/trending"       element={<TrendingPage />} />
               <Route path="/concerts"       element={<ConcertsPage />} />
               <Route path="/festivals"      element={<FestivalsPage />} />
+              <Route path="/sets"           element={<SetsPage />} />
               <Route path="/artists"        element={<ArtistsPage />} />
               <Route path="/venues"         element={<VenuesPage />} />
               <Route path="/venues/:id"     element={<VenueDetail />} />
