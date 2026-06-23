@@ -73,7 +73,7 @@ export default function RequestDJPage() {
         <div className="mb-8">
           <p className="text-gray-600 text-xs font-semibold uppercase tracking-widest mb-3">Your Requests</p>
           <div className="space-y-3">
-            {requests.map(r => <RequestStatusCard key={r.id} r={r} />)}
+            {requests.slice(0, 2).map(r => <RequestStatusCard key={r.id} r={r} />)}
           </div>
         </div>
       )}
