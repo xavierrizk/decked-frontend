@@ -1,6 +1,6 @@
 import API_URL from '../api';
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import MinimalDots from '../components/backgrounds/MinimalDots';
 
@@ -10,6 +10,8 @@ export default function Login({ setIsLoggedIn }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const sessionExpired = new URLSearchParams(location.search).get('reason') === 'session_expired';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,6 +31,11 @@ export default function Login({ setIsLoggedIn }) {
     <div className="min-h-[85vh] flex items-center justify-center px-4">
       <MinimalDots />
       <div className="w-full max-w-sm">
+        {sessionExpired && (
+          <div className="mb-6 px-4 py-3 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-yellow-400 text-sm text-center">
+            Your session expired — please log in again.
+          </div>
+        )}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold text-white">Welcome back</h1>
           <p className="text-gray-500 mt-1 text-sm">Sign in to your DECK'D account</p>
