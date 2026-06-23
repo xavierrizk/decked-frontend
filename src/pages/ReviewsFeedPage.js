@@ -58,6 +58,11 @@ function ReviewCard({ review, onLike, currentUserId }) {
   const [videoOpen, setVideoOpen] = useState(false);
   const navigate = useNavigate();
 
+  // support both flat (username) and nested (user.username) shapes
+  const username = review.username || review.user?.username;
+  const profilePic = review.profile_picture_url || review.user?.profile_picture_url;
+  const userId = review.user_id || review.user?.id;
+
   const subRatings = [
     { label: 'Performance', value: review.performance_rating },
     { label: 'Venue', value: review.venue_rating },
@@ -78,20 +83,20 @@ function ReviewCard({ review, onLike, currentUserId }) {
       {/* Header row */}
       <div className="flex items-start gap-3 mb-4">
         {/* Avatar */}
-        <Link to={`/profile/${review.username}`} className="flex-shrink-0">
-          {review.profile_picture_url ? (
-            <img src={review.profile_picture_url} alt={review.username} className="w-9 h-9 rounded-full object-cover ring-1 ring-white/10 hover:ring-brand-500/50 transition-all" />
+        <Link to={`/profile/${username}`} className="flex-shrink-0">
+          {profilePic ? (
+            <img src={profilePic} alt={username} className="w-9 h-9 rounded-full object-cover ring-1 ring-white/10 hover:ring-brand-500/50 transition-all" />
           ) : (
             <div className="w-9 h-9 rounded-full bg-gradient-to-br from-brand-600 to-pink-600 flex items-center justify-center text-white text-sm font-bold ring-1 ring-white/10 hover:ring-brand-500/50 transition-all">
-              {review.username?.[0]?.toUpperCase()}
+              {username?.[0]?.toUpperCase()}
             </div>
           )}
         </Link>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <Link to={`/profile/${review.username}`} className="text-white font-semibold text-sm hover:text-brand-400 transition-colors">
-              {review.username}
+            <Link to={`/profile/${username}`} className="text-white font-semibold text-sm hover:text-brand-400 transition-colors">
+              {username}
             </Link>
             <span className="text-gray-600 text-xs">reviewed</span>
             <Link to={`/set/${review.set_id}`} className="text-brand-400 hover:text-brand-300 font-semibold text-sm transition-colors truncate max-w-[200px]">
@@ -173,7 +178,7 @@ function ReviewCard({ review, onLike, currentUserId }) {
           View Set
         </Link>
 
-        {currentUserId && review.user_id === currentUserId && (
+        {currentUserId && userId === currentUserId && (
           <Link
             to={`/review/set/${review.set_id}`}
             className="text-xs text-gray-600 hover:text-gray-400 transition-colors ml-auto"
