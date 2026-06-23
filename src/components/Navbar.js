@@ -8,6 +8,7 @@ import ProfileDropdown from './ProfileDropdown';
 const NAV_LINKS = [
   { to: '/discover',   label: 'DISCOVER'   },
   { to: '/sets',       label: 'SETS'        },
+  { to: '/reviews',    label: 'REVIEWS'     },
   { to: '/artists',    label: 'ARTISTS'     },
   { to: '/venues',     label: 'VENUES'      },
   { to: '/trending',   label: 'TRENDING'    },
