@@ -70,7 +70,7 @@ const accentGrads = [
 /* ─── card sub-components ─────────────────────────── */
 
 // Large hero card for the featured artist
-function FeaturedDJCard({ dj, isLoggedIn, className = '' }) {
+function FeaturedDJCard({ dj, isLoggedIn, className = '', style: styleProp = {} }) {
   const bg = dj.profile_image_url
     ? `url(${dj.profile_image_url})`
     : `linear-gradient(135deg, ${accentGrads[dj.id % accentGrads.length]})`;
@@ -78,7 +78,7 @@ function FeaturedDJCard({ dj, isLoggedIn, className = '' }) {
     <Link
       to={`/artist/${dj.id}`}
       className={`relative overflow-hidden group cursor-pointer ${className}`}
-      style={{ backgroundImage: bg, backgroundSize: 'cover', backgroundPosition: 'center top' }}
+      style={{ backgroundImage: bg, backgroundSize: 'cover', backgroundPosition: 'center top', ...styleProp }}
     >
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
       <div className="absolute top-4 left-4 flex items-center gap-1.5 bg-black/50 backdrop-blur-md border border-white/20 rounded-full px-3 py-1">
@@ -106,7 +106,7 @@ function FeaturedDJCard({ dj, isLoggedIn, className = '' }) {
   );
 }
 
-// One unified card used for ALL non-featured slots — full-bleed image, text overlay at bottom
+// Uniform small card for the grid below the featured artist
 function ArtistGridCard({ dj, isLoggedIn, className = '' }) {
   const bg = dj.profile_image_url
     ? `url(${dj.profile_image_url})`
@@ -114,18 +114,18 @@ function ArtistGridCard({ dj, isLoggedIn, className = '' }) {
   return (
     <Link
       to={`/artist/${dj.id}`}
-      className={`relative overflow-hidden group cursor-pointer ${className}`}
+      className={`relative overflow-hidden rounded-xl group cursor-pointer ${className}`}
       style={{ backgroundImage: bg, backgroundSize: 'cover', backgroundPosition: 'center top' }}
     >
-      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent group-hover:from-black/90 transition-all duration-300" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-transparent group-hover:from-black/85 transition-all duration-300" />
       {dj.verified && (
-        <div className="absolute top-2 right-2 text-xs bg-black/40 backdrop-blur-sm rounded-full px-1.5 py-0.5 border border-white/10">✅</div>
+        <div className="absolute top-2 right-2 text-[10px] bg-black/50 backdrop-blur-sm rounded-full px-1.5 py-0.5 border border-white/10">✅</div>
       )}
       <div className="absolute bottom-0 left-0 right-0 p-3">
         <p className="text-white font-bold text-sm leading-tight truncate group-hover:text-[#00D9FF] transition-colors duration-200">{dj.name}</p>
         {dj.genre && <p className="text-gray-500 text-[11px] mt-0.5 truncate">{dj.genre}</p>}
-        <div className="flex items-center justify-between mt-1">
-          <p className="text-gray-500 text-[11px]">{fmt(dj.follower_count)} followers</p>
+        <div className="flex items-center justify-between mt-1.5">
+          <p className="text-gray-500 text-[10px]">{fmt(dj.follower_count)} followers</p>
           <FollowBtn djId={dj.id} djName={dj.name} initialFollowing={dj.is_following} initialCount={dj.follower_count} isLoggedIn={isLoggedIn} />
         </div>
       </div>
@@ -133,14 +133,14 @@ function ArtistGridCard({ dj, isLoggedIn, className = '' }) {
   );
 }
 
-// Mobile-only list row
+// Mobile list row
 function SmallDJCard({ dj, isLoggedIn, className = '' }) {
   return (
     <Link
       to={`/artist/${dj.id}`}
-      className={`flex items-center gap-3 bg-[#111114] border border-white/[0.07] hover:border-[#00D9FF]/30 rounded p-3 group transition-all duration-200 overflow-hidden ${className}`}
+      className={`flex items-center gap-3 bg-[#111114] border border-white/[0.07] hover:border-[#00D9FF]/30 rounded-xl p-3 group transition-all duration-200 overflow-hidden ${className}`}
     >
-      <div className="w-14 h-14 rounded overflow-hidden flex-shrink-0">
+      <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
         {dj.profile_image_url ? (
           <img src={dj.profile_image_url} alt={dj.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
         ) : (
@@ -152,44 +152,26 @@ function SmallDJCard({ dj, isLoggedIn, className = '' }) {
       <div className="min-w-0 flex-1">
         <p className="text-white font-bold text-sm truncate group-hover:text-[#00D9FF] transition-colors">{dj.name}</p>
         <p className="text-gray-500 text-xs mt-0.5">{fmt(dj.follower_count)} followers</p>
-        {dj.genre && <p className="text-gray-600 text-xs mt-0.5 truncate">{dj.genre}</p>}
       </div>
       <FollowBtn djId={dj.id} djName={dj.name} initialFollowing={dj.is_following} initialCount={dj.follower_count} isLoggedIn={isLoggedIn} />
     </Link>
   );
 }
 
-/* ─── bento grid ──────────────────────────────────── */
-function BentoDJGrid({ djs, isLoggedIn }) {
+/* ─── artist layout ───────────────────────────────── */
+function ArtistSection({ djs, isLoggedIn }) {
   if (!djs.length) return null;
-
   const [featured, ...rest] = djs;
-  const row1Side = rest.slice(0, 2);
-  const row2 = rest.slice(2, 5);
-  const row3 = rest.slice(5, 9);
-  const row4 = rest.slice(9, 14);
 
   return (
-    <div className="space-y-2">
-      <div className="grid gap-2" style={{ gridTemplateColumns: '2fr 1fr', height: '300px' }}>
-        <FeaturedDJCard dj={featured} isLoggedIn={isLoggedIn} />
-        <div className="grid gap-2" style={{ gridTemplateRows: '1fr 1fr' }}>
-          {row1Side.map(dj => <ArtistGridCard key={dj.id} dj={dj} isLoggedIn={isLoggedIn} />)}
-        </div>
-      </div>
-      {row2.length > 0 && (
-        <div className="grid grid-cols-3 gap-2" style={{ height: '220px' }}>
-          {row2.map(dj => <ArtistGridCard key={dj.id} dj={dj} isLoggedIn={isLoggedIn} />)}
-        </div>
-      )}
-      {row3.length > 0 && (
-        <div className="grid grid-cols-4 gap-2" style={{ height: '180px' }}>
-          {row3.map(dj => <ArtistGridCard key={dj.id} dj={dj} isLoggedIn={isLoggedIn} />)}
-        </div>
-      )}
-      {row4.length > 0 && (
-        <div className="grid grid-cols-5 gap-2" style={{ height: '150px' }}>
-          {row4.map(dj => <ArtistGridCard key={dj.id} dj={dj} isLoggedIn={isLoggedIn} />)}
+    <div className="space-y-3">
+      {/* Featured — full width, tall */}
+      <FeaturedDJCard dj={featured} isLoggedIn={isLoggedIn} className="w-full rounded-xl" style={{ height: '320px' }} />
+
+      {/* Uniform grid */}
+      {rest.length > 0 && (
+        <div className="grid grid-cols-4 gap-2" style={{ gridAutoRows: '160px' }}>
+          {rest.map(dj => <ArtistGridCard key={dj.id} dj={dj} isLoggedIn={isLoggedIn} />)}
         </div>
       )}
     </div>
@@ -344,10 +326,10 @@ export default function Home() {
       ) : (
         <>
           <div className="hidden md:block">
-            <BentoDJGrid djs={djs} isLoggedIn={isLoggedIn} />
+            <ArtistSection djs={djs} isLoggedIn={isLoggedIn} />
           </div>
-          <div className="md:hidden space-y-3">
-            {djs.map(dj => <SmallDJCard key={dj.id} dj={dj} isLoggedIn={isLoggedIn} className="h-20" />)}
+          <div className="md:hidden space-y-2">
+            {djs.map(dj => <SmallDJCard key={dj.id} dj={dj} isLoggedIn={isLoggedIn} />)}
           </div>
         </>
       )}
