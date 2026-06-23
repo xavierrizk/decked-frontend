@@ -1,10 +1,56 @@
 import API_URL from '../api';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import VisualizerBackground from '../components/backgrounds/VisualizerBackground';
 import SetCard from '../components/cards/SetCard';
 import { getCurrentUserId, getCurrentUsername } from '../utils/auth';
+
+const authHeaders = () => {
+  const t = localStorage.getItem('token');
+  return t ? { Authorization: `Bearer ${t}` } : {};
+};
+
+// Inline follow button — stops click propagation so it works inside <Link> cards
+function FollowBtn({ djId, djName, initialFollowing, initialCount, isLoggedIn, onUpdate }) {
+  const [following, setFollowing] = useState(initialFollowing);
+  const [count, setCount] = useState(initialCount);
+  const [loading, setLoading] = useState(false);
+
+  const handle = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isLoggedIn) { window.location.href = '/login'; return; }
+    if (loading) return;
+    setLoading(true);
+    try {
+      const res = following
+        ? await axios.delete(`${API_URL}/api/follows/${djId}`, { headers: authHeaders() })
+        : await axios.post(`${API_URL}/api/follows/${djId}`, {}, { headers: authHeaders() });
+      setFollowing(res.data.following);
+      setCount(res.data.count);
+      if (onUpdate) onUpdate(djId, res.data.following, res.data.count);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      onClick={handle}
+      disabled={loading}
+      className={`text-[10px] font-bold px-2.5 py-1 rounded-full border transition-all duration-150 disabled:opacity-60 ${
+        following
+          ? 'bg-brand-500/20 border-brand-500/40 text-brand-400 hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400'
+          : 'bg-black/60 border-white/20 text-white hover:bg-brand-500/20 hover:border-brand-500/40 hover:text-brand-400'
+      }`}
+    >
+      {loading ? '…' : following ? '✓ Following' : '+ Follow'}
+    </button>
+  );
+}
 
 /* ─── helpers ─────────────────────────────────────── */
 const fmt = (n) => {
@@ -24,7 +70,7 @@ const accentGrads = [
 /* ─── card sub-components ─────────────────────────── */
 
 // Large hero card for the featured artist
-function FeaturedDJCard({ dj, className = '' }) {
+function FeaturedDJCard({ dj, isLoggedIn, className = '' }) {
   const bg = dj.profile_image_url
     ? `url(${dj.profile_image_url})`
     : `linear-gradient(135deg, ${accentGrads[dj.id % accentGrads.length]})`;
@@ -52,6 +98,7 @@ function FeaturedDJCard({ dj, className = '' }) {
         <div className="flex items-center gap-4">
           <span className="text-gray-400 text-sm"><span className="text-white font-bold">{fmt(dj.follower_count)}</span> followers</span>
           <span className="text-gray-400 text-sm"><span className="text-white font-bold">{dj.set_count}</span> sets</span>
+          <FollowBtn djId={dj.id} djName={dj.name} initialFollowing={dj.is_following} initialCount={dj.follower_count} isLoggedIn={isLoggedIn} />
         </div>
         {dj.bio && <p className="text-gray-500 text-sm mt-2 line-clamp-2">{dj.bio}</p>}
       </div>
@@ -60,7 +107,7 @@ function FeaturedDJCard({ dj, className = '' }) {
 }
 
 // One unified card used for ALL non-featured slots — full-bleed image, text overlay at bottom
-function ArtistGridCard({ dj, className = '' }) {
+function ArtistGridCard({ dj, isLoggedIn, className = '' }) {
   const bg = dj.profile_image_url
     ? `url(${dj.profile_image_url})`
     : `linear-gradient(135deg, ${accentGrads[dj.id % accentGrads.length]})`;
@@ -70,7 +117,6 @@ function ArtistGridCard({ dj, className = '' }) {
       className={`relative overflow-hidden group cursor-pointer ${className}`}
       style={{ backgroundImage: bg, backgroundSize: 'cover', backgroundPosition: 'center top' }}
     >
-      {/* Gradient: transparent top, heavy black bottom */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-transparent group-hover:from-black/90 transition-all duration-300" />
       {dj.verified && (
         <div className="absolute top-2 right-2 text-xs bg-black/40 backdrop-blur-sm rounded-full px-1.5 py-0.5 border border-white/10">✅</div>
@@ -78,14 +124,17 @@ function ArtistGridCard({ dj, className = '' }) {
       <div className="absolute bottom-0 left-0 right-0 p-3">
         <p className="text-white font-bold text-sm leading-tight truncate group-hover:text-[#00D9FF] transition-colors duration-200">{dj.name}</p>
         {dj.genre && <p className="text-gray-500 text-[11px] mt-0.5 truncate">{dj.genre}</p>}
-        <p className="text-gray-500 text-[11px] mt-0.5">{fmt(dj.follower_count)} followers</p>
+        <div className="flex items-center justify-between mt-1">
+          <p className="text-gray-500 text-[11px]">{fmt(dj.follower_count)} followers</p>
+          <FollowBtn djId={dj.id} djName={dj.name} initialFollowing={dj.is_following} initialCount={dj.follower_count} isLoggedIn={isLoggedIn} />
+        </div>
       </div>
     </Link>
   );
 }
 
 // Mobile-only list row
-function SmallDJCard({ dj, className = '' }) {
+function SmallDJCard({ dj, isLoggedIn, className = '' }) {
   return (
     <Link
       to={`/artist/${dj.id}`}
@@ -105,52 +154,42 @@ function SmallDJCard({ dj, className = '' }) {
         <p className="text-gray-500 text-xs mt-0.5">{fmt(dj.follower_count)} followers</p>
         {dj.genre && <p className="text-gray-600 text-xs mt-0.5 truncate">{dj.genre}</p>}
       </div>
+      <FollowBtn djId={dj.id} djName={dj.name} initialFollowing={dj.is_following} initialCount={dj.follower_count} isLoggedIn={isLoggedIn} />
     </Link>
   );
 }
 
 /* ─── bento grid ──────────────────────────────────── */
-function BentoDJGrid({ djs }) {
+function BentoDJGrid({ djs, isLoggedIn }) {
   if (!djs.length) return null;
 
   const [featured, ...rest] = djs;
-  // row1: 2 stacked beside the hero
   const row1Side = rest.slice(0, 2);
-  // row2: 3 equal cards
   const row2 = rest.slice(2, 5);
-  // row3: 4 equal cards
   const row3 = rest.slice(5, 9);
-  // row4: remaining
   const row4 = rest.slice(9, 14);
 
   return (
     <div className="space-y-2">
-      {/* Row 1 — hero (2/3) + 2 stacked (1/3) */}
       <div className="grid gap-2" style={{ gridTemplateColumns: '2fr 1fr', height: '300px' }}>
-        <FeaturedDJCard dj={featured} />
+        <FeaturedDJCard dj={featured} isLoggedIn={isLoggedIn} />
         <div className="grid gap-2" style={{ gridTemplateRows: '1fr 1fr' }}>
-          {row1Side.map(dj => <ArtistGridCard key={dj.id} dj={dj} />)}
+          {row1Side.map(dj => <ArtistGridCard key={dj.id} dj={dj} isLoggedIn={isLoggedIn} />)}
         </div>
       </div>
-
-      {/* Row 2 — 3 equal */}
       {row2.length > 0 && (
         <div className="grid grid-cols-3 gap-2" style={{ height: '220px' }}>
-          {row2.map(dj => <ArtistGridCard key={dj.id} dj={dj} />)}
+          {row2.map(dj => <ArtistGridCard key={dj.id} dj={dj} isLoggedIn={isLoggedIn} />)}
         </div>
       )}
-
-      {/* Row 3 — 4 equal */}
       {row3.length > 0 && (
         <div className="grid grid-cols-4 gap-2" style={{ height: '180px' }}>
-          {row3.map(dj => <ArtistGridCard key={dj.id} dj={dj} />)}
+          {row3.map(dj => <ArtistGridCard key={dj.id} dj={dj} isLoggedIn={isLoggedIn} />)}
         </div>
       )}
-
-      {/* Row 4 — 5 equal (remaining) */}
       {row4.length > 0 && (
         <div className="grid grid-cols-5 gap-2" style={{ height: '150px' }}>
-          {row4.map(dj => <ArtistGridCard key={dj.id} dj={dj} />)}
+          {row4.map(dj => <ArtistGridCard key={dj.id} dj={dj} isLoggedIn={isLoggedIn} />)}
         </div>
       )}
     </div>
@@ -171,17 +210,31 @@ export default function Home() {
   const token      = localStorage.getItem('token');
 
   useEffect(() => {
+    const headers = isLoggedIn ? { Authorization: `Bearer ${token}` } : {};
     const base = [
       axios.get(API_URL + '/api/artist-profiles/featured'),
       axios.get(API_URL + '/api/feed/trending?sort=likes'),
     ];
     const personalizedReq = isLoggedIn
-      ? axios.get(API_URL + '/api/feed/personalized', { headers: { Authorization: `Bearer ${token}` } }).catch(() => null)
+      ? axios.get(API_URL + '/api/feed/personalized', { headers }).catch(() => null)
       : Promise.resolve(null);
 
     Promise.all([...base, personalizedReq])
-      .then(([djsRes, trendingRes, persRes]) => {
-        setDJs(djsRes.data);
+      .then(async ([djsRes, trendingRes, persRes]) => {
+        let djList = djsRes.data;
+
+        // Fetch follow status for all artists in one shot if logged in
+        if (isLoggedIn && djList.length) {
+          const followStatuses = await Promise.allSettled(
+            djList.map(dj => axios.get(`${API_URL}/api/follows/${dj.id}`, { headers }))
+          );
+          djList = djList.map((dj, i) => ({
+            ...dj,
+            is_following: followStatuses[i].status === 'fulfilled' ? followStatuses[i].value.data.following : false,
+          }));
+        }
+
+        setDJs(djList);
         setTrending(trendingRes.data.slice(0, 3));
         if (persRes?.data) {
           const prefs = persRes.data.preferences || {};
@@ -291,10 +344,10 @@ export default function Home() {
       ) : (
         <>
           <div className="hidden md:block">
-            <BentoDJGrid djs={djs} />
+            <BentoDJGrid djs={djs} isLoggedIn={isLoggedIn} />
           </div>
           <div className="md:hidden space-y-3">
-            {djs.map(dj => <SmallDJCard key={dj.id} dj={dj} className="h-20" />)}
+            {djs.map(dj => <SmallDJCard key={dj.id} dj={dj} isLoggedIn={isLoggedIn} className="h-20" />)}
           </div>
         </>
       )}
