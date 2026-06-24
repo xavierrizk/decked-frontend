@@ -121,11 +121,19 @@ export default function ProfileHeader({
           ) : isLoggedIn ? (
             <button onClick={onFriend} disabled={friendLoading}
               className={`text-xs font-semibold px-4 py-2 border transition-all duration-150 disabled:opacity-50 ${
-                friendData.friends
+                friendData.status === 'friends'
                   ? 'bg-white/[0.06] border-white/15 text-white hover:bg-red-500/15 hover:border-red-400/30 hover:text-red-300'
+                  : friendData.status === 'request_sent'
+                  ? 'bg-white/[0.04] border-white/10 text-gray-500'
+                  : friendData.status === 'request_received'
+                  ? 'bg-brand-500/20 border-brand-500/40 text-brand-400 hover:bg-brand-500/30'
                   : 'border-white/10 text-gray-200 hover:border-[#00D9FF]/50 hover:text-white'
               }`}>
-              {friendLoading ? '…' : friendData.friends ? '🤝 Friends' : '+ Add Friend'}
+              {friendLoading ? '…'
+                : friendData.status === 'friends' ? '🤝 Friends'
+                : friendData.status === 'request_sent' ? 'Request Sent'
+                : friendData.status === 'request_received' ? '✓ Accept Request'
+                : '+ Add Friend'}
             </button>
           ) : null}
           <button onClick={onCopyLink}

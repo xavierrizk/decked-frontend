@@ -39,7 +39,7 @@ export default function ProfilePage() {
   const [actState, setActState]     = useState('idle');
   const [featuredSets, setFeaturedSets] = useState([]);
 
-  const [friendData, setFriendData] = useState({ friends: false, friendCount: 0, commonCount: 0 });
+  const [friendData, setFriendData] = useState({ status: 'none', friends: false, friendCount: 0, commonCount: 0 });
   const [friendLoading, setFriendLoading] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
@@ -143,17 +143,26 @@ export default function ProfilePage() {
 
   const handleFriend = async () => {
     if (!isLoggedIn) return;
-    if (friendData.friends && !window.confirm(`Remove ${profile?.username} as a friend?`)) return;
     setFriendLoading(true);
     try {
-      if (friendData.friends) {
+      const { status } = friendData;
+      if (status === 'friends') {
+        if (!window.confirm(`Remove ${profile?.username} as a friend?`)) { setFriendLoading(false); return; }
         const res = await axios.delete(`${API_URL}/api/friends/${userId}`, { headers: authHeaders() });
-        setFriendData(prev => ({ ...prev, friends: false, friendCount: res.data.count }));
+        setFriendData(prev => ({ ...prev, status: 'none', friends: false, friendCount: res.data.count }));
         showToast(`Removed ${profile?.username} as a friend`);
+      } else if (status === 'request_sent') {
+        const res = await axios.delete(`${API_URL}/api/friends/${userId}`, { headers: authHeaders() });
+        setFriendData(prev => ({ ...prev, status: 'none', friends: false, friendCount: res.data.count }));
+        showToast('Friend request cancelled');
+      } else if (status === 'request_received') {
+        const res = await axios.post(`${API_URL}/api/friends/${userId}/accept`, {}, { headers: authHeaders() });
+        setFriendData(prev => ({ ...prev, status: 'friends', friends: true, friendCount: res.data.count }));
+        showToast(`You and ${profile?.username} are now friends! 🎉`);
       } else {
         const res = await axios.post(`${API_URL}/api/friends/${userId}`, {}, { headers: authHeaders() });
-        setFriendData(prev => ({ ...prev, friends: true, friendCount: res.data.count }));
-        showToast(`You and ${profile?.username} are now friends! 🤝`);
+        setFriendData(prev => ({ ...prev, status: res.data.status, friends: false }));
+        showToast(`Friend request sent to ${profile?.username} 🤝`);
       }
     } catch (err) { console.error(err); }
     setFriendLoading(false);
