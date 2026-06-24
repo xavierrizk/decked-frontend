@@ -244,8 +244,6 @@ export default function ActivityFeedPage() {
   const [page, setPage]             = useState(1);
   const [hasMore, setHasMore]       = useState(false);
 
-  if (!token) return <Navigate to="/login" />;
-
   const load = useCallback(async (p, append = false) => {
     if (p === 1) setLoading(true); else setLoadingMore(true);
     try {
@@ -267,6 +265,8 @@ export default function ActivityFeedPage() {
   }, []);
 
   useEffect(() => { load(1, false); }, [load]);
+
+  if (!token) return <Navigate to="/login" />;
 
   const handleLike = async (item) => {
     try {
