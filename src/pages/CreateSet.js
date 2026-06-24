@@ -1,5 +1,5 @@
 import API_URL from '../api';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import axios from 'axios';
 
@@ -19,6 +19,9 @@ export default function CreateSet() {
   const [djId, setDjId]         = useState('');
   const [genre, setGenre]       = useState('');
   const [location, setLocation] = useState('');
+  const [venueId, setVenueId]   = useState(null);
+  const [venueSuggestions, setVenueSuggestions] = useState([]);
+  const [showVenueDrop, setShowVenueDrop] = useState(false);
   const [duration, setDuration] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [myDjs, setMyDjs]       = useState([]);
@@ -27,8 +30,31 @@ export default function CreateSet() {
   const [error, setError]       = useState('');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const venueDebounce = useRef(null);
+  const venueInputRef = useRef(null);
 
   const isDjSet = perfType === 'dj_set';
+
+  const handleVenueInput = (val) => {
+    setLocation(val);
+    setVenueId(null);
+    clearTimeout(venueDebounce.current);
+    if (val.length < 2) { setVenueSuggestions([]); setShowVenueDrop(false); return; }
+    venueDebounce.current = setTimeout(async () => {
+      try {
+        const res = await axios.get(`${API_URL}/api/venues/search?q=${encodeURIComponent(val)}`);
+        setVenueSuggestions(res.data);
+        setShowVenueDrop(true);
+      } catch {}
+    }, 250);
+  };
+
+  const selectVenue = (v) => {
+    setLocation(`${v.name}, ${v.city}`);
+    setVenueId(v.id);
+    setVenueSuggestions([]);
+    setShowVenueDrop(false);
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -52,6 +78,7 @@ export default function CreateSet() {
         title,
         genre: genre || null,
         location: location || null,
+        venue_id: venueId || null,
         duration: duration ? parseInt(duration) : null,
         video_url: videoUrl || null,
       };
@@ -119,7 +146,42 @@ export default function CreateSet() {
             )}
 
             <Field label="Genre" inp={inp} value={genre} onChange={setGenre} placeholder="Pop, Techno, Rock…" optional />
-            <Field label="Location / Venue" inp={inp} value={location} onChange={setLocation} placeholder="Madison Square Garden" optional />
+
+            {/* Venue autocomplete */}
+            <div className="relative">
+              <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1.5">
+                Venue <span className="text-gray-700 normal-case tracking-normal font-normal">(optional)</span>
+              </label>
+              <input
+                ref={venueInputRef}
+                type="text"
+                value={location}
+                onChange={e => handleVenueInput(e.target.value)}
+                onFocus={() => venueSuggestions.length > 0 && setShowVenueDrop(true)}
+                onBlur={() => setTimeout(() => setShowVenueDrop(false), 150)}
+                placeholder="Start typing a venue name…"
+                className={inp + (venueId ? ' border-[#00D9FF]/50' : '')}
+                autoComplete="off"
+              />
+              {venueId && (
+                <span className="absolute right-3 top-[38px] text-[#00D9FF] text-xs pointer-events-none">✓ matched</span>
+              )}
+              {showVenueDrop && venueSuggestions.length > 0 && (
+                <div className="absolute left-0 right-0 top-full mt-1 z-50 bg-[#0d0d0f] border border-white/10 rounded-xl overflow-hidden shadow-2xl">
+                  {venueSuggestions.map(v => (
+                    <button
+                      key={v.id}
+                      type="button"
+                      onMouseDown={() => selectVenue(v)}
+                      className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-white/[0.06] transition-colors text-left"
+                    >
+                      <span className="text-white text-sm">{v.name}</span>
+                      <span className="text-gray-500 text-xs ml-3 flex-shrink-0">{v.city}, {v.country}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             <Field label="Duration (minutes)" inp={inp} type="number" value={duration} onChange={setDuration} placeholder="90" optional />
 
             <div>
