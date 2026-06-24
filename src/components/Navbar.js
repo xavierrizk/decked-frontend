@@ -6,7 +6,6 @@ import { getCurrentUserId, getIsAdmin, getCurrentUsername } from '../utils/auth'
 import ProfileDropdown from './ProfileDropdown';
 
 const NAV_LINKS = [
-  { to: '/discover',   label: 'DISCOVER'   },
   { to: '/sets',       label: 'SETS'        },
   { to: '/reviews',    label: 'REVIEWS'     },
   { to: '/artists',    label: 'ARTISTS'     },
