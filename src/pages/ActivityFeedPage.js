@@ -72,12 +72,12 @@ function ReviewItem({ item, onLike }) {
     <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-5 hover:border-white/[0.12] transition-colors">
       {/* Actor row */}
       <div className="flex items-center gap-2.5 mb-4">
-        <Link to={`/profile/${item.actor_username}`}>
+        <Link to={`/profile/${item.actor_id}`}>
           <Avatar src={item.actor_pic} name={item.actor_username} />
         </Link>
         <div className="flex-1 min-w-0">
           <div className="flex flex-wrap items-center gap-1.5 text-sm">
-            <Link to={`/profile/${item.actor_username}`} className="text-white font-semibold hover:text-brand-400 transition-colors">
+            <Link to={`/profile/${item.actor_id}`} className="text-white font-semibold hover:text-brand-400 transition-colors">
               {item.actor_username}
             </Link>
             <span className="text-gray-600">reviewed</span>
@@ -160,12 +160,12 @@ function CommentItem({ item }) {
   return (
     <div className="bg-white/[0.02] border border-white/[0.05] rounded-2xl p-5 hover:border-white/[0.09] transition-colors">
       <div className="flex items-center gap-2.5 mb-3">
-        <Link to={`/profile/${item.actor_username}`}>
+        <Link to={`/profile/${item.actor_id}`}>
           <Avatar src={item.actor_pic} name={item.actor_username} />
         </Link>
         <div>
           <div className="flex flex-wrap items-center gap-1.5 text-sm">
-            <Link to={`/profile/${item.actor_username}`} className="text-white font-semibold hover:text-brand-400 transition-colors">
+            <Link to={`/profile/${item.actor_id}`} className="text-white font-semibold hover:text-brand-400 transition-colors">
               {item.actor_username}
             </Link>
             <span className="text-gray-600">commented on</span>
@@ -192,10 +192,10 @@ function FriendRequestsPanel({ requests, onAccept, onDecline }) {
       <div className="space-y-3">
         {requests.map(r => (
           <div key={r.from_user_id} className="flex items-center gap-3">
-            <Link to={`/profile/${r.username}`}>
+            <Link to={`/profile/${r.from_user_id}`}>
               <Avatar src={r.profile_picture_url} name={r.username} size={8} />
             </Link>
-            <Link to={`/profile/${r.username}`} className="flex-1 text-white font-semibold text-sm hover:text-brand-400 transition-colors">
+            <Link to={`/profile/${r.from_user_id}`} className="flex-1 text-white font-semibold text-sm hover:text-brand-400 transition-colors">
               {r.username}
             </Link>
             <div className="flex gap-2">

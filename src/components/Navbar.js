@@ -13,7 +13,6 @@ const NAV_LINKS = [
   { to: '/venues',     label: 'VENUES'      },
   { to: '/trending',   label: 'TRENDING'    },
   { to: '/community',  label: 'COMMUNITY'   },
-  { to: '/friends',    label: 'FRIENDS'     },
 ];
 
 const SearchIcon = () => (

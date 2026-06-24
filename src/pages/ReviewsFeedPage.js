@@ -62,6 +62,7 @@ function ReviewCard({ review, onLike, currentUserId }) {
   const username = review.username || review.user?.username;
   const profilePic = review.profile_picture_url || review.user?.profile_picture_url;
   const userId = review.user_id || review.user?.id;
+  const profileLink = `/profile/${userId}`;
 
   const subRatings = [
     { label: 'Performance', value: review.performance_rating },
@@ -83,7 +84,7 @@ function ReviewCard({ review, onLike, currentUserId }) {
       {/* Header row */}
       <div className="flex items-start gap-3 mb-4">
         {/* Avatar */}
-        <Link to={`/profile/${username}`} className="flex-shrink-0">
+        <Link to={`/profile/${userId}`} className="flex-shrink-0">
           {profilePic ? (
             <img src={profilePic} alt={username} className="w-9 h-9 rounded-full object-cover ring-1 ring-white/10 hover:ring-brand-500/50 transition-all" />
           ) : (
@@ -95,7 +96,7 @@ function ReviewCard({ review, onLike, currentUserId }) {
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <Link to={`/profile/${username}`} className="text-white font-semibold text-sm hover:text-brand-400 transition-colors">
+            <Link to={`/profile/${userId}`} className="text-white font-semibold text-sm hover:text-brand-400 transition-colors">
               {username}
             </Link>
             <span className="text-gray-600 text-xs">reviewed</span>
