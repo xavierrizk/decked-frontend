@@ -159,7 +159,17 @@ export default function VenueDetail() {
                   </p>
                   <div className="flex items-center gap-2 mt-0.5">
                     {set.dj_name && (
-                      <span className="text-gray-500 text-xs truncate">{set.dj_name}</span>
+                      set.dj_id ? (
+                        <Link
+                          to={`/artist/${set.dj_id}`}
+                          onClick={e => e.stopPropagation()}
+                          className="text-[#00D9FF] text-xs truncate hover:underline"
+                        >
+                          {set.dj_name}
+                        </Link>
+                      ) : (
+                        <span className="text-gray-500 text-xs truncate">{set.dj_name}</span>
+                      )
                     )}
                     {set.performance_type && (
                       <span className="text-gray-700 text-xs">

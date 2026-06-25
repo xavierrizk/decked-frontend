@@ -315,10 +315,18 @@ export default function SetDetail() {
             🎪 {set.festival_name}
           </Link>
         )}
-        {set.venue_name && (
+        {set.venue_name && set.venue_id ? (
+          <Link
+            to={`/venues/${set.venue_id}`}
+            className="text-xs text-[#00D9FF] bg-[#00D9FF]/10 border border-[#00D9FF]/30 px-3 py-1 rounded-full hover:bg-[#00D9FF]/20 transition-colors"
+          >
+            🏟️ {set.venue_name}{set.venue_city ? `, ${set.venue_city}` : ''}
+          </Link>
+        ) : set.venue_name ? (
           <Pill>🏟️ {set.venue_name}{set.venue_city ? `, ${set.venue_city}` : ''}</Pill>
-        )}
-        {set.location && !set.venue_name && <Pill>📍 {set.location}</Pill>}
+        ) : set.location ? (
+          <Pill>📍 {set.location}</Pill>
+        ) : null}
         {set.duration  && <Pill>⏱️ {set.duration} mins</Pill>}
         {set.genre     && <Pill>🎵 {set.genre}</Pill>}
       </div>
