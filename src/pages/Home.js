@@ -312,27 +312,6 @@ export default function Home() {
         </div>
       )}
 
-      {/* ── DJ Bento Grid ─────────────────────────────── */}
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="section-label">Artists</h2>
-        <span className="text-gray-600 text-sm">{djs.length} total</span>
-      </div>
-
-      {djs.length === 0 ? (
-        <div className="text-center py-24 border border-white/5">
-          <p className="text-5xl mb-4">🎛️</p>
-          <p className="text-gray-500">No Artists yet. Be the first to add one!</p>
-        </div>
-      ) : (
-        <>
-          <div className="hidden md:block">
-            <ArtistSection djs={djs} isLoggedIn={isLoggedIn} />
-          </div>
-          <div className="md:hidden space-y-2">
-            {djs.map(dj => <SmallDJCard key={dj.id} dj={dj} isLoggedIn={isLoggedIn} />)}
-          </div>
-        </>
-      )}
     </div>
   );
 }
