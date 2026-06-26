@@ -241,8 +241,8 @@ export default function Home() {
       {/* ── Greeting (logged in) or Hero (logged out) ── */}
       {isLoggedIn && username ? (
         <div className="mb-6">
-          <p className="text-base font-semibold text-gray-400" style={{ fontFamily: ‘"Space Grotesk", sans-serif’ }}>
-            Welcome back,{‘ ‘}
+          <p className="text-base font-semibold text-gray-400" style={{ fontFamily: '"Space Grotesk", sans-serif' }}>
+            Welcome back,{' '}
             <Link to={`/profile/${userId}`} className="text-white hover:text-[#00D9FF] transition-colors">
               {username}
             </Link>
