@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { getCurrentUserId } from '../utils/auth';
+import CityAutocomplete from '../components/CityAutocomplete';
 
 const GENRES = [
   'House', 'Techno', 'Drum & Bass', 'Trance', 'Dubstep', 'Hardstyle',
@@ -148,7 +149,7 @@ export default function EditProfile() {
             </div>
             <div>
               <label className={label}>Location <span className="text-gray-700 normal-case tracking-normal font-normal">(optional)</span></label>
-              <input type="text" value={location} onChange={e => setLocation(e.target.value)} placeholder="London, UK" className={inp} />
+              <CityAutocomplete value={location} onChange={setLocation} placeholder="London, UK" className={inp} />
             </div>
             <div>
               <label className={label}>Bio <span className="text-gray-700 normal-case tracking-normal font-normal">(optional)</span></label>

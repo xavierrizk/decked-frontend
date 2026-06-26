@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import API_URL from '../api';
+import CityAutocomplete from './CityAutocomplete';
 
 const GENRES = [
   'House', 'Techno', 'Drum & Bass', 'Trance', 'Dubstep',
@@ -284,10 +285,9 @@ export default function ExtendedOnboarding({ onComplete }) {
                   Where are you based?
                 </h2>
                 <p className="text-gray-500 text-sm mb-6">Optional. Helps surface local Artists.</p>
-                <input
-                  type="text"
+                <CityAutocomplete
                   value={location}
-                  onChange={e => setLocation(e.target.value)}
+                  onChange={setLocation}
                   placeholder="City, e.g. London, Berlin, Sydney…"
                   className="w-full bg-white/[0.04] border border-white/[0.08] focus:border-[#00D9FF] text-white placeholder-gray-600 text-sm px-4 py-3 outline-none transition-colors"
                 />

@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { getCurrentUserId } from '../utils/auth';
+import CityAutocomplete from '../components/CityAutocomplete';
 import { useToast } from '../components/Toast';
 import Toast from '../components/Toast';
 
@@ -252,11 +253,9 @@ export default function EditArtistProfile() {
 
             <div>
               <label className="block text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1.5">Location</label>
-              <input
-                type="text"
+              <CityAutocomplete
                 value={location}
-                onChange={e => setLocation(e.target.value)}
-                maxLength={255}
+                onChange={setLocation}
                 placeholder="e.g. Berlin, Germany"
                 className="w-full bg-white/[0.04] border border-white/10 focus:border-[#00D9FF]/50 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 text-sm outline-none transition-colors"
               />
