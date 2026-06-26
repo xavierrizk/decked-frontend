@@ -37,25 +37,7 @@ function StarRating({ value, size = 'sm' }) {
   );
 }
 
-function VideoModal({ url, onClose }) {
-  useEffect(() => {
-    const onKey = e => { if (e.key === 'Escape') onClose(); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [onClose]);
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={onClose}>
-      <div className="relative w-full max-w-3xl" onClick={e => e.stopPropagation()}>
-        <button onClick={onClose} className="absolute -top-10 right-0 text-gray-400 hover:text-white text-sm font-semibold">✕ Close</button>
-        <video src={url} controls autoPlay className="w-full rounded-2xl max-h-[70vh] bg-black" />
-      </div>
-    </div>
-  );
-}
-
 function ReviewCard({ review, onLike, currentUserId }) {
-  const [videoOpen, setVideoOpen] = useState(false);
   const navigate = useNavigate();
 
   // support both flat (username) and nested (user.username) shapes
@@ -141,18 +123,22 @@ function ReviewCard({ review, onLike, currentUserId }) {
 
       {/* Video clip */}
       {review.video_url && (
-        <button
-          onClick={() => setVideoOpen(true)}
-          className="flex items-center gap-2 text-xs font-bold text-brand-400 hover:text-brand-300 transition-colors mb-3 bg-brand-500/10 hover:bg-brand-500/20 rounded-lg px-3 py-2 border border-brand-500/20"
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          WATCH VIDEO CLIP
-          {review.video_duration && (
-            <span className="text-gray-500 font-normal ml-1">
-              {Math.floor(review.video_duration / 60)}:{String(Math.floor(review.video_duration % 60)).padStart(2, '0')}
-            </span>
-          )}
-        </button>
+        <div className="mt-3 mb-3 rounded-xl overflow-hidden border border-[#00D9FF]/20 bg-black">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-[#00D9FF]/10 border-b border-[#00D9FF]/20">
+            <span className="text-[#00D9FF] text-xs">▶</span>
+            <span className="text-[#00D9FF] text-xs font-semibold uppercase tracking-wider">Video Clip</span>
+            {review.video_duration && (
+              <span className="ml-auto text-gray-500 text-[10px] font-mono">{Math.floor(review.video_duration)}s</span>
+            )}
+          </div>
+          <video
+            src={review.video_url}
+            controls
+            playsInline
+            onClick={e => e.stopPropagation()}
+            className="w-full max-h-64 object-contain bg-black"
+          />
+        </div>
       )}
 
       {/* Footer */}
@@ -189,7 +175,6 @@ function ReviewCard({ review, onLike, currentUserId }) {
         )}
       </div>
 
-      {videoOpen && <VideoModal url={review.video_url} onClose={() => setVideoOpen(false)} />}
     </div>
   );
 }
