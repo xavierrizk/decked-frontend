@@ -145,25 +145,48 @@ function ArtistPill({ artist }) {
   );
 }
 
-/* ── review row (vertical list) ─────────────────────── */
-function ReviewRow({ review, last }) {
+/* ── review card (Letterboxd style) ─────────────────── */
+function SetThumbSmall({ review }) {
+  const ytId = getYouTubeId(review.video_url);
+  const src  = ytId
+    ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`
+    : review.dj_image || null;
+  return (
+    <div className="w-14 h-20 rounded flex-shrink-0 overflow-hidden bg-[#1a1a1f]">
+      {src
+        ? <img src={src} alt={review.set_title} className="w-full h-full object-cover" />
+        : <div className="w-full h-full bg-gradient-to-b from-gray-800 to-black" />
+      }
+    </div>
+  );
+}
+
+function ReviewCard({ review, last }) {
   return (
     <Link
       to={`/set/${review.set_id}`}
-      className={`flex items-start gap-3 py-2.5 hover:bg-white/[0.03] rounded-lg px-2 -mx-2 transition-colors group ${!last ? 'border-b border-white/[0.05]' : ''}`}
+      className={`flex gap-3 group py-4 ${!last ? 'border-b border-white/[0.06]' : ''}`}
     >
-      <Avatar src={review.user_avatar} name={review.username} size={30} />
+      <SetThumbSmall review={review} />
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
-          <span className="text-white text-[11px] font-semibold">{review.username}</span>
-          <Stars rating={review.rating} />
-          <span className="text-gray-600 text-[10px]">on</span>
-          <span className="text-gray-400 text-[11px] truncate group-hover:text-[#00D9FF] transition-colors">
-            {review.set_title.trim()}
-          </span>
+        {/* User header */}
+        <div className="flex items-center gap-2 mb-1">
+          <Avatar src={review.user_avatar} name={review.username} size={22} />
+          <span className="text-white text-xs font-semibold">{review.username}</span>
         </div>
+        {/* Set title + rating */}
+        <p className="text-white text-sm font-bold leading-tight line-clamp-1 group-hover:text-[#00D9FF] transition-colors mb-1">
+          {review.set_title.trim()}
+          {review.artist_name && (
+            <span className="text-gray-500 font-normal text-xs ml-1.5">{review.artist_name}</span>
+          )}
+        </p>
+        <Stars rating={review.rating} />
+        {/* Review text */}
         {review.review_text && (
-          <p className="text-gray-500 text-[11px] leading-relaxed line-clamp-2">&ldquo;{review.review_text}&rdquo;</p>
+          <p className="text-gray-400 text-xs leading-relaxed line-clamp-2 mt-1.5">
+            {review.review_text}
+          </p>
         )}
       </div>
     </Link>
@@ -267,9 +290,9 @@ export default function HighlightsSection({ isLoggedIn }) {
           {/* Hot reviews */}
           <Section label="Hot Reviews" icon="⭐" to="/reviews" loading={loadingHr}>
             {hotRevs.length > 0 ? (
-              <div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
                 {hotRevs.map((r, i) => (
-                  <ReviewRow key={r.review_id} review={r} last={i === hotRevs.length - 1} />
+                  <ReviewCard key={r.review_id} review={r} last={i >= hotRevs.length - 2} />
                 ))}
               </div>
             ) : (
