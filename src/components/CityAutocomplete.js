@@ -30,25 +30,36 @@ const COUNTRY_NAMES = {
 };
 
 export default function CityAutocomplete({ value, onChange, placeholder = 'City, e.g. London, Berlin…', className = '' }) {
+  const [inputText, setInputText]     = useState(value || '');
   const [suggestions, setSuggestions] = useState([]);
   const [open, setOpen]               = useState(false);
-  const [focused, setFocused]         = useState(false);
+  const [confirmed, setConfirmed]     = useState(!!value);
+  const [error, setError]             = useState(false);
   const debounce = useRef(null);
   const wrapRef  = useRef(null);
 
+  // Sync external value resets (e.g. form reset)
+  useEffect(() => {
+    setInputText(value || '');
+    setConfirmed(!!value);
+    setError(false);
+  }, [value]);
+
   useEffect(() => {
     clearTimeout(debounce.current);
-    if (!value || value.length < 1) { setSuggestions([]); return; }
+    setConfirmed(false);
+    setError(false);
+    if (!inputText || inputText.length < 1) { setSuggestions([]); setOpen(false); return; }
     debounce.current = setTimeout(async () => {
       try {
-        const { data } = await axios.get(`${API_URL}/api/cities/search?q=${encodeURIComponent(value)}`);
+        const { data } = await axios.get(`${API_URL}/api/cities/search?q=${encodeURIComponent(inputText)}`);
         setSuggestions(data);
         setOpen(data.length > 0);
       } catch { setSuggestions([]); }
     }, 200);
-  }, [value]);
+  }, [inputText]);
 
-  // Close on outside click
+  // Close dropdown on outside click
   useEffect(() => {
     const handler = e => { if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false); };
     document.addEventListener('mousedown', handler);
@@ -56,23 +67,55 @@ export default function CityAutocomplete({ value, onChange, placeholder = 'City,
   }, []);
 
   const select = (city) => {
-    onChange(city.name);
+    setInputText(city.name);
+    setConfirmed(true);
+    setError(false);
     setSuggestions([]);
     setOpen(false);
+    onChange(city.name);
   };
+
+  const handleBlur = () => {
+    setTimeout(() => {
+      if (!confirmed) {
+        if (inputText.trim()) {
+          // Text entered but nothing selected — clear it
+          setInputText('');
+          setError(true);
+          onChange('');
+        }
+        setSuggestions([]);
+        setOpen(false);
+      }
+    }, 150);
+  };
+
+  const handleChange = (e) => {
+    setInputText(e.target.value);
+    setConfirmed(false);
+    setError(false);
+  };
+
+  const errorClass = error ? ' border-red-500/60' : '';
 
   return (
     <div ref={wrapRef} className="relative">
       <input
         type="text"
-        value={value}
-        onChange={e => { onChange(e.target.value); }}
-        onFocus={() => { setFocused(true); if (suggestions.length > 0) setOpen(true); }}
-        onBlur={() => setFocused(false)}
+        value={inputText}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        onFocus={() => { if (suggestions.length > 0) setOpen(true); }}
         placeholder={placeholder}
-        className={className}
+        className={className + errorClass}
         autoComplete="off"
       />
+      {confirmed && (
+        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#00D9FF] text-xs pointer-events-none">✓</span>
+      )}
+      {error && (
+        <p className="text-red-400 text-[11px] mt-1">Please select a city from the list.</p>
+      )}
       {open && suggestions.length > 0 && (
         <ul className="absolute left-0 right-0 top-full mt-1 z-50 bg-[#111114] border border-white/10 rounded-lg overflow-hidden shadow-2xl">
           {suggestions.map((c, i) => (
