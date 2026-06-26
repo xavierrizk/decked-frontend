@@ -92,7 +92,7 @@ function FeaturedDJCard({ dj, isLoggedIn, className = '', style: styleProp = {} 
       )}
       <div className="absolute bottom-0 left-0 right-0 p-6">
         {dj.genre && <p className="text-gray-400 text-xs font-medium uppercase tracking-widest mb-1">{dj.genre}</p>}
-        <h2 className="text-white text-3xl font-black leading-tight mb-2 group-hover:text-[#00D9FF] transition-colors duration-200">
+        <h2 className="text-white text-3xl font-black leading-tight mb-2 group-hover:text-[#00D9FF] transition-colors duration-200 truncate">
           {dj.name}
         </h2>
         <div className="flex items-center gap-4">
@@ -170,7 +170,7 @@ function ArtistSection({ djs, isLoggedIn }) {
 
       {/* Uniform grid */}
       {rest.length > 0 && (
-        <div className="grid grid-cols-4 gap-2" style={{ gridAutoRows: '160px' }}>
+        <div className="grid grid-cols-4 gap-2 overflow-hidden" style={{ gridAutoRows: '160px' }}>
           {rest.map(dj => <ArtistGridCard key={dj.id} dj={dj} isLoggedIn={isLoggedIn} />)}
         </div>
       )}
@@ -304,7 +304,7 @@ export default function Home() {
               See all →
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4">
             {trending.map((set, i) => (
               <SetCard key={set.id} set={set} rank={i + 1} />
             ))}
