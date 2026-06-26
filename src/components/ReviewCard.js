@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { StarDisplay } from './StarRating';
+import ShareMenu from './ShareMenu';
 
 export default function ReviewCard({ review, onLikeToggle, onOpen, currentUserId }) {
   const [likeAnim, setLikeAnim] = useState(false);
@@ -132,11 +133,20 @@ export default function ReviewCard({ review, onLikeToggle, onOpen, currentUserId
           <span>{review.like_count || 0}</span>
         </button>
 
-        {review.is_favorited && (
-          <span className="text-yellow-400 text-[10px] font-semibold flex items-center gap-1">
-            ⭐ Favorited
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {review.is_favorited && (
+            <span className="text-yellow-400 text-[10px] font-semibold flex items-center gap-1">
+              ⭐ Favorited
+            </span>
+          )}
+          <ShareMenu
+            url={review.set_id ? `${window.location.origin}/set/${review.set_id}` : undefined}
+            text={review.review_text
+              ? `"${review.review_text.slice(0, 80)}${review.review_text.length > 80 ? '…' : ''}" — DECK'D ${window.location.origin}/set/${review.set_id}`
+              : `Check out this review on DECK'D — ${window.location.origin}/set/${review.set_id}`}
+            className="ml-auto"
+          />
+        </div>
       </div>
     </div>
   );

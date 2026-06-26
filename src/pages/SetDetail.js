@@ -8,6 +8,7 @@ import Toast, { useToast } from '../components/Toast';
 import ReportModal from '../components/ReportModal';
 import ReviewCard from '../components/ReviewCard';
 import ReviewDetailModal from '../components/ReviewDetailModal';
+import ShareMenu from '../components/ShareMenu';
 
 function getYouTubeId(url) {
   if (!url) return null;
@@ -237,15 +238,10 @@ export default function SetDetail() {
     setDeletingComment(null);
   };
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    showToast('Link copied!');
-  };
-
-  const handleShare = () => {
-    const avg = stats?.average ? Number(stats.average).toFixed(1) : '?';
-    const text = `"${set.title}" by ${set.dj_name} — ${avg}/5 on DECK'D ${window.location.href}`;
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+  const buildShareText = () => {
+    const avg = stats?.average ? Number(stats.average).toFixed(1) : null;
+    const score = avg ? ` — ${avg}/5` : '';
+    return `"${set?.title}" by ${set?.dj_name}${score} on DECK'D ${window.location.href}`;
   };
 
   if (loading) return <Spinner />;
@@ -448,20 +444,7 @@ export default function SetDetail() {
               >
                 {likes.liked ? '♥' : '♡'} {likes.count}
               </button>
-              <button
-                onClick={handleCopyLink}
-                className="flex items-center justify-center w-9 h-9 rounded-lg border border-white/[0.07] text-gray-500 hover:text-white hover:border-white/20 transition-all"
-                title="Copy link"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-              </button>
-              <button
-                onClick={handleShare}
-                className="flex items-center justify-center w-9 h-9 rounded-lg border border-white/[0.07] text-gray-500 hover:text-white hover:border-white/20 transition-all"
-                title="Share on X"
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-              </button>
+              <ShareMenu text={buildShareText()} />
               {isLoggedIn && (
                 <button
                   onClick={() => setReportModal({ open: true, type: 'set', id: set.id, name: set.title })}
