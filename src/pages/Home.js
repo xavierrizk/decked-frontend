@@ -182,7 +182,6 @@ function ArtistSection({ djs, isLoggedIn }) {
 /* ─── main page ───────────────────────────────────── */
 export default function Home() {
   const [djs, setDJs]                   = useState([]);
-  const [trending, setTrending]         = useState([]);
   const [personalized, setPersonalized] = useState([]);
   const [hasPrefs, setHasPrefs]         = useState(false);
   const [loading, setLoading]           = useState(true);
@@ -196,14 +195,13 @@ export default function Home() {
     const headers = isLoggedIn ? { Authorization: `Bearer ${token}` } : {};
     const base = [
       axios.get(API_URL + '/api/artist-profiles/featured'),
-      axios.get(API_URL + '/api/feed/trending?sort=likes'),
     ];
     const personalizedReq = isLoggedIn
       ? axios.get(API_URL + '/api/feed/personalized', { headers }).catch(() => null)
       : Promise.resolve(null);
 
     Promise.all([...base, personalizedReq])
-      .then(async ([djsRes, trendingRes, persRes]) => {
+      .then(async ([djsRes, persRes]) => {
         let djList = djsRes.data;
 
         // Fetch follow status for all artists in one shot if logged in
@@ -218,7 +216,6 @@ export default function Home() {
         }
 
         setDJs(djList);
-        setTrending(trendingRes.data.slice(0, 3));
         if (persRes?.data) {
           const prefs = persRes.data.preferences || {};
           const genres = prefs.favorite_genres || [];
@@ -276,22 +273,6 @@ export default function Home() {
           <div className="grid grid-cols-4 gap-3">
             {personalized.slice(0, 4).map(set => (
               <SetCard key={set.id} set={set} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* ── Trending this week ─────────────────────────── */}
-      {trending.length > 0 && (
-        <div className="mb-7">
-          <div className="flex items-center justify-between mb-3">
-            <Link to="/trending" className="text-[11px] font-semibold uppercase tracking-widest text-gray-500 hover:text-white transition-colors">
-              Trending This Week →
-            </Link>
-          </div>
-          <div className="grid grid-cols-4 gap-3">
-            {trending.slice(0, 4).map((set, i) => (
-              <SetCard key={set.id} set={set} rank={i + 1} />
             ))}
           </div>
         </div>
