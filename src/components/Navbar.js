@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { to: '/artists',    label: 'ARTISTS'     },
   { to: '/venues',     label: 'VENUES'      },
   { to: '/trending',     label: 'TRENDING'     },
+  { to: '/genre',        label: 'BROWSE'       },
   { to: '/community',    label: 'COMMUNITY'    },
   { to: '/leaderboards', label: 'LEADERBOARDS' },
 ];

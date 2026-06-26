@@ -16,6 +16,7 @@ import ProfilePage       from './pages/ProfilePage';
 import EditProfile       from './pages/EditProfile';
 import FeedPage          from './pages/FeedPage';
 import TrendingPage      from './pages/TrendingPage';
+import GenrePage         from './pages/GenrePage';
 import NotificationsPage from './pages/NotificationsPage';
 import SearchPage              from './pages/SearchPage';
 import DiscoveryPage           from './pages/DiscoveryPage';
@@ -112,6 +113,8 @@ function AppInner({ isLoggedIn, setIsLoggedIn }) {
             <Routes>
               <Route path="/"               element={<Home />} />
               <Route path="/trending"       element={<TrendingPage />} />
+              <Route path="/genre"          element={<GenrePage />} />
+              <Route path="/genre/:slug"   element={<GenrePage />} />
               <Route path="/concerts"       element={<ConcertsPage />} />
               <Route path="/festivals"      element={<FestivalsPage />} />
               <Route path="/sets"           element={<SetsPage />} />
