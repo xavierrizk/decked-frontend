@@ -222,7 +222,7 @@ export default function ProfilePage() {
       />
 
       {/* THE VISUAL HERO */}
-      <StatsBlock stats={stats} />
+      <StatsBlock stats={stats} location={profile.location} />
 
       {/* Featured sets — only if the user picked any */}
       {featuredSets.length > 0 && (
