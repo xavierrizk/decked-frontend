@@ -10,11 +10,6 @@ const genreGradient = {
   'default':      'from-gray-900 via-zinc-800 to-black',
 };
 
-function getGradient(genre) {
-  if (!genre) return genreGradient['default'];
-  return genreGradient[genre] || genreGradient['default'];
-}
-
 const TYPE_BADGE = {
   dj_set:       { label: 'DJ Set',    color: '#00D9FF' },
   concert:      { label: 'Concert',   color: '#FF006E' },
@@ -24,23 +19,24 @@ const TYPE_BADGE = {
   other:        { label: 'Live',      color: '#9BA6B3' },
 };
 
+function getGradient(genre) {
+  if (!genre) return genreGradient['default'];
+  return genreGradient[genre] || genreGradient['default'];
+}
+
 function getYouTubeId(url) {
   if (!url) return null;
-  // Standard: youtube.com/watch?v=ID
   let m = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
   if (m) return m[1];
-  // Short: youtu.be/ID
   m = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
   if (m) return m[1];
-  // Embed: youtube.com/embed/ID
   m = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/);
   if (m) return m[1];
   return null;
 }
 
-function YouTubeThumbnail({ videoId, alt, className }) {
-  // Try maxresdefault, fall back to hqdefault if it 404s (maxres isn't always available)
-  const [src, setSrc] = useState(`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`);
+function Thumb({ videoId, alt, className }) {
+  const [src, setSrc] = useState(`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`);
   return (
     <img
       src={src}
@@ -52,110 +48,73 @@ function YouTubeThumbnail({ videoId, alt, className }) {
 }
 
 export default function SetCard({ set, rank }) {
-  const gradient = getGradient(set.genre);
-  const badge = TYPE_BADGE[set.performance_type] || null;
-  const isDjSet = set.performance_type === 'dj_set' || (!set.performance_type && set.dj_id);
-  const ytId = getYouTubeId(set.video_url);
-  const artistImage = set.dj_profile_image_url;
+  const gradient   = getGradient(set.genre);
+  const badge      = TYPE_BADGE[set.performance_type] || null;
+  const isDjSet    = set.performance_type === 'dj_set' || (!set.performance_type && set.dj_id);
+  const ytId       = getYouTubeId(set.video_url);
+  const artistImg  = set.dj_profile_image_url;
+  const rating     = set.avg_rating ? Number(set.avg_rating).toFixed(1) : null;
+  const artistLink = isDjSet && set.dj_id ? `/artist/${set.dj_id}` : set.artist_id ? `/artist/${set.artist_id}` : null;
 
   return (
-    <div className="relative">
-      {/* Rating badge */}
-      <div className="absolute -top-3 -right-2 z-10 bg-[#0d0d0f] border border-white/10 rounded-xl px-2.5 py-1.5 text-center shadow-lg">
-        <p className="text-yellow-400 text-sm font-black leading-none" style={{ fontFamily: '"IBM Plex Mono", monospace' }}>
-          {set.avg_rating ? Number(set.avg_rating).toFixed(1) : '—'}
-        </p>
-        <p className="text-gray-600 text-[10px] leading-none mt-0.5">{set.rating_count} ratings</p>
+    <Link to={`/set/${set.id}`} className="group block">
+      {/* Thumbnail */}
+      <div className={`relative rounded-lg overflow-hidden aspect-video ${!ytId && !artistImg ? `bg-gradient-to-br ${gradient}` : 'bg-black'}`}>
+        {ytId ? (
+          <Thumb videoId={ytId} alt={set.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+        ) : artistImg ? (
+          <img src={artistImg} alt={set.dj_name} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300" />
+        ) : (
+          <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full opacity-[0.06]">
+            <circle cx="50" cy="50" r="48" fill="white" />
+            <circle cx="50" cy="50" r="36" fill="#111" />
+            <circle cx="50" cy="50" r="24" fill="white" />
+            <circle cx="50" cy="50" r="16" fill="#111" />
+            <circle cx="50" cy="50" r="6"  fill="white" />
+            <circle cx="50" cy="50" r="2"  fill="#111" />
+          </svg>
+        )}
+
+        {/* Type badge */}
+        {badge && (
+          <span
+            className="absolute top-2 left-2 text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded backdrop-blur-sm"
+            style={{ color: badge.color, background: 'rgba(0,0,0,0.6)', border: `1px solid ${badge.color}44` }}
+          >
+            {badge.label}
+          </span>
+        )}
+
+        {/* Rank */}
+        {rank && (
+          <span className="absolute bottom-2 right-2 text-3xl font-black text-white/10 leading-none select-none">
+            {rank}
+          </span>
+        )}
       </div>
 
-      <Link to={`/set/${set.id}`}>
-        <div className={`rounded overflow-hidden relative aspect-[4/3] group cursor-pointer hover:scale-[1.02] transition-all duration-300 ${!ytId && !artistImage ? `bg-gradient-to-br ${gradient}` : 'bg-black'}`}>
-
-          {/* YouTube thumbnail — highest priority */}
-          {ytId ? (
-            <>
-              <YouTubeThumbnail
-                videoId={ytId}
-                alt={set.title}
-                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
-            </>
-          ) : artistImage ? (
-            /* Artist profile picture fallback */
-            <>
-              <img
-                src={artistImage}
-                alt={set.dj_name}
-                className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-            </>
-          ) : (
-            /* Genre gradient + vinyl as last resort */
-            <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full opacity-[0.06] pointer-events-none">
-              <circle cx="50" cy="50" r="48" fill="white" />
-              <circle cx="50" cy="50" r="36" fill="#111" />
-              <circle cx="50" cy="50" r="24" fill="white" />
-              <circle cx="50" cy="50" r="16" fill="#111" />
-              <circle cx="50" cy="50" r="6" fill="white" />
-              <circle cx="50" cy="50" r="2" fill="#111" />
-            </svg>
-          )}
-
-          {/* Rank number */}
-          {rank && (
-            <span className="absolute bottom-12 right-3 text-5xl font-black text-white/10 leading-none select-none z-[1]">
-              {rank}
-            </span>
-          )}
-
-          {/* Performance-type badge */}
-          {badge && (
-            <span
-              className="absolute top-3 left-3 z-10 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full backdrop-blur-sm"
-              style={{
-                color: badge.color,
-                background: 'rgba(0,0,0,0.55)',
-                border: `1px solid ${badge.color}55`,
-              }}
+      {/* Info row */}
+      <div className="mt-1.5 px-0.5">
+        <p className="text-white text-xs font-semibold leading-snug line-clamp-1 group-hover:text-[#00D9FF] transition-colors">
+          {set.title}
+        </p>
+        <div className="flex items-center justify-between mt-0.5">
+          {artistLink ? (
+            <Link
+              to={artistLink}
+              onClick={e => e.stopPropagation()}
+              className="text-gray-500 text-[11px] hover:text-white transition-colors truncate max-w-[70%]"
             >
-              {badge.label}
-            </span>
+              {set.dj_name}
+            </Link>
+          ) : (
+            <span className="text-gray-600 text-[11px] truncate max-w-[70%]">{set.dj_name}</span>
           )}
-
-          {/* Duration badge */}
-          {set.duration && (
-            <span className="absolute bottom-3 right-3 bg-black/60 text-gray-300 text-xs px-2 py-0.5 rounded-full backdrop-blur-sm z-10">
-              {set.duration} min
-            </span>
+          {rating && (
+            <span className="text-[#FF006E] text-[11px] font-bold tabular-nums flex-shrink-0">{rating}</span>
           )}
-
-          {/* Bottom text overlay */}
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-4 group-hover:from-black/95 transition-all duration-300 z-10">
-            <p className="text-white font-bold text-base leading-tight line-clamp-2">{set.title}</p>
-            {isDjSet && set.dj_id ? (
-              <Link
-                to={`/artist/${set.dj_id}`}
-                onClick={(e) => e.stopPropagation()}
-                className="text-gray-300 text-xs mt-1 hover:text-[#00D9FF] transition-colors inline-block"
-              >
-                {set.dj_name}
-              </Link>
-            ) : set.artist_id ? (
-              <Link
-                to={`/artist/${set.artist_id}`}
-                onClick={(e) => e.stopPropagation()}
-                className="text-gray-300 text-xs mt-1 hover:text-[#FF006E] transition-colors inline-block"
-              >
-                {set.dj_name}
-              </Link>
-            ) : (
-              <span className="text-gray-300 text-xs mt-1 inline-block">{set.dj_name}</span>
-            )}
-          </div>
         </div>
-      </Link>
-    </div>
+      </div>
+    </Link>
   );
 }

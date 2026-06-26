@@ -235,47 +235,30 @@ export default function Home() {
   if (loading) return <Spinner />;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="max-w-5xl mx-auto px-4 py-6">
       <VisualizerBackground />
 
       {/* ── Greeting (logged in) or Hero (logged out) ── */}
       {isLoggedIn && username ? (
-        <div className="mb-8 pb-6 border-b border-white/[0.05]">
-          <p className="text-2xl font-semibold text-gray-300" style={{ fontFamily: '"Space Grotesk", sans-serif' }}>
-            Welcome back,{' '}
-            <Link
-              to={`/profile/${userId}`}
-              className="transition-colors hover:underline"
-              style={{ color: '#00D9FF' }}
-            >
+        <div className="mb-6">
+          <p className="text-base font-semibold text-gray-400" style={{ fontFamily: ‘"Space Grotesk", sans-serif’ }}>
+            Welcome back,{‘ ‘}
+            <Link to={`/profile/${userId}`} className="text-white hover:text-[#00D9FF] transition-colors">
               {username}
             </Link>
             .
           </p>
-          <p className="text-gray-600 text-sm mt-1">
-            {hasPrefs ? "Here’s what we’ve been recommending based on your taste." : "Here’s what’s trending right now."}
-          </p>
         </div>
       ) : (
-        <div className="text-center mb-8">
-          <div className="inline-block mb-3 px-2.5 py-0.5 text-[10px] font-semibold bg-brand-600/20 text-brand-300 border border-brand-600/30 tracking-widest uppercase">
-            Beta
-          </div>
-          <h1 style={{ fontFamily: '"Space Grotesk", sans-serif', letterSpacing: '-0.02em' }} className="text-4xl md:text-6xl font-bold text-white mb-3 leading-tight">
-            Rate the sets that <span className="text-purple-gradient">DECK'D</span> you
+        <div className="mb-6">
+          <h1 style={{ fontFamily: '"Space Grotesk", sans-serif', letterSpacing: '-0.02em' }} className="text-2xl font-bold text-white mb-1">
+            Rate the sets that <span className="text-[#00D9FF]">DECK'D</span> you
           </h1>
-          <p className="text-gray-500 text-base mb-5 max-w-sm mx-auto">
-            The community platform for discovering and reviewing DJ sets.
-          </p>
-          <div className="flex justify-center gap-2">
-            <Link to="/signup" className="btn-primary px-6 py-2 text-sm">
-              Get Started
-            </Link>
-            <Link
-              to="/discover"
-              className="px-6 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white text-sm font-semibold transition-all duration-200"
-            >
-              Explore
+          <p className="text-gray-500 text-sm mb-4">The community platform for DJ sets.</p>
+          <div className="flex gap-2">
+            <Link to="/signup" className="btn-primary px-4 py-1.5 text-xs">Join</Link>
+            <Link to="/sets" className="px-4 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white text-xs font-semibold transition-all duration-200">
+              Browse Sets
             </Link>
           </div>
         </div>
@@ -283,11 +266,9 @@ export default function Home() {
 
       {/* ── Personalized sets ──────────────────────────── */}
       {hasPrefs && personalized.length > 0 && (
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="section-label">✨ Recommended for You</h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+        <div className="mb-7">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-600 mb-3">Recommended for You</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {personalized.map(set => (
               <SetCard key={set.id} set={set} />
             ))}
@@ -297,14 +278,14 @@ export default function Home() {
 
       {/* ── Trending this week ─────────────────────────── */}
       {trending.length > 0 && (
-        <div className="mb-8">
+        <div className="mb-7">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="section-label">🔥 Trending This Week</h2>
-            <Link to="/trending" className="text-[#00D9FF]/60 hover:text-[#00D9FF] text-xs font-medium transition-colors">
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-600">Trending This Week</p>
+            <Link to="/trending" className="text-gray-600 hover:text-white text-[11px] transition-colors">
               See all →
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {trending.map((set, i) => (
               <SetCard key={set.id} set={set} rank={i + 1} />
             ))}
