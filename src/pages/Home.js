@@ -171,7 +171,7 @@ function ArtistSection({ djs, isLoggedIn }) {
 
       {/* Uniform grid */}
       {rest.length > 0 && (
-        <div className="grid grid-cols-4 gap-2 overflow-hidden" style={{ gridAutoRows: '160px' }}>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 overflow-hidden" style={{ gridAutoRows: '160px' }}>
           {rest.map(dj => <ArtistGridCard key={dj.id} dj={dj} isLoggedIn={isLoggedIn} />)}
         </div>
       )}
@@ -270,7 +270,7 @@ export default function Home() {
               Recommended for You →
             </Link>
           </div>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {personalized.slice(0, 4).map(set => (
               <SetCard key={set.id} set={set} />
             ))}
