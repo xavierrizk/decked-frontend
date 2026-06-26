@@ -1,20 +1,153 @@
 import API_URL from '../api';
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { getCurrentUserId } from '../utils/auth';
 import Toast, { useToast } from '../components/Toast';
 import ReportModal from '../components/ReportModal';
 import ReviewDetailModal from '../components/ReviewDetailModal';
 import ProfileHeader from '../components/profile/ProfileHeader';
-import StatsBlock from '../components/profile/StatsBlock';
 import ProfileTabs from '../components/profile/ProfileTabs';
 import ReviewSection from '../components/profile/ReviewSection';
 import ArtistGrid from '../components/profile/DJGrid';
 import NetworkGrid from '../components/profile/NetworkGrid';
-import ActivityFeed from '../components/profile/ActivityFeed';
-import SetCard from '../components/cards/SetCard';
+import ProfileReviewCard from '../components/profile/ProfileReviewCard';
 import { relativeTime } from '../components/profile/helpers';
+
+function getYtThumb(url) {
+  if (!url) return null;
+  let m = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
+  if (!m) m = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+  if (!m) m = url.match(/youtube\.com\/(?:embed|shorts)\/([a-zA-Z0-9_-]{11})/);
+  return m ? `https://img.youtube.com/vi/${m[1]}/mqdefault.jpg` : null;
+}
+
+// Letterboxd-style recent activity: thumbnail grid of rated sets
+function RecentActivityGrid({ activity, loading }) {
+  const rated = (activity || []).filter(a => a.type === 'rating').slice(0, 8);
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="aspect-video rounded-lg bg-white/[0.04] animate-pulse" />
+        ))}
+      </div>
+    );
+  }
+
+  if (!rated.length) return null;
+
+  return (
+    <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
+      {rated.map((item, i) => {
+        const thumb = getYtThumb(item.set_video_url) || item.dj_image || null;
+        const stars = item.rating ? Math.round(item.rating) : 0;
+        return (
+          <Link key={i} to={`/set/${item.set_id}`} className="relative group aspect-video rounded-lg overflow-hidden bg-white/[0.04] block">
+            {thumb
+              ? <img src={thumb} alt={item.set_title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+              : <div className="w-full h-full flex items-center justify-center text-gray-700 text-xl">♪</div>
+            }
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute bottom-1 left-0 right-0 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="text-[9px] text-yellow-400 leading-none">
+                {'★'.repeat(stars)}{'☆'.repeat(Math.max(0, 5 - stars))}
+              </span>
+            </div>
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
+function SectionLabel({ children, action }) {
+  return (
+    <div className="flex items-center justify-between mb-3">
+      <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500">{children}</p>
+      {action && <Link to={action.to} className="text-xs text-gray-600 hover:text-[#00D9FF] transition-colors">{action.label} →</Link>}
+    </div>
+  );
+}
+
+// Dashboard — the default profile tab
+function ProfileDashboard({ featuredSets, activity, actLoading, reviews, reviewsLoading, onOpenReview, isOwn, userId }) {
+  const hasActivity = activity.filter(a => a.type === 'rating').length > 0;
+  const recentReviews = reviews.filter(r => r.review_text).slice(0, 3);
+
+  return (
+    <div className="space-y-8">
+      {/* Favorite Sets */}
+      {featuredSets.length > 0 && (
+        <div>
+          <SectionLabel>Favorite Sets</SectionLabel>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {featuredSets.slice(0, 4).map(s => {
+              const thumb = getYtThumb(s.video_url) || s.dj_image || null;
+              return (
+                <Link key={s.id} to={`/set/${s.id}`} className="relative group aspect-video rounded-lg overflow-hidden bg-white/[0.04]">
+                  {thumb
+                    ? <img src={thumb} alt={s.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    : <div className="w-full h-full flex items-center justify-center text-gray-700 text-2xl">♪</div>
+                  }
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-2">
+                    <p className="text-white text-[11px] font-semibold leading-tight line-clamp-1">{s.title}</p>
+                    {s.dj_name && <p className="text-gray-400 text-[10px] line-clamp-1">{s.dj_name}</p>}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Recent Activity */}
+      {hasActivity && (
+        <div>
+          <SectionLabel action={{ to: `?tab=reviews`, label: 'All ratings' }}>Recent Activity</SectionLabel>
+          <RecentActivityGrid activity={activity} loading={actLoading} />
+        </div>
+      )}
+
+      {/* Recent Reviews */}
+      {(reviewsLoading || recentReviews.length > 0) && (
+        <div>
+          <SectionLabel action={reviews.length > 3 ? { to: `?tab=reviews`, label: 'All reviews' } : null}>
+            Recent Reviews
+          </SectionLabel>
+          {reviewsLoading ? (
+            <div className="space-y-3">
+              {[0, 1].map(i => <div key={i} className="h-32 rounded-xl bg-white/[0.03] animate-pulse" />)}
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {recentReviews.map(r => (
+                <ProfileReviewCard key={r.id} review={r} onOpen={onOpenReview} />
+              ))}
+            </div>
+          )}
+          {!reviewsLoading && recentReviews.length === 0 && (
+            <div className="text-center py-10 border border-white/[0.05] rounded-xl text-gray-600 text-sm">
+              No written reviews yet.
+              {isOwn && <span> <Link to="/trending" className="text-[#00D9FF]">Find a set to review →</Link></span>}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Empty state */}
+      {!featuredSets.length && !hasActivity && !reviewsLoading && !recentReviews.length && (
+        <div className="text-center py-16 border border-white/[0.05] rounded-xl text-gray-600">
+          <p className="text-3xl mb-3">🎧</p>
+          <p className="mb-3">Nothing here yet.</p>
+          {isOwn && <Link to="/trending" className="text-[#00D9FF] text-sm">Start rating sets →</Link>}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function ProfilePage() {
   const { userId } = useParams();
@@ -22,72 +155,60 @@ export default function ProfilePage() {
   const [searchParams] = useSearchParams();
   const tabParam = searchParams.get('tab');
 
-  const [profile, setProfile]   = useState(null);
-  const [loading, setLoading]   = useState(true);
-  const [activeTab, setActiveTab] = useState('reviews');
+  const [profile, setProfile]     = useState(null);
+  const [loading, setLoading]     = useState(true);
+  const [activeTab, setActiveTab] = useState('profile');
 
-  // Per-section data + loaded flags
-  const [reviews, setReviews]       = useState([]);
+  const [reviews, setReviews]           = useState([]);
   const [reviewsLoading, setReviewsLoading] = useState(true);
-  const [favorites, setFavorites]   = useState([]);
-  const [favState, setFavState]     = useState('idle');     // idle | loading | loaded
-  const [following, setFollowing]   = useState([]);
-  const [followState, setFollowState] = useState('idle');
-  const [network, setNetwork]       = useState([]);
-  const [netState, setNetState]     = useState('idle');
-  const [activity, setActivity]     = useState([]);
-  const [actState, setActState]     = useState('idle');
+  const [following, setFollowing]       = useState([]);
+  const [followState, setFollowState]   = useState('idle');
+  const [network, setNetwork]           = useState([]);
+  const [netState, setNetState]         = useState('idle');
+  const [activity, setActivity]         = useState([]);
+  const [actState, setActState]         = useState('idle');
   const [featuredSets, setFeaturedSets] = useState([]);
 
-  const [friendData, setFriendData] = useState({ status: 'none', friends: false, friendCount: 0, commonCount: 0 });
+  const [friendData, setFriendData]     = useState({ status: 'none', friends: false, friendCount: 0 });
   const [friendLoading, setFriendLoading] = useState(false);
-  const [reportOpen, setReportOpen] = useState(false);
+  const [reportOpen, setReportOpen]     = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
-  const [toast, showToast] = useToast();
+  const [toast, showToast]              = useToast();
 
   const currentUserId = getCurrentUserId();
   const isOwn         = parseInt(userId) === currentUserId;
   const isLoggedIn    = !!localStorage.getItem('token');
   const authHeaders   = () => ({ Authorization: 'Bearer ' + localStorage.getItem('token') });
 
-  // Initial load: profile + reviews + friend state
   useEffect(() => {
     const token = localStorage.getItem('token');
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     setLoading(true);
     setReviewsLoading(true);
-    // reset tab caches when viewing a different user
-    setFavState('idle'); setFollowState('idle'); setNetState('idle'); setActState('idle');
+    setFollowState('idle'); setNetState('idle'); setActState('idle');
 
     Promise.all([
       axios.get(`${API_URL}/api/users/${userId}`),
-      axios.get(`${API_URL}/api/friends/${userId}`, { headers }).catch(() => ({ data: { friends: false, friendCount: 0, commonCount: 0 } })),
-    ])
-      .then(([profileRes, friendRes]) => {
-        setProfile(profileRes.data);
-        setFriendData(friendRes.data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      axios.get(`${API_URL}/api/friends/${userId}`, { headers }).catch(() => ({ data: { friends: false, friendCount: 0 } })),
+    ]).then(([profileRes, friendRes]) => {
+      setProfile(profileRes.data);
+      setFriendData(friendRes.data);
+      setLoading(false);
+    }).catch(() => setLoading(false));
 
     axios.get(`${API_URL}/api/users/${userId}/reviews`)
-      .then(r => setReviews(r.data))
-      .catch(() => {})
+      .then(r => setReviews(r.data)).catch(() => {})
       .finally(() => setReviewsLoading(false));
 
     axios.get(`${API_URL}/api/users/${userId}/featured-sets`)
-      .then(r => setFeaturedSets(r.data || []))
-      .catch(() => setFeaturedSets([]));
-  }, [userId]);
+      .then(r => setFeaturedSets(r.data || [])).catch(() => setFeaturedSets([]));
 
-  // Lazy-load tab data on first visit
-  const ensureFavorites = useCallback(() => {
-    if (favState !== 'idle') return;
-    setFavState('loading');
-    axios.get(`${API_URL}/api/users/${userId}/favorite-reviews`)
-      .then(r => setFavorites(r.data)).catch(() => {})
-      .finally(() => setFavState('loaded'));
-  }, [favState, userId]);
+    // Load activity eagerly for the dashboard
+    setActState('loading');
+    axios.get(`${API_URL}/api/users/${userId}/activity`)
+      .then(r => setActivity(r.data)).catch(() => {})
+      .finally(() => setActState('loaded'));
+  }, [userId]);
 
   const ensureFollowing = useCallback(() => {
     if (followState !== 'idle') return;
@@ -105,39 +226,22 @@ export default function ProfilePage() {
       .finally(() => setNetState('loaded'));
   }, [netState, userId]);
 
-  const ensureActivity = useCallback(() => {
-    if (actState !== 'idle') return;
-    setActState('loading');
-    axios.get(`${API_URL}/api/users/${userId}/activity`)
-      .then(r => setActivity(r.data)).catch(() => {})
-      .finally(() => setActState('loaded'));
-  }, [actState, userId]);
-
-  const handleTab = (tab) => {
+  const handleTab = useCallback((tab) => {
     setActiveTab(tab);
-    if (tab === 'favorites') ensureFavorites();
     if (tab === 'following') ensureFollowing();
     if (tab === 'network')   ensureNetwork();
-    if (tab === 'activity')  ensureActivity();
-  };
+  }, [ensureFollowing, ensureNetwork]);
 
-  // Honor ?tab= query param (e.g. from navbar dropdown links)
   useEffect(() => {
-    const valid = ['reviews', 'favorites', 'activity', 'following', 'network'];
-    const tab = valid.includes(tabParam) ? tabParam : 'reviews';
-    handleTab(tab);
+    const valid = ['profile', 'reviews', 'following', 'network'];
+    handleTab(valid.includes(tabParam) ? tabParam : 'profile');
   }, [tabParam, userId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const openReview = (review) => {
-    // ReviewDetailModal expects a `user` object + time_ago
     setSelectedReview({
       ...review,
       time_ago: relativeTime(review.created_at),
-      user: {
-        id: parseInt(userId),
-        username: profile?.username,
-        profile_picture_url: profile?.profile_picture_url,
-      },
+      user: { id: parseInt(userId), username: profile?.username, profile_picture_url: profile?.profile_picture_url },
     });
   };
 
@@ -158,11 +262,11 @@ export default function ProfilePage() {
       } else if (status === 'request_received') {
         const res = await axios.post(`${API_URL}/api/friends/${userId}/accept`, {}, { headers: authHeaders() });
         setFriendData(prev => ({ ...prev, status: 'friends', friends: true, friendCount: res.data.count }));
-        showToast(`You and ${profile?.username} are now friends! 🎉`);
+        showToast(`You and ${profile?.username} are now friends!`);
       } else {
         const res = await axios.post(`${API_URL}/api/friends/${userId}`, {}, { headers: authHeaders() });
         setFriendData(prev => ({ ...prev, status: res.data.status, friends: false }));
-        showToast(`Friend request sent to ${profile?.username} 🤝`);
+        showToast(`Friend request sent to ${profile?.username}`);
       }
     } catch (err) { console.error(err); }
     setFriendLoading(false);
@@ -182,15 +286,14 @@ export default function ProfilePage() {
 
   const stats = profile.stats || {};
   const tabs = [
+    { key: 'profile',   label: 'Profile' },
     { key: 'reviews',   label: 'Reviews',   count: stats.sets_rated },
-    { key: 'favorites', label: 'Favorites' },
-    { key: 'activity',  label: 'Activity' },
-    { key: 'following', label: 'Following', count: stats.following },
-    { key: 'network',   label: 'Network',   count: stats.friends },
+    { key: 'following', label: 'Following',  count: stats.following },
+    { key: 'network',   label: 'Network',    count: stats.friends },
   ];
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-6">
+    <div className="max-w-4xl mx-auto px-4 py-6">
       <Toast message={toast} />
       <ReportModal
         open={reportOpen}
@@ -211,6 +314,7 @@ export default function ProfilePage() {
 
       <ProfileHeader
         profile={profile}
+        stats={stats}
         isOwn={isOwn}
         isLoggedIn={isLoggedIn}
         friendData={friendData}
@@ -221,24 +325,24 @@ export default function ProfilePage() {
         joined={joined}
       />
 
-      {/* THE VISUAL HERO */}
-      <StatsBlock stats={stats} location={profile.location} />
-
-      {/* Featured sets — only if the user picked any */}
-      {featuredSets.length > 0 && (
-        <div className="mb-10">
-          <p className="section-label mb-4">⭐ Featured Sets</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-3">
-            {featuredSets.map(s => <SetCard key={s.id} set={s} />)}
-          </div>
-        </div>
-      )}
-
       <ProfileTabs tabs={tabs} active={activeTab} onChange={handleTab} />
+
+      {activeTab === 'profile' && (
+        <ProfileDashboard
+          featuredSets={featuredSets}
+          activity={activity}
+          actLoading={actState === 'loading'}
+          reviews={reviews}
+          reviewsLoading={reviewsLoading}
+          onOpenReview={openReview}
+          isOwn={isOwn}
+          userId={userId}
+        />
+      )}
 
       {activeTab === 'reviews' && (
         <ReviewSection
-          heading="Recent Reviews"
+          heading="All Reviews"
           reviews={reviews}
           loading={reviewsLoading}
           onOpen={openReview}
@@ -246,33 +350,20 @@ export default function ProfilePage() {
         />
       )}
 
-      {activeTab === 'favorites' && (
-        <ReviewSection
-          heading="⭐ Favorite Reviews"
-          reviews={favorites}
-          loading={favState === 'loading'}
-          onOpen={openReview}
-          empty={{ icon: '⭐', text: 'No favorite reviews yet.', cta: null }}
-        />
-      )}
-
-      {activeTab === 'activity' && (
-        <div>
-          <p className="section-label mb-4">Recent Activity</p>
-          <ActivityFeed activity={activity} loading={actState === 'loading'} />
-        </div>
-      )}
-
       {activeTab === 'following' && (
         <div>
-          <p className="section-label mb-4">Following {stats.following ? `(${stats.following})` : ''}</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-4">
+            Following {stats.following ? `(${stats.following})` : ''}
+          </p>
           <ArtistGrid djs={following} loading={followState === 'loading'} isOwn={isOwn} />
         </div>
       )}
 
       {activeTab === 'network' && (
         <div>
-          <p className="section-label mb-4">Network {stats.friends ? `(${stats.friends})` : ''}</p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-4">
+            Network {stats.friends ? `(${stats.friends})` : ''}
+          </p>
           <NetworkGrid friends={network} loading={netState === 'loading'} />
         </div>
       )}
