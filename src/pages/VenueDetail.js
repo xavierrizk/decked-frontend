@@ -2,195 +2,206 @@ import API_URL from '../api';
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { StarDisplay } from '../components/StarRating';
+
+function getYtThumb(url) {
+  if (!url) return null;
+  let m = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
+  if (!m) m = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+  return m ? `https://img.youtube.com/vi/${m[1]}/mqdefault.jpg` : null;
+}
 
 const PERF_TYPE_LABELS = {
   dj_set: 'DJ Set', concert: 'Concert', live_band: 'Live Band',
   festival_set: 'Festival', rave: 'Rave', other: 'Other',
 };
 
+function StatBox({ value, label, color }) {
+  return (
+    <div className="flex flex-col items-center justify-center bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-4 text-center">
+      <p className="font-bold tabular-nums leading-none" style={{ fontSize: 'clamp(22px, 4vw, 32px)', color: color || '#FF006E' }}>
+        {value ?? '—'}
+      </p>
+      <p className="text-gray-600 text-[10px] font-bold uppercase tracking-[0.12em] mt-1">{label}</p>
+    </div>
+  );
+}
+
+function SubRating({ label, value, color }) {
+  if (!value || parseFloat(value) === 0) return null;
+  const pct = (parseFloat(value) / 5) * 100;
+  return (
+    <div className="flex items-center gap-3">
+      <span className="text-gray-500 text-xs w-24 flex-shrink-0">{label}</span>
+      <div className="flex-1 h-1.5 bg-white/[0.05] rounded-full overflow-hidden">
+        <div className="h-full rounded-full" style={{ width: `${pct}%`, background: color }} />
+      </div>
+      <span className="text-xs font-bold tabular-nums flex-shrink-0" style={{ color }}>{parseFloat(value).toFixed(1)}</span>
+    </div>
+  );
+}
+
 export default function VenueDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [venue, setVenue] = useState(null);
+  const [venue, setVenue]   = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     axios.get(`${API_URL}/api/venues/${id}`)
       .then(r => { setVenue(r.data); setLoading(false); })
-      .catch(() => { setError('Venue not found'); setLoading(false); });
+      .catch(() => setLoading(false));
   }, [id]);
 
   if (loading) return (
     <div className="flex justify-center items-center min-h-[60vh]">
-      <div className="w-10 h-10 border-4 border-[#FF006E] border-t-transparent rounded-full animate-spin" />
+      <div className="w-10 h-10 border-4 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#FF006E', borderTopColor: 'transparent' }} />
     </div>
   );
-
-  if (error || !venue) return (
+  if (!venue) return (
     <div className="text-center py-20">
-      <p className="text-gray-500">{error || 'Something went wrong'}</p>
-      <button onClick={() => navigate('/venues')} className="mt-4 text-[#FF006E] text-sm hover:underline">
-        ← Back to Venues
-      </button>
+      <p className="text-gray-500">Venue not found</p>
+      <button onClick={() => navigate('/venues')} className="mt-4 text-[#FF006E] text-sm hover:underline">← Back to Venues</button>
     </div>
   );
 
-  const bd = venue.rating_breakdown || {};
-  const hasBreakdown = bd.avg_overall && parseFloat(bd.avg_overall) > 0;
+  const sets       = venue.sets        || [];
+  const artists    = venue.top_artists || [];
+  const bd         = venue.rating_breakdown || {};
+  const avgScore   = bd.avg_score   ? parseFloat(bd.avg_score)   : null;
+  const topSet     = sets[0] || null; // already sorted by rating desc
 
   return (
-    <div className="min-h-screen max-w-4xl mx-auto px-4 py-8">
-      {/* Back */}
-      <button
-        onClick={() => navigate('/venues')}
-        className="text-gray-500 hover:text-[#FF006E] text-sm transition-colors mb-6 block"
-      >
-        ← All Venues
-      </button>
+    <div className="max-w-4xl mx-auto px-4 py-6">
+      <Link to="/venues" className="inline-flex items-center gap-1.5 text-gray-500 hover:text-white text-sm transition-colors mb-5">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        All Venues
+      </Link>
 
       {/* Hero */}
-      <div className="rounded-2xl overflow-hidden border border-white/[0.07] mb-8">
+      <div className="rounded-xl overflow-hidden border border-white/[0.07] bg-[#0f0f1a] mb-6">
         {venue.image_url ? (
-          <div className="h-56 relative">
-            <img
-              src={venue.image_url}
-              alt={venue.name}
-              className="w-full h-full object-cover"
-            />
+          <div className="h-48 relative">
+            <img src={venue.image_url} alt={venue.name} className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-            <div className="absolute bottom-0 left-0 p-6">
-              <h1 className="text-3xl font-extrabold text-white mb-1">{venue.name}</h1>
-              <p className="text-gray-300 text-sm">
-                {[venue.city, venue.country].filter(Boolean).join(', ')}
-              </p>
+            <div className="absolute bottom-0 left-0 p-5">
+              <h1 className="text-2xl font-extrabold text-white">{venue.name}</h1>
+              <p className="text-gray-400 text-sm mt-0.5">{[venue.city, venue.country].filter(Boolean).join(', ')}</p>
             </div>
           </div>
         ) : (
-          <div className="bg-[#111114] p-6">
-            <h1 className="text-3xl font-extrabold text-white mb-1">{venue.name}</h1>
-            <p className="text-gray-500 text-sm">
-              {[venue.city, venue.country].filter(Boolean).join(', ') || 'Unknown location'}
-            </p>
+          <div className="px-5 py-6" style={{ background: 'linear-gradient(135deg, rgba(255,0,110,0.08) 0%, rgba(168,85,247,0.05) 100%)' }}>
+            <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, #FF006E, #A855F7)' }} />
+            <h1 className="text-2xl font-extrabold text-white">{venue.name}</h1>
+            <p className="text-gray-500 text-sm mt-0.5">{[venue.city, venue.country].filter(Boolean).join(', ') || 'Unknown location'}</p>
           </div>
         )}
 
-        {/* Meta row */}
-        <div className="bg-[#111114] px-6 py-4 flex flex-wrap gap-4 items-center border-t border-white/[0.05]">
-          {venue.website && (
-            <a
-              href={venue.website}
-              target="_blank"
-              rel="noreferrer"
-              className="text-[#00D9FF] text-sm hover:underline"
-            >
-              🌐 Website
+        {venue.website && (
+          <div className="px-5 py-3 border-t border-white/[0.05]">
+            <a href={venue.website} target="_blank" rel="noreferrer" className="text-[#00D9FF] text-xs hover:underline">
+              {venue.website.replace(/^https?:\/\//, '')}
             </a>
-          )}
-          {venue.capacity && (
-            <span className="text-gray-500 text-sm">🏟️ Capacity: {venue.capacity.toLocaleString()}</span>
-          )}
-          <span className="text-gray-500 text-sm">{venue.sets?.length || 0} performances</span>
-        </div>
+          </div>
+        )}
       </div>
 
-      {/* Rating Breakdown */}
-      {hasBreakdown && (
-        <div className="bg-[#111114] border border-white/[0.07] rounded-2xl p-6 mb-8">
-          <h2 className="text-white font-bold text-lg mb-5">Venue Ratings</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {[
-              { icon: '🎤', label: 'Performance', key: 'avg_performance', color: '#00D9FF' },
-              { icon: '🏟️', label: 'Venue',       key: 'avg_venue',       color: '#FF006E' },
-              { icon: '👥', label: 'Crowd',       key: 'avg_crowd',       color: '#A020F0' },
-            ].map(({ icon, label, key, color }) => {
-              const val = parseFloat(bd[key]);
-              if (!val) return null;
-              return (
-                <div key={key} className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.05]">
-                  <span className="text-lg">{icon}</span>
-                  <div className="flex-1">
-                    <p className="text-xs font-semibold mb-1" style={{ color }}>{label}</p>
-                    <StarDisplay value={val} size={14} color={color} />
-                  </div>
-                  <span className="text-sm font-bold" style={{ color }}>{val.toFixed(1)}</span>
-                </div>
-              );
-            })}
+      {/* Stats row */}
+      <div className="grid grid-cols-3 gap-3 mb-6">
+        <StatBox value={avgScore ? avgScore.toFixed(1) : null} label="Avg Score"     color="#FF006E" />
+        <StatBox value={sets.length}                           label="Performances"  color="#00D9FF" />
+        <StatBox value={bd.total_ratings || 0}                label="Ratings"       color="#A855F7" />
+      </div>
 
-            {/* Overall */}
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.04] border border-white/[0.08] sm:col-span-2">
-              <span className="text-lg">⭐</span>
-              <div className="flex-1">
-                <p className="text-xs font-semibold text-white mb-1">Overall</p>
-                <StarDisplay value={parseFloat(bd.avg_overall)} size={14} />
-              </div>
-              <div className="text-right">
-                <span className="text-sm font-bold text-white">{parseFloat(bd.avg_overall).toFixed(1)}</span>
-                {bd.total_ratings > 0 && (
-                  <p className="text-gray-600 text-[11px]">{bd.total_ratings} rating{bd.total_ratings !== 1 ? 's' : ''}</p>
-                )}
-              </div>
+      {/* Sub-ratings bar */}
+      {(bd.avg_performance || bd.avg_venue || bd.avg_crowd) && (
+        <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl px-5 py-4 mb-6 space-y-3">
+          <SubRating label="Performance" value={bd.avg_performance} color="#00D9FF" />
+          <SubRating label="Venue"       value={bd.avg_venue}       color="#FF006E" />
+          <SubRating label="Crowd"       value={bd.avg_crowd}       color="#A855F7" />
+        </div>
+      )}
+
+      {/* Top-rated set callout */}
+      {topSet && topSet.avg_rating && (
+        <div className="mb-6">
+          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-3">Top Rated Set</p>
+          <Link to={`/set/${topSet.id}`}
+            className="group flex items-center gap-4 bg-white/[0.03] border border-white/[0.07] hover:border-[#FF006E]/30 rounded-xl p-4 transition-all">
+            <div className="w-20 h-12 rounded-lg overflow-hidden bg-white/[0.05] flex-shrink-0">
+              {getYtThumb(topSet.video_url)
+                ? <img src={getYtThumb(topSet.video_url)} alt={topSet.title} className="w-full h-full object-cover" />
+                : <div className="w-full h-full flex items-center justify-center text-gray-700">♪</div>
+              }
             </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-white font-semibold text-sm truncate group-hover:text-[#FF006E] transition-colors">{topSet.title}</p>
+              {topSet.dj_name && <p className="text-gray-500 text-xs mt-0.5">{topSet.dj_name}</p>}
+            </div>
+            <div className="flex-shrink-0 text-right">
+              <p className="text-[#FF006E] font-bold text-lg tabular-nums">{parseFloat(topSet.avg_rating).toFixed(1)}</p>
+              <p className="text-gray-600 text-[10px]">{topSet.rating_count} rating{topSet.rating_count !== 1 ? 's' : ''}</p>
+            </div>
+          </Link>
+        </div>
+      )}
+
+      {/* Most frequent artists */}
+      {artists.length > 0 && (
+        <div className="mb-6">
+          <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-3">Frequent Artists</p>
+          <div className="flex flex-wrap gap-2">
+            {artists.map((a, i) => (
+              a.dj_id ? (
+                <Link key={i} to={`/artist/${a.dj_id}`}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/[0.07] bg-white/[0.03] hover:border-[#00D9FF]/30 hover:bg-[#00D9FF]/[0.05] transition-all text-sm">
+                  <span className="text-white font-medium">{a.name}</span>
+                  <span className="text-gray-600 text-xs">{a.performance_count}×</span>
+                </Link>
+              ) : (
+                <div key={i} className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/[0.07] bg-white/[0.03] text-sm">
+                  <span className="text-gray-400">{a.name}</span>
+                  <span className="text-gray-600 text-xs">{a.performance_count}×</span>
+                </div>
+              )
+            ))}
           </div>
         </div>
       )}
 
-      {/* Sets at this venue */}
+      {/* All performances */}
       <div>
-        <h2 className="text-white font-bold text-lg mb-4">Performances</h2>
-        {!venue.sets || venue.sets.length === 0 ? (
-          <div className="text-center py-12 text-gray-600 bg-[#111114] border border-white/[0.05] rounded-2xl">
+        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-3">
+          All Performances <span className="text-gray-700 font-normal normal-case">({sets.length})</span>
+        </p>
+        {sets.length === 0 ? (
+          <div className="text-center py-12 border border-white/[0.05] rounded-xl text-gray-600">
             <p className="text-3xl mb-2">🎶</p>
-            <p>No performances recorded at this venue yet</p>
+            <p>No performances recorded here yet</p>
           </div>
         ) : (
-          <div className="space-y-2">
-            {venue.sets.map(set => (
-              <Link
-                key={set.id}
-                to={`/set/${set.id}`}
-                className="flex items-center justify-between p-4 bg-[#111114] border border-white/[0.06] rounded-xl hover:border-[#FF006E]/30 hover:bg-[#FF006E]/[0.02] transition-all duration-200 group"
-              >
+          <div className="space-y-1.5">
+            {sets.map(set => (
+              <Link key={set.id} to={`/set/${set.id}`}
+                className="flex items-center gap-4 p-3 bg-white/[0.02] border border-white/[0.05] rounded-xl hover:border-white/[0.12] hover:bg-white/[0.04] transition-all group">
+                <div className="w-12 h-8 rounded-lg overflow-hidden bg-white/[0.05] flex-shrink-0">
+                  {getYtThumb(set.video_url)
+                    ? <img src={getYtThumb(set.video_url)} alt={set.title} className="w-full h-full object-cover" />
+                    : <div className="w-full h-full flex items-center justify-center text-gray-700 text-xs">♪</div>
+                  }
+                </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-white font-semibold text-sm truncate group-hover:text-[#FF006E] transition-colors">
-                    {set.title}
-                  </p>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    {set.dj_name && (
-                      set.dj_id ? (
-                        <Link
-                          to={`/artist/${set.dj_id}`}
-                          onClick={e => e.stopPropagation()}
-                          className="text-[#00D9FF] text-xs truncate hover:underline"
-                        >
-                          {set.dj_name}
-                        </Link>
-                      ) : (
-                        <span className="text-gray-500 text-xs truncate">{set.dj_name}</span>
-                      )
-                    )}
-                    {set.performance_type && (
-                      <span className="text-gray-700 text-xs">
-                        · {PERF_TYPE_LABELS[set.performance_type] || set.performance_type}
-                      </span>
-                    )}
+                  <p className="text-white text-sm font-semibold truncate group-hover:text-[#00D9FF] transition-colors">{set.title}</p>
+                  <div className="flex items-center gap-2 mt-0.5 text-[10px] text-gray-600">
+                    {set.dj_name && <span>{set.dj_name}</span>}
+                    {set.performance_type && <span>· {PERF_TYPE_LABELS[set.performance_type] || set.performance_type}</span>}
                   </div>
                 </div>
-
-                <div className="flex items-center gap-3 ml-4 flex-shrink-0">
-                  {set.rating_count > 0 && (
-                    <div className="text-right">
-                      <div className="flex items-center gap-1.5">
-                        <StarDisplay value={parseFloat(set.avg_rating)} size={12} color="#FF006E" />
-                        <span className="text-[#FF006E] text-xs font-bold">{parseFloat(set.avg_rating).toFixed(1)}</span>
-                      </div>
-                      <p className="text-gray-600 text-[11px]">{set.rating_count} rating{set.rating_count !== 1 ? 's' : ''}</p>
-                    </div>
-                  )}
-                  <span className="text-gray-700 text-sm">→</span>
-                </div>
+                {set.rating_count > 0 && (
+                  <div className="flex-shrink-0 text-right">
+                    <p className="text-white font-bold text-sm tabular-nums">{parseFloat(set.avg_rating).toFixed(1)}</p>
+                    <p className="text-gray-700 text-[10px]">{set.rating_count} rating{set.rating_count !== 1 ? 's' : ''}</p>
+                  </div>
+                )}
               </Link>
             ))}
           </div>
