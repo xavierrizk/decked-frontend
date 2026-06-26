@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import VisualizerBackground from '../components/backgrounds/VisualizerBackground';
 import SetCard from '../components/cards/SetCard';
+import HighlightsSection from '../components/HighlightsSection';
 import { getCurrentUserId, getCurrentUsername } from '../utils/auth';
 
 const authHeaders = () => {
@@ -295,6 +296,8 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      <HighlightsSection isLoggedIn={isLoggedIn} />
 
     </div>
   );
