@@ -10,8 +10,9 @@ const NAV_LINKS = [
   { to: '/reviews',    label: 'REVIEWS'     },
   { to: '/artists',    label: 'ARTISTS'     },
   { to: '/venues',     label: 'VENUES'      },
-  { to: '/trending',   label: 'TRENDING'    },
-  { to: '/community',  label: 'COMMUNITY'   },
+  { to: '/trending',     label: 'TRENDING'     },
+  { to: '/community',    label: 'COMMUNITY'    },
+  { to: '/leaderboards', label: 'LEADERBOARDS' },
 ];
 
 const SearchIcon = () => (
