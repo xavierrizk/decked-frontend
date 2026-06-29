@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { getCurrentUserId } from '../utils/auth';
 import Toast, { useToast } from '../components/Toast';
+import ArtistVerificationModal from '../components/ArtistVerificationModal';
 
 function getYtThumb(url) {
   if (!url) return null;
@@ -114,6 +115,7 @@ export default function ArtistProfilePage() {
   const [verifStatus, setVerifStatus] = useState(null);
   const [loading, setLoading]   = useState(true);
   const [followLoading, setFollowLoading] = useState(false);
+  const [verificationModalOpen, setVerificationModalOpen] = useState(false);
   const [toast, showToast]      = useToast();
   const currentUserId = getCurrentUserId();
   const isLoggedIn = !!localStorage.getItem('token');
@@ -234,6 +236,16 @@ export default function ArtistProfilePage() {
                 )
               )}
             </div>
+
+            {/* Verify button */}
+            {!isOwnDj && isLoggedIn && !artistProfile.is_verified && (
+              <button
+                onClick={() => setVerificationModalOpen(true)}
+                className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/10 transition-all ml-2"
+              >
+                ✓ Verify
+              </button>
+            )}
           </div>
 
           {/* Name + badges */}
@@ -332,6 +344,13 @@ export default function ArtistProfilePage() {
           </div>
         </div>
       )}
+
+      <ArtistVerificationModal
+        open={verificationModalOpen}
+        onClose={() => setVerificationModalOpen(false)}
+        djName={artistProfile?.name}
+        djId={parseInt(id)}
+      />
     </div>
   );
 }

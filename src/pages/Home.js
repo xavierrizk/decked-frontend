@@ -5,6 +5,7 @@ import axios from 'axios';
 import VisualizerBackground from '../components/backgrounds/VisualizerBackground';
 import SetCard from '../components/cards/SetCard';
 import HighlightsSection from '../components/HighlightsSection';
+import SubmitSetModal from '../components/SubmitSetModal';
 import { getCurrentUserId, getCurrentUsername } from '../utils/auth';
 
 const authHeaders = () => {
@@ -185,6 +186,8 @@ export default function Home() {
   const [personalized, setPersonalized] = useState([]);
   const [hasPrefs, setHasPrefs]         = useState(false);
   const [loading, setLoading]           = useState(true);
+  const [venues, setVenues]             = useState([]);
+  const [submitModalOpen, setSubmitModalOpen] = useState(false);
 
   const isLoggedIn = !!localStorage.getItem('token');
   const userId     = getCurrentUserId();
@@ -195,14 +198,16 @@ export default function Home() {
     const headers = isLoggedIn ? { Authorization: `Bearer ${token}` } : {};
     const base = [
       axios.get(API_URL + '/api/artist-profiles/featured'),
+      axios.get(API_URL + '/api/venues').catch(() => ({ data: { venues: [] } })),
     ];
     const personalizedReq = isLoggedIn
       ? axios.get(API_URL + '/api/feed/personalized', { headers }).catch(() => null)
       : Promise.resolve(null);
 
     Promise.all([...base, personalizedReq])
-      .then(async ([djsRes, persRes]) => {
+      .then(async ([djsRes, venuesRes, persRes]) => {
         let djList = djsRes.data;
+        setVenues(venuesRes.data?.venues || []);
 
         // Fetch follow status for all artists in one shot if logged in
         if (isLoggedIn && djList.length) {
@@ -262,6 +267,18 @@ export default function Home() {
         </div>
       )}
 
+      {/* ── Add a Set button ──────────────────────────── */}
+      {isLoggedIn && (
+        <div className="mb-6">
+          <button
+            onClick={() => setSubmitModalOpen(true)}
+            className="px-4 py-2 rounded-lg bg-[#FF006E]/20 border border-[#FF006E]/30 text-[#FF006E] text-xs font-semibold hover:bg-[#FF006E]/30 transition-all"
+          >
+            + Add a Set You Attended
+          </button>
+        </div>
+      )}
+
       {/* ── Personalized sets ──────────────────────────── */}
       {hasPrefs && personalized.length > 0 && (
         <div className="mb-7">
@@ -280,6 +297,7 @@ export default function Home() {
 
       <HighlightsSection isLoggedIn={isLoggedIn} />
 
+      <SubmitSetModal open={submitModalOpen} onClose={() => setSubmitModalOpen(false)} venues={venues} />
     </div>
   );
 }
