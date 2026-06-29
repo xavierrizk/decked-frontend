@@ -587,6 +587,36 @@ export default function SetDetail() {
           </div>
         )}
       </div>
+
+      {/* Mobile sticky bottom bar — score + CTA (hidden on lg) */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-white/[0.07] bg-[#0a0a0a]/95 backdrop-blur-sm px-4 py-3 flex items-center gap-3">
+        {avg ? (
+          <div className="flex items-baseline gap-1 flex-shrink-0">
+            <span className="text-2xl font-extrabold text-white tabular-nums">{avg.toFixed(1)}</span>
+            <span className="text-gray-600 text-sm">/5</span>
+          </div>
+        ) : (
+          <span className="text-gray-600 text-sm">{total} rating{total !== 1 ? 's' : ''}</span>
+        )}
+        <div className="flex-1">
+          {isLoggedIn ? (
+            <Link to={`/review/set/${set.id}`}
+              className="w-full flex items-center justify-center py-2.5 rounded-lg font-semibold text-sm transition-all hover:opacity-90"
+              style={{ background: '#00D9FF', color: '#0a0a0a' }}>
+              {myReview ? 'Edit Review' : 'Write a Review'}
+            </Link>
+          ) : (
+            <Link to="/login"
+              className="w-full flex items-center justify-center py-2.5 rounded-lg border border-white/10 text-gray-400 hover:text-white text-sm transition-all">
+              Log in to review
+            </Link>
+          )}
+        </div>
+        <ShareMenu text={buildShareText()} />
+      </div>
+
+      {/* Spacer so content isn't hidden behind mobile sticky bar */}
+      <div className="lg:hidden h-20" />
     </div>
   );
 }
