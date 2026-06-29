@@ -6,6 +6,8 @@ import VisualizerBackground from '../components/backgrounds/VisualizerBackground
 import SetCard from '../components/cards/SetCard';
 import HighlightsSection from '../components/HighlightsSection';
 import SubmitSetModal from '../components/SubmitSetModal';
+import VenueSubmitModal from '../components/VenueSubmitModal';
+import CollectionModal from '../components/CollectionModal';
 import { getCurrentUserId, getCurrentUsername } from '../utils/auth';
 
 const authHeaders = () => {
@@ -188,6 +190,8 @@ export default function Home() {
   const [loading, setLoading]           = useState(true);
   const [venues, setVenues]             = useState([]);
   const [submitModalOpen, setSubmitModalOpen] = useState(false);
+  const [venueModalOpen, setVenueModalOpen] = useState(false);
+  const [collectionModalOpen, setCollectionModalOpen] = useState(false);
 
   const isLoggedIn = !!localStorage.getItem('token');
   const userId     = getCurrentUserId();
@@ -267,14 +271,26 @@ export default function Home() {
         </div>
       )}
 
-      {/* ── Add a Set button ──────────────────────────── */}
+      {/* ── Contribution buttons ──────────────────────────── */}
       {isLoggedIn && (
-        <div className="mb-6">
+        <div className="mb-6 flex flex-wrap gap-2">
           <button
             onClick={() => setSubmitModalOpen(true)}
             className="px-4 py-2 rounded-lg bg-[#FF006E]/20 border border-[#FF006E]/30 text-[#FF006E] text-xs font-semibold hover:bg-[#FF006E]/30 transition-all"
           >
-            + Add a Set You Attended
+            + Set You Attended
+          </button>
+          <button
+            onClick={() => setVenueModalOpen(true)}
+            className="px-4 py-2 rounded-lg bg-[#00D9FF]/20 border border-[#00D9FF]/30 text-[#00D9FF] text-xs font-semibold hover:bg-[#00D9FF]/30 transition-all"
+          >
+            + Add a Venue
+          </button>
+          <button
+            onClick={() => setCollectionModalOpen(true)}
+            className="px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-400 text-xs font-semibold hover:bg-purple-500/30 transition-all"
+          >
+            + Create Collection
           </button>
         </div>
       )}
@@ -298,6 +314,8 @@ export default function Home() {
       <HighlightsSection isLoggedIn={isLoggedIn} />
 
       <SubmitSetModal open={submitModalOpen} onClose={() => setSubmitModalOpen(false)} venues={venues} />
+      <VenueSubmitModal open={venueModalOpen} onClose={() => setVenueModalOpen(false)} />
+      <CollectionModal open={collectionModalOpen} onClose={() => setCollectionModalOpen(false)} />
     </div>
   );
 }

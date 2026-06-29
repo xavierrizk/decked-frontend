@@ -48,6 +48,7 @@ import CommunityPage      from './pages/CommunityPage';
 import LeaderboardsPage   from './pages/LeaderboardsPage';
 import AdminSubmissionsPage from './pages/AdminSubmissionsPage';
 import AdminVerificationsPage from './pages/AdminVerificationsPage';
+import AdminVenuesPage from './pages/AdminVenuesPage';
 
 // Inner component that can use useNavigate (must be inside <Router>)
 function AppInner({ isLoggedIn, setIsLoggedIn }) {
@@ -132,6 +133,7 @@ function AppInner({ isLoggedIn, setIsLoggedIn }) {
               <Route path="/admin"          element={<Protected><AdminDashboard /></Protected>} />
               <Route path="/admin/submissions" element={<Protected><AdminSubmissionsPage /></Protected>} />
               <Route path="/admin/verifications" element={<Protected><AdminVerificationsPage /></Protected>} />
+              <Route path="/admin/venues" element={<Protected><AdminVenuesPage /></Protected>} />
               <Route path="/request-artist"  element={<Protected><RequestDJPage /></Protected>} />
               <Route path="/my-artists"      element={<Protected><MyDJsPage /></Protected>} />
               <Route path="/artist/:id"      element={<ArtistProfilePage />} />
