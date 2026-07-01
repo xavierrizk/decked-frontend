@@ -5,9 +5,9 @@ import PulsingOrbs from '../components/backgrounds/PulsingOrbs';
 import SetCard from '../components/cards/SetCard';
 
 const SORTS = [
-  { key: 'likes',  label: '❤️ Most Liked' },
-  { key: 'rated',  label: '⭐ Most Rated' },
-  { key: 'newest', label: '🆕 Newest' },
+  { key: 'likes',  label: 'Most Liked' },
+  { key: 'rated',  label: 'Most Rated' },
+  { key: 'newest', label: 'Newest' },
 ];
 
 export default function TrendingPage() {
@@ -23,9 +23,9 @@ export default function TrendingPage() {
   }, [sort]);
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6">
+    <div className="max-w-6xl mx-auto px-4 py-6">
       <PulsingOrbs />
-      <div className="mb-8">
+      <div className="mb-6">
         <h1 className="text-3xl font-bold text-white" style={{ fontFamily: '"Space Grotesk", sans-serif', letterSpacing: '-0.02em' }}>Trending</h1>
         <p className="text-gray-500 mt-1 text-sm">The hottest sets on DECK'D this week</p>
       </div>
@@ -34,10 +34,10 @@ export default function TrendingPage() {
       <div className="flex gap-2 mb-6 flex-wrap">
         {SORTS.map(s => (
           <button key={s.key} onClick={() => setSort(s.key)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 ${
+            className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200 ${
               sort === s.key
-                ? 'bg-brand-600 text-white shadow-glow-sm'
-                : 'bg-white/[0.05] text-gray-400 hover:bg-white/[0.10] hover:text-white border border-white/[0.07]'
+                ? 'bg-brand-500/30 border border-brand-500/50 text-white'
+                : 'bg-white/[0.05] border border-white/[0.07] text-gray-400 hover:bg-white/[0.08] hover:text-white'
             }`}>
             {s.label}
           </button>
@@ -46,11 +46,10 @@ export default function TrendingPage() {
 
       {loading ? <Spinner /> : sets.length === 0 ? (
         <div className="text-center py-20 border border-white/[0.05] rounded-2xl text-gray-600">
-          <p className="text-4xl mb-3">📊</p>
           <p>Nothing trending yet — add some sets!</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
           {sets.map((set, i) => (
             <SetCard key={set.id} set={set} rank={i + 1} />
           ))}
