@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import API_URL from '../api';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import DJMatchModal from '../components/DJMatchModal';
 
 const STATUS_TABS = [
   { key: 'pending',  label: 'Pending' },
@@ -30,6 +31,9 @@ export default function AdminSubmissionsPage() {
   const [selected, setSelected] = useState(new Set());
   const [bulkRejecting, setBulkRejecting] = useState(false);
   const [bulkRejectReason, setBulkRejectReason] = useState('');
+  const [djMatchingId, setDjMatchingId] = useState(null);
+  const [djMatchingName, setDjMatchingName] = useState('');
+  const [djMatching, setDjMatching] = useState(false);
 
   const fetchSubmissions = useCallback(async () => {
     setLoading(true);
@@ -66,12 +70,23 @@ export default function AdminSubmissionsPage() {
 
   useEffect(() => { fetchStats(); }, [fetchStats]);
 
-  const approve = async (id) => {
+  const approve = (id) => {
+    const sub = submissions.find(s => s.id === id);
+    if (!sub) return;
+    setDjMatchingId(id);
+    setDjMatchingName(sub.dj_name);
+    setDjMatching(true);
+  };
+
+  const confirmApproval = async (djId) => {
+    setDjMatching(false);
     try {
-      await axios.patch(`${API_URL}/api/submissions/admin/${id}/approve`, {}, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-      });
-      setSubmissions(s => s.filter(x => x.id !== id));
+      await axios.patch(`${API_URL}/api/submissions/admin/${djMatchingId}/approve`,
+        { dj_id: djId || undefined },
+        { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+      );
+      setSubmissions(s => s.filter(x => x.id !== djMatchingId));
+      setDjMatchingId(null);
       fetchStats();
     } catch (err) {
       alert('Error approving submission');
@@ -384,6 +399,14 @@ export default function AdminSubmissionsPage() {
           ))}
         </div>
       )}
+
+      <DJMatchModal
+        open={djMatching}
+        onClose={() => setDjMatching(false)}
+        djName={djMatchingName}
+        onConfirm={confirmApproval}
+        loading={false}
+      />
     </div>
   );
 }
