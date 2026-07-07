@@ -24,6 +24,7 @@ export default function AdminSubmissionsPage() {
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState('pending');
   const [search, setSearch] = useState('');
+  const [stats, setStats] = useState(null);
   const [rejectingId, setRejectingId] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
   const [selected, setSelected] = useState(new Set());
@@ -52,12 +53,26 @@ export default function AdminSubmissionsPage() {
     return () => clearTimeout(t);
   }, [fetchSubmissions]);
 
+  const fetchStats = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API_URL}/api/submissions/admin/stats`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
+      setStats(res.data);
+    } catch (err) {
+      console.error('Error fetching stats:', err);
+    }
+  }, []);
+
+  useEffect(() => { fetchStats(); }, [fetchStats]);
+
   const approve = async (id) => {
     try {
       await axios.patch(`${API_URL}/api/submissions/admin/${id}/approve`, {}, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
       setSubmissions(s => s.filter(x => x.id !== id));
+      fetchStats();
     } catch (err) {
       alert('Error approving submission');
     }
@@ -72,6 +87,7 @@ export default function AdminSubmissionsPage() {
       setSubmissions(s => s.filter(x => x.id !== id));
       setRejectingId(null);
       setRejectReason('');
+      fetchStats();
     } catch (err) {
       alert('Error rejecting submission');
     }
@@ -99,6 +115,7 @@ export default function AdminSubmissionsPage() {
       );
       setSubmissions(s => s.filter(x => !selected.has(x.id)));
       setSelected(new Set());
+      fetchStats();
     } catch (err) {
       alert('Error bulk approving');
     }
@@ -115,6 +132,7 @@ export default function AdminSubmissionsPage() {
       setSelected(new Set());
       setBulkRejecting(false);
       setBulkRejectReason('');
+      fetchStats();
     } catch (err) {
       alert('Error bulk rejecting');
     }
@@ -125,7 +143,42 @@ export default function AdminSubmissionsPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-6">
       <h1 className="text-2xl font-bold text-white mb-1">Set Submissions</h1>
-      <p className="text-gray-500 text-sm mb-6">{submissions.length} {status === 'all' ? 'total' : status}</p>
+      <p className="text-gray-500 text-sm mb-4">{submissions.length} {status === 'all' ? 'total' : status}</p>
+
+      {/* Queue stats */}
+      {stats && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6">
+          <div className="bg-white/[0.02] border border-white/[0.07] rounded-lg p-3">
+            <p className="text-gray-500 text-[10px] uppercase tracking-wider">Pending</p>
+            <p className="text-white text-xl font-bold">{stats.pending}</p>
+          </div>
+          <div className="bg-white/[0.02] border border-white/[0.07] rounded-lg p-3">
+            <p className="text-gray-500 text-[10px] uppercase tracking-wider">Approved</p>
+            <p className="text-green-400 text-xl font-bold">{stats.approved}</p>
+          </div>
+          <div className="bg-white/[0.02] border border-white/[0.07] rounded-lg p-3">
+            <p className="text-gray-500 text-[10px] uppercase tracking-wider">Rejected</p>
+            <p className="text-red-400 text-xl font-bold">{stats.rejected}</p>
+          </div>
+          <div className="bg-white/[0.02] border border-white/[0.07] rounded-lg p-3">
+            <p className="text-gray-500 text-[10px] uppercase tracking-wider">Approval Rate</p>
+            <p className="text-[#00D9FF] text-xl font-bold">{stats.approval_rate !== null ? `${stats.approval_rate}%` : '—'}</p>
+          </div>
+        </div>
+      )}
+
+      {stats?.top_submitters?.length > 0 && (
+        <div className="mb-6 p-3 bg-white/[0.02] border border-white/[0.07] rounded-lg">
+          <p className="text-gray-500 text-[10px] uppercase tracking-wider mb-2">Top Submitters</p>
+          <div className="flex flex-wrap gap-2">
+            {stats.top_submitters.map(u => (
+              <span key={u.username} className="text-xs text-gray-400 bg-white/[0.03] border border-white/[0.07] rounded-full px-3 py-1">
+                {u.username} <span className="text-gray-600">·</span> {u.submission_count} submitted <span className="text-gray-600">·</span> <span className="text-green-400">{u.approved_count} approved</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -253,6 +306,11 @@ export default function AdminSubmissionsPage() {
                     <p className="text-gray-600 text-xs mt-1">Submitted by <span className="text-gray-400">{sub.username}</span></p>
                     {sub.rejection_reason && (
                       <p className="text-red-400/80 text-xs mt-1">Reason: {sub.rejection_reason}</p>
+                    )}
+                    {sub.status !== 'pending' && sub.reviewed_by_username && (
+                      <p className="text-gray-600 text-xs mt-1">
+                        {sub.status === 'approved' ? 'Approved' : 'Rejected'} by <span className="text-gray-400">{sub.reviewed_by_username}</span> on {new Date(sub.reviewed_at).toLocaleDateString()}
+                      </p>
                     )}
                   </div>
                 </div>
