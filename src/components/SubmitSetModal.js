@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import API_URL from '../api';
 import axios from 'axios';
 
-export default function SubmitSetModal({ open, onClose, venues }) {
+export default function SubmitSetModal({ open, onClose, venues: initialVenues }) {
   const [formData, setFormData] = useState({ dj_name: '', venue_id: '', date: '', youtube_url: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -12,6 +12,22 @@ export default function SubmitSetModal({ open, onClose, venues }) {
   const [filteredVenues, setFilteredVenues] = useState([]);
   const [showVenueDropdown, setShowVenueDropdown] = useState(false);
   const [selectedVenue, setSelectedVenue] = useState(null);
+  const [allVenues, setAllVenues] = useState(initialVenues || []);
+
+  // Fetch fresh venue list when modal opens
+  useEffect(() => {
+    if (!open) return;
+    const fetchVenues = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/api/venues`);
+        setAllVenues(res.data.venues || []);
+      } catch (err) {
+        console.error('Error fetching venues:', err);
+        setAllVenues(initialVenues || []);
+      }
+    };
+    fetchVenues();
+  }, [open, initialVenues]);
 
   useEffect(() => {
     if (venueSearch.trim() === '') {
@@ -20,12 +36,12 @@ export default function SubmitSetModal({ open, onClose, venues }) {
       return;
     }
     const search = venueSearch.toLowerCase();
-    const filtered = venues?.filter(v =>
+    const filtered = allVenues?.filter(v =>
       `${v.name} ${v.city}`.toLowerCase().includes(search)
     ) || [];
     setFilteredVenues(filtered);
     setShowVenueDropdown(true);
-  }, [venueSearch, venues]);
+  }, [venueSearch, allVenues]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
