@@ -19,7 +19,7 @@ export default function SubmitSetModal({ open, onClose, venues: initialVenues })
     if (!open) return;
     const fetchVenues = async () => {
       try {
-        const res = await axios.get(`${API_URL}/api/venues`);
+        const res = await axios.get(`${API_URL}/api/venues?limit=10000`);
         setAllVenues(res.data.venues || []);
       } catch (err) {
         console.error('Error fetching venues:', err);
