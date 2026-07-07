@@ -8,11 +8,42 @@ export default function SubmitSetModal({ open, onClose, venues }) {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [remaining, setRemaining] = useState(null);
+  const [venueSearch, setVenueSearch] = useState('');
+  const [filteredVenues, setFilteredVenues] = useState([]);
+  const [showVenueDropdown, setShowVenueDropdown] = useState(false);
+  const [selectedVenue, setSelectedVenue] = useState(null);
+
+  useEffect(() => {
+    if (venueSearch.trim() === '') {
+      setFilteredVenues([]);
+      setShowVenueDropdown(false);
+      return;
+    }
+    const search = venueSearch.toLowerCase();
+    const filtered = venues?.filter(v =>
+      `${v.name} ${v.city}`.toLowerCase().includes(search)
+    ) || [];
+    setFilteredVenues(filtered);
+    setShowVenueDropdown(true);
+  }, [venueSearch, venues]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     setError(null);
+  };
+
+  const selectVenue = (venue) => {
+    setSelectedVenue(venue);
+    setFormData(prev => ({ ...prev, venue_id: venue.id }));
+    setVenueSearch(`${venue.name}, ${venue.city}`);
+    setShowVenueDropdown(false);
+  };
+
+  const handleVenueInputChange = (e) => {
+    setVenueSearch(e.target.value);
+    setSelectedVenue(null);
+    setFormData(prev => ({ ...prev, venue_id: '' }));
   };
 
   const handleSubmit = async (e) => {
@@ -28,6 +59,8 @@ export default function SubmitSetModal({ open, onClose, venues }) {
       setSuccess(true);
       setRemaining(res.data.remaining);
       setFormData({ dj_name: '', venue_id: '', date: '', youtube_url: '' });
+      setVenueSearch('');
+      setSelectedVenue(null);
       setTimeout(() => {
         setSuccess(false);
         onClose();
@@ -40,6 +73,8 @@ export default function SubmitSetModal({ open, onClose, venues }) {
   };
 
   if (!open) return null;
+
+  const canSubmit = formData.dj_name.trim() && selectedVenue && formData.date;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
@@ -69,20 +104,38 @@ export default function SubmitSetModal({ open, onClose, venues }) {
               />
             </div>
 
-            <div>
+            <div className="relative">
               <label className="block text-xs font-semibold text-gray-400 mb-1">Venue*</label>
-              <select
-                name="venue_id"
-                value={formData.venue_id}
-                onChange={handleChange}
+              <input
+                type="text"
+                value={venueSearch}
+                onChange={handleVenueInputChange}
+                onFocus={() => venueSearch.trim() && setShowVenueDropdown(true)}
+                placeholder="Search venues..."
                 className="w-full px-3 py-2 rounded-lg bg-white/[0.05] border border-white/[0.1] text-white text-sm outline-none focus:border-[#00D9FF]/50"
-                required
-              >
-                <option value="">Select venue...</option>
-                {venues?.map(v => (
-                  <option key={v.id} value={v.id}>{v.name}, {v.city}</option>
-                ))}
-              </select>
+              />
+              {showVenueDropdown && filteredVenues.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-[#0f0f1a] border border-white/[0.1] rounded-lg max-h-48 overflow-y-auto z-10">
+                  {filteredVenues.map(v => (
+                    <button
+                      key={v.id}
+                      type="button"
+                      onClick={() => selectVenue(v)}
+                      className="w-full text-left px-3 py-2 hover:bg-white/[0.05] text-white text-sm border-b border-white/[0.05] last:border-b-0"
+                    >
+                      {v.name}, {v.city}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {showVenueDropdown && venueSearch.trim() && filteredVenues.length === 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-[#0f0f1a] border border-white/[0.1] rounded-lg p-3 z-10">
+                  <p className="text-gray-500 text-xs">No venues found. Try a different search.</p>
+                </div>
+              )}
+              {selectedVenue && (
+                <p className="text-[#00D9FF] text-[10px] mt-1">✓ {selectedVenue.name} selected</p>
+              )}
             </div>
 
             <div>
@@ -98,7 +151,7 @@ export default function SubmitSetModal({ open, onClose, venues }) {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-400 mb-1">YouTube URL*</label>
+              <label className="block text-xs font-semibold text-gray-400 mb-1">YouTube URL (optional)</label>
               <input
                 type="url"
                 name="youtube_url"
@@ -106,7 +159,6 @@ export default function SubmitSetModal({ open, onClose, venues }) {
                 onChange={handleChange}
                 placeholder="youtube.com/watch?v=..."
                 className="w-full px-3 py-2 rounded-lg bg-white/[0.05] border border-white/[0.1] text-white text-sm outline-none focus:border-[#00D9FF]/50"
-                required
               />
             </div>
 
@@ -126,8 +178,8 @@ export default function SubmitSetModal({ open, onClose, venues }) {
               </button>
               <button
                 type="submit"
-                disabled={loading}
-                className="flex-1 px-4 py-2 rounded-lg bg-[#00D9FF] text-[#0a0a0a] text-sm font-semibold hover:opacity-90 disabled:opacity-50"
+                disabled={loading || !canSubmit}
+                className="flex-1 px-4 py-2 rounded-lg bg-[#00D9FF] text-[#0a0a0a] text-sm font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Submitting...' : 'Submit'}
               </button>
