@@ -91,6 +91,8 @@ export default function SetDetail() {
   const [followLoading, setFollowLoading] = useState(false);
   const [selectedReview, setSelectedReview] = useState(null);
   const [reportModal, setReportModal]   = useState({ open: false, type: null, id: null, name: '' });
+  const [reviewsWithVideos, setReviewsWithVideos] = useState([]);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [toast, showToast]              = useToast();
   const isLoggedIn    = !!localStorage.getItem('token');
   const currentUserId = getCurrentUserId();
@@ -124,16 +126,20 @@ export default function SetDetail() {
       .then(async (setRes) => {
         const s = setRes.data;
         setSet(s);
-        const [ratingsRes, commentsRes, likesRes, followRes] = await Promise.all([
+        const [ratingsRes, commentsRes, likesRes, followRes, videosRes] = await Promise.all([
           axios.get(`${API_URL}/api/ratings/set/${id}`),
           axios.get(`${API_URL}/api/comments/set/${id}`),
           axios.get(`${API_URL}/api/likes/set/${id}`, { headers }),
           s.dj_id ? axios.get(`${API_URL}/api/follows/${s.dj_id}`, { headers }) : Promise.resolve({ data: { count: 0, following: false } }),
+          !s.video_url ? axios.get(`${API_URL}/api/reviews/set/${id}/videos`, { headers }).catch(() => ({ data: [] })) : Promise.resolve({ data: [] }),
         ]);
         setStats(ratingsRes.data.stats || null);
         setComments(commentsRes.data);
         setLikes(likesRes.data);
         setFollow(followRes.data);
+        if (videosRes.data && Array.isArray(videosRes.data)) {
+          setReviewsWithVideos(videosRes.data);
+        }
         setLoading(false);
         fetchReviews('newest', 1);
       })
@@ -307,7 +313,7 @@ export default function SetDetail() {
         {/* LEFT — video + metadata */}
         <div className="flex-1 min-w-0">
 
-          {/* Embedded player */}
+          {/* Embedded player or fallback video from reviews */}
           {ytId ? (
             <div className="rounded-xl overflow-hidden bg-black aspect-video mb-4">
               <iframe
@@ -327,6 +333,33 @@ export default function SetDetail() {
               <span className="text-white font-medium text-sm">Watch video</span>
               <svg className="w-4 h-4 text-gray-600 group-hover:text-gray-400 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
             </a>
+          ) : reviewsWithVideos.length > 0 ? (
+            <div className="rounded-xl overflow-hidden bg-black aspect-video mb-4 relative group">
+              <video
+                src={reviewsWithVideos[currentVideoIndex].video_url}
+                controls
+                className="w-full h-full"
+              />
+              {reviewsWithVideos.length > 1 && (
+                <div className="absolute inset-0 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => setCurrentVideoIndex((i) => (i - 1 + reviewsWithVideos.length) % reviewsWithVideos.length)}
+                    className="ml-2 px-3 py-2 bg-black/70 rounded-lg text-white hover:bg-black transition"
+                  >
+                    ← Prev
+                  </button>
+                  <button
+                    onClick={() => setCurrentVideoIndex((i) => (i + 1) % reviewsWithVideos.length)}
+                    className="mr-2 px-3 py-2 bg-black/70 rounded-lg text-white hover:bg-black transition"
+                  >
+                    Next →
+                  </button>
+                </div>
+              )}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
+                <p className="text-gray-300 text-xs">Video from review by <Link to={`/profile/${reviewsWithVideos[currentVideoIndex].user_id}`} className="text-[#00D9FF] hover:underline">@{reviewsWithVideos[currentVideoIndex].username}</Link></p>
+              </div>
+            </div>
           ) : null}
 
           {/* Title + year */}
