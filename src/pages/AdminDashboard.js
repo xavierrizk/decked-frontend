@@ -11,10 +11,12 @@ import ReportsModeration from './ReportsModeration';
 import BanManager from './BanManager';
 import AnnouncementsManager from './AnnouncementsManager';
 import CommentModerationQueue from './CommentModerationQueue';
+import AdminSubmissionsPage from './AdminSubmissionsPage';
 
 const STATUS_TABS = ['pending', 'approved', 'rejected'];
 const NAV = [
   { id: 'overview',      icon: '📊', label: 'Overview' },
+  { id: 'submissions',   icon: '📝', label: 'Set Submissions' },
   { id: 'dj-requests',   icon: '🎧', label: 'Artist Requests' },
   { id: 'verifications', icon: '✅', label: 'Verifications' },
   { id: 'manage-djs',    icon: '🗑️', label: 'Manage Artists' },
@@ -195,6 +197,9 @@ export default function AdminDashboard() {
       <main className="flex-1 px-6 py-8 pb-20 sm:pb-8 overflow-auto">
         {/* Overview — Analytics Dashboard */}
         {section === 'overview' && <AdminAnalyticsDashboard />}
+
+        {/* Set Submissions */}
+        {section === 'submissions' && <AdminSubmissionsPage />}
 
         {/* Reports & Moderation */}
         {section === 'reports' && <ReportsModeration />}
