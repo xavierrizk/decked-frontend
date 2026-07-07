@@ -356,8 +356,11 @@ export default function SetDetail() {
                   </button>
                 </div>
               )}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
-                <p className="text-gray-300 text-xs">Video from review by <Link to={`/profile/${reviewsWithVideos[currentVideoIndex].user_id}`} className="text-[#00D9FF] hover:underline">@{reviewsWithVideos[currentVideoIndex].username}</Link></p>
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-4">
+                <p className="text-gray-400 text-[11px] opacity-70 mb-1">Video from review by</p>
+                <Link to={`/profile/${reviewsWithVideos[currentVideoIndex].user_id}`} className="inline-block text-[#00D9FF] hover:text-[#00D9FF]/80 font-semibold text-sm transition-colors">
+                  {reviewsWithVideos[currentVideoIndex].username}
+                </Link>
               </div>
             </div>
           ) : null}
