@@ -334,31 +334,33 @@ export default function SetDetail() {
               <svg className="w-4 h-4 text-gray-600 group-hover:text-gray-400 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
             </a>
           ) : reviewsWithVideos.length > 0 ? (
-            <div className="rounded-xl overflow-hidden bg-black aspect-video mb-4 relative group">
-              <video
-                src={reviewsWithVideos[currentVideoIndex].video_url}
-                controls
-                className="w-full h-full"
-              />
-              {reviewsWithVideos.length > 1 && (
-                <div className="absolute inset-0 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button
-                    onClick={() => setCurrentVideoIndex((i) => (i - 1 + reviewsWithVideos.length) % reviewsWithVideos.length)}
-                    className="ml-2 px-3 py-2 bg-black/70 rounded-lg text-white hover:bg-black transition"
-                  >
-                    ← Prev
-                  </button>
-                  <button
-                    onClick={() => setCurrentVideoIndex((i) => (i + 1) % reviewsWithVideos.length)}
-                    className="mr-2 px-3 py-2 bg-black/70 rounded-lg text-white hover:bg-black transition"
-                  >
-                    Next →
-                  </button>
-                </div>
-              )}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-4">
-                <p className="text-gray-400 text-[11px] opacity-70 mb-1">Video from review by</p>
-                <Link to={`/profile/${reviewsWithVideos[currentVideoIndex].user_id}`} className="inline-block text-[#00D9FF] hover:text-[#00D9FF]/80 font-semibold text-sm transition-colors">
+            <div className="mb-4">
+              <div className="rounded-xl overflow-hidden bg-black aspect-video mb-3 relative group">
+                <video
+                  src={reviewsWithVideos[currentVideoIndex].video_url}
+                  controls
+                  className="w-full h-full"
+                />
+                {reviewsWithVideos.length > 1 && (
+                  <div className="absolute inset-0 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      onClick={() => setCurrentVideoIndex((i) => (i - 1 + reviewsWithVideos.length) % reviewsWithVideos.length)}
+                      className="ml-2 px-3 py-2 bg-black/70 rounded-lg text-white hover:bg-black transition"
+                    >
+                      ← Prev
+                    </button>
+                    <button
+                      onClick={() => setCurrentVideoIndex((i) => (i + 1) % reviewsWithVideos.length)}
+                      className="mr-2 px-3 py-2 bg-black/70 rounded-lg text-white hover:bg-black transition"
+                    >
+                      Next →
+                    </button>
+                  </div>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                <p className="text-gray-500 text-xs">Video from review by</p>
+                <Link to={`/profile/${reviewsWithVideos[currentVideoIndex].user_id}`} className="text-[#00D9FF] hover:text-[#00D9FF]/80 font-semibold text-sm transition-colors">
                   {reviewsWithVideos[currentVideoIndex].username}
                 </Link>
               </div>
