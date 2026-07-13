@@ -360,8 +360,8 @@ export default function SetDetail() {
               </div>
               <div className="flex items-center gap-2">
                 <p className="text-gray-500 text-xs">Video from review by</p>
-                <Link to={`/profile/${reviewsWithVideos[currentVideoIndex].user_id}`} className="text-[#00D9FF] hover:text-[#00D9FF]/80 font-semibold text-sm transition-colors">
-                  {reviewsWithVideos[currentVideoIndex].username}
+                <Link to={`/profile/${reviewsWithVideos[currentVideoIndex].user.id}`} className="text-[#00D9FF] hover:text-[#00D9FF]/80 font-semibold text-sm transition-colors">
+                  @{reviewsWithVideos[currentVideoIndex].user.username}
                 </Link>
               </div>
             </div>
