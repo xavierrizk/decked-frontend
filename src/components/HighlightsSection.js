@@ -96,7 +96,6 @@ function SetThumb({ set }) {
       <div className="w-36 h-20 rounded-lg overflow-hidden bg-[#111114] mb-1.5 relative">
         <SetThumbnail
           setId={set.set_id}
-          youtubeUrl={set.video_url}
           performanceType={set.performance_type}
           fallbackImage={set.dj_image}
           alt={set.title}

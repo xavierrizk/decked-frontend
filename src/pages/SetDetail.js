@@ -10,17 +10,6 @@ import ReviewCard from '../components/ReviewCard';
 import ReviewDetailModal from '../components/ReviewDetailModal';
 import ShareMenu from '../components/ShareMenu';
 
-function getYouTubeId(url) {
-  if (!url) return null;
-  let m = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
-  if (m) return m[1];
-  m = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
-  if (m) return m[1];
-  m = url.match(/youtube\.com\/(?:embed|shorts)\/([a-zA-Z0-9_-]{11})/);
-  if (m) return m[1];
-  return null;
-}
-
 function Spinner() {
   return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-10 h-10 border-4 border-[#00D9FF] border-t-transparent rounded-full animate-spin" /></div>;
 }
@@ -131,7 +120,7 @@ export default function SetDetail() {
           axios.get(`${API_URL}/api/comments/set/${id}`),
           axios.get(`${API_URL}/api/likes/set/${id}`, { headers }),
           s.dj_id ? axios.get(`${API_URL}/api/follows/${s.dj_id}`, { headers }) : Promise.resolve({ data: { count: 0, following: false } }),
-          !s.video_url ? axios.get(`${API_URL}/api/reviews/set/${id}/videos`, { headers }).catch(() => ({ data: [] })) : Promise.resolve({ data: [] }),
+          axios.get(`${API_URL}/api/reviews/set/${id}/videos`, { headers }).catch(() => ({ data: [] })),
         ]);
         setStats(ratingsRes.data.stats || null);
         setComments(commentsRes.data);
@@ -259,7 +248,6 @@ export default function SetDetail() {
   const isDjSet    = set.performance_type === 'dj_set' || (!set.performance_type && set.dj_id);
   const typeLabel  = TYPE_LABELS[set.performance_type] || null;
   const typeColor  = TYPE_COLORS[set.performance_type] || '#9BA6B3';
-  const ytId       = getYouTubeId(set.video_url);
 
   const setDate = set.set_date || set.created_at;
   const dateStr = setDate ? new Date(setDate).getFullYear() : null;
@@ -313,27 +301,8 @@ export default function SetDetail() {
         {/* LEFT — video + metadata */}
         <div className="flex-1 min-w-0">
 
-          {/* Embedded player or fallback video from reviews */}
-          {ytId ? (
-            <div className="rounded-xl overflow-hidden bg-black aspect-video mb-4">
-              <iframe
-                src={`https://www.youtube.com/embed/${ytId}`}
-                title={set.title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full"
-              />
-            </div>
-          ) : set.video_url ? (
-            <a href={set.video_url} target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-4 bg-white/[0.03] border border-white/[0.07] hover:border-white/20 rounded-xl px-5 py-4 mb-4 transition-all group">
-              <div className="w-10 h-10 rounded-lg bg-red-600 flex items-center justify-center flex-shrink-0">
-                <svg className="w-4 h-4 text-white ml-0.5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-              </div>
-              <span className="text-white font-medium text-sm">Watch video</span>
-              <svg className="w-4 h-4 text-gray-600 group-hover:text-gray-400 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-            </a>
-          ) : reviewsWithVideos.length > 0 ? (
+          {/* User review videos, always primary */}
+          {reviewsWithVideos.length > 0 ? (
             <div className="mb-4">
               <div className="rounded-xl overflow-hidden bg-black aspect-video mb-3 relative group">
                 <video
@@ -365,7 +334,23 @@ export default function SetDetail() {
                 </Link>
               </div>
             </div>
-          ) : null}
+          ) : (
+            <div className="rounded-xl overflow-hidden bg-gradient-to-br from-gray-900 to-black aspect-video mb-4 flex items-center justify-center text-4xl opacity-40">
+              🎵
+            </div>
+          )}
+
+          {/* YouTube link, secondary — set detail page only */}
+          {set.video_url && (
+            <a href={set.video_url} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-4 bg-white/[0.03] border border-white/[0.07] hover:border-white/20 rounded-xl px-5 py-4 mb-4 transition-all group">
+              <div className="w-10 h-10 rounded-lg bg-red-600 flex items-center justify-center flex-shrink-0">
+                <svg className="w-4 h-4 text-white ml-0.5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              </div>
+              <span className="text-white font-medium text-sm">🎥 Watch Full Set on YouTube</span>
+              <svg className="w-4 h-4 text-gray-600 group-hover:text-gray-400 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            </a>
+          )}
 
           {/* Title + year */}
           <div className="flex items-start gap-3 mb-2">

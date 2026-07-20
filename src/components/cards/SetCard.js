@@ -25,22 +25,10 @@ function getGradient(genre) {
   return genreGradient[genre] || genreGradient['default'];
 }
 
-function getYouTubeId(url) {
-  if (!url) return null;
-  let m = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
-  if (m) return m[1];
-  m = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
-  if (m) return m[1];
-  m = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/);
-  if (m) return m[1];
-  return null;
-}
-
 export default function SetCard({ set, rank }) {
   const gradient   = getGradient(set.genre);
   const badge      = TYPE_BADGE[set.performance_type] || null;
   const isDjSet    = set.performance_type === 'dj_set' || (!set.performance_type && set.dj_id);
-  const ytId       = getYouTubeId(set.video_url);
   const artistImg  = set.dj_profile_image_url;
   const rating     = set.avg_rating ? Number(set.avg_rating).toFixed(1) : null;
   const artistLink = isDjSet && set.dj_id ? `/artist/${set.dj_id}` : set.artist_id ? `/artist/${set.artist_id}` : null;
@@ -48,10 +36,9 @@ export default function SetCard({ set, rank }) {
   return (
     <Link to={`/set/${set.id}`} className="group block">
       {/* Thumbnail */}
-      <div className={`relative rounded-lg overflow-hidden aspect-video ${!ytId && !artistImg ? `bg-gradient-to-br ${gradient}` : 'bg-black'}`}>
+      <div className={`relative rounded-lg overflow-hidden aspect-video ${!artistImg ? `bg-gradient-to-br ${gradient}` : 'bg-black'}`}>
         <SetThumbnail
           setId={set.id}
-          youtubeUrl={set.video_url}
           performanceType={set.performance_type}
           fallbackImage={artistImg}
           alt={set.title}

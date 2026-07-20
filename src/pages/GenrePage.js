@@ -70,7 +70,6 @@ function GenreSetCard({ set }) {
       <div className="relative aspect-video bg-white/[0.04] overflow-hidden">
         <SetThumbnail
           setId={set.id}
-          youtubeUrl={set.video_url}
           performanceType={set.performance_type}
           alt={set.title}
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
