@@ -24,6 +24,8 @@ import AdminDashboard          from './pages/AdminDashboard';
 import VerificationRequestPage from './pages/VerificationRequestPage';
 import RequestDJPage           from './pages/RequestDJPage';
 import MyDJsPage               from './pages/MyDJsPage';
+import BucketListPage          from './pages/BucketListPage';
+import PublicBucketListPage    from './pages/PublicBucketListPage';
 import Navbar            from './components/Navbar';
 import PageWrapper       from './components/PageWrapper';
 import AnnouncementsBanner from './components/AnnouncementsBanner';
@@ -141,6 +143,8 @@ function AppInner({ isLoggedIn, setIsLoggedIn }) {
               <Route path="/concert-artist/:id" element={<ConcertArtistPage />} />
               <Route path="/set/:id"        element={<SetDetail />} />
               <Route path="/profile/:userId" element={<ProfilePage />} />
+              <Route path="/bucket-list"      element={<Protected><BucketListPage /></Protected>} />
+              <Route path="/users/:userId/bucket-list" element={<PublicBucketListPage />} />
               <Route path="/rate/:setId"    element={<Protected><RateSet /></Protected>} />
               <Route path="/review/set/:setId" element={<Protected><EnhancedRateSet /></Protected>} />
               <Route path="/create-artist"   element={<Protected><CreateDJ /></Protected>} />

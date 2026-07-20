@@ -71,8 +71,37 @@ function SectionLabel({ children, action }) {
   );
 }
 
+// Bucket List preview strip
+function BucketListPreview({ bucketList, userId }) {
+  if (!bucketList.length) return null;
+  return (
+    <div>
+      <SectionLabel action={{ to: `/users/${userId}/bucket-list`, label: 'View full list' }}>
+        Bucket List ({bucketList.length})
+      </SectionLabel>
+      <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
+        {bucketList.slice(0, 8).map(dj => (
+          <Link key={dj.artist_id} to={`/artist/${dj.artist_id}`} className="flex flex-col items-center text-center group">
+            {dj.profile_image_url ? (
+              <img src={dj.profile_image_url} alt={dj.name} className="w-12 h-12 rounded-full object-cover mb-1" />
+            ) : (
+              <div
+                className="w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold text-white mb-1"
+                style={{ background: 'linear-gradient(135deg, #FF006E, #7c1d4e)' }}
+              >
+                {dj.name?.[0]?.toUpperCase()}
+              </div>
+            )}
+            <span className="text-gray-500 text-[10px] truncate max-w-full group-hover:text-[#00D9FF] transition-colors">{dj.name}</span>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // Dashboard — the default profile tab
-function ProfileDashboard({ featuredSets, activity, actLoading, reviews, reviewsLoading, onOpenReview, isOwn, userId }) {
+function ProfileDashboard({ featuredSets, activity, actLoading, reviews, reviewsLoading, onOpenReview, isOwn, userId, bucketList }) {
   const hasActivity = activity.filter(a => a.type === 'rating').length > 0;
   const recentReviews = reviews.filter(r => r.review_text).slice(0, 3);
 
@@ -102,6 +131,9 @@ function ProfileDashboard({ featuredSets, activity, actLoading, reviews, reviews
           </div>
         </div>
       )}
+
+      {/* Bucket List */}
+      <BucketListPreview bucketList={bucketList} userId={userId} />
 
       {/* Recent Activity */}
       {hasActivity && (
@@ -168,6 +200,7 @@ export default function ProfilePage() {
   const [activity, setActivity]         = useState([]);
   const [actState, setActState]         = useState('idle');
   const [featuredSets, setFeaturedSets] = useState([]);
+  const [bucketList, setBucketList]     = useState([]);
 
   const [friendData, setFriendData]     = useState({ status: 'none', friends: false, friendCount: 0 });
   const [friendLoading, setFriendLoading] = useState(false);
@@ -202,6 +235,9 @@ export default function ProfilePage() {
 
     axios.get(`${API_URL}/api/users/${userId}/featured-sets`)
       .then(r => setFeaturedSets(r.data || [])).catch(() => setFeaturedSets([]));
+
+    axios.get(`${API_URL}/api/users/${userId}/bucket-list`)
+      .then(r => setBucketList(r.data?.bucket_list || [])).catch(() => setBucketList([]));
 
     // Load activity eagerly for the dashboard
     setActState('loading');
@@ -337,6 +373,7 @@ export default function ProfilePage() {
           onOpenReview={openReview}
           isOwn={isOwn}
           userId={userId}
+          bucketList={bucketList}
         />
       )}
 

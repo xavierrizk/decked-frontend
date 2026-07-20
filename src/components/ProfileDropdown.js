@@ -9,6 +9,7 @@ const IconUser     = () => <svg {...ic}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0
 const IconStar     = () => <svg {...ic}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>;
 const IconHeart    = () => <svg {...ic}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 1 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z" /></svg>;
 const IconVinyl    = () => <svg {...ic}><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="3" /></svg>;
+const IconBookmark = () => <svg {...ic}><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" /></svg>;
 const IconSettings = () => <svg {...ic}><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>;
 const IconHelp     = () => <svg {...ic}><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>;
 const IconInfo     = () => <svg {...ic}><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>;
@@ -148,6 +149,7 @@ export default function ProfileDropdown({ userId, username, isAdmin, onLogout })
           <MenuItem to={`/profile/${userId}`}                  onClick={close} icon={<IconUser />}  label="View Profile" />
           <MenuItem to={`/profile/${userId}?tab=reviews`}      onClick={close} icon={<IconStar />}  label="My Reviews" />
           <MenuItem to={`/profile/${userId}?tab=favorites`}    onClick={close} icon={<IconHeart />} label="Favorite Reviews" />
+          <MenuItem to="/bucket-list"                          onClick={close} icon={<IconBookmark />} label="Bucket List" />
 
           {/* Section 2: Creator */}
           {isArtist && (

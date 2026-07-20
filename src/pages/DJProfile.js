@@ -5,6 +5,7 @@ import axios from 'axios';
 import { getCurrentUserId } from '../utils/auth';
 import Toast, { useToast } from '../components/Toast';
 import ArtistVerificationModal from '../components/ArtistVerificationModal';
+import AddToBucketListButton from '../components/AddToBucketListButton';
 
 function getYtThumb(url) {
   if (!url) return null;
@@ -218,7 +219,7 @@ export default function ArtistProfilePage() {
                 : <span className="text-2xl">🎧</span>
               }
             </div>
-            <div className="pb-1 ml-auto">
+            <div className="pb-1 ml-auto flex items-center gap-2">
               {!isOwnDj && (
                 isLoggedIn ? (
                   <button onClick={handleFollow} disabled={followLoading}
@@ -235,6 +236,7 @@ export default function ArtistProfilePage() {
                   </Link>
                 )
               )}
+              {!isOwnDj && <AddToBucketListButton artistId={id} isLoggedIn={isLoggedIn} onToast={showToast} />}
             </div>
 
             {/* Verify button */}
