@@ -194,7 +194,7 @@ export default function ArtistProfilePage() {
 
       {/* Hero */}
       <div className="relative bg-[#0f0f1a] border border-white/[0.07] rounded-xl mb-6 overflow-hidden">
-        <div className="relative h-36 sm:h-48">
+        <div className="relative z-0 h-36 sm:h-48">
           {artistProfile.banner_image_url ? (
             <img src={artistProfile.banner_image_url} alt="Banner" className="w-full h-full object-cover" />
           ) : (
@@ -211,7 +211,7 @@ export default function ArtistProfilePage() {
           )}
         </div>
 
-        <div className="px-5 pb-5">
+        <div className="relative z-10 px-5 pb-5">
           <div className="flex items-end gap-4 -mt-10 mb-4">
             <div className="w-20 h-20 rounded-xl border-4 border-[#0f0f1a] overflow-hidden flex-shrink-0 bg-gradient-to-br from-[#00D9FF]/30 to-[#A855F7]/20 flex items-center justify-center shadow-xl">
               {artistProfile.profile_image_url
