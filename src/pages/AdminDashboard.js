@@ -12,6 +12,7 @@ import BanManager from './BanManager';
 import AnnouncementsManager from './AnnouncementsManager';
 import CommentModerationQueue from './CommentModerationQueue';
 import AdminSubmissionsPage from './AdminSubmissionsPage';
+import AdminDuplicateArtistsPage from './AdminDuplicateArtistsPage';
 
 const STATUS_TABS = ['pending', 'approved', 'rejected'];
 const NAV = [
@@ -20,6 +21,7 @@ const NAV = [
   { id: 'dj-requests',   icon: '🎧', label: 'Artist Requests' },
   { id: 'verifications', icon: '✅', label: 'Verifications' },
   { id: 'manage-djs',    icon: '🗑️', label: 'Manage Artists' },
+  { id: 'duplicate-artists', icon: '🔀', label: 'Duplicate Artists' },
   { id: 'manage-sets',   icon: '🎵', label: 'Manage Sets' },
   { id: 'reports',       icon: '🚩', label: 'Reports & Moderation' },
   { id: 'ban-users',     icon: '🔒', label: 'Ban Users' },
@@ -200,6 +202,9 @@ export default function AdminDashboard() {
 
         {/* Set Submissions */}
         {section === 'submissions' && <AdminSubmissionsPage />}
+
+        {/* Duplicate Artists */}
+        {section === 'duplicate-artists' && <AdminDuplicateArtistsPage />}
 
         {/* Reports & Moderation */}
         {section === 'reports' && <ReportsModeration />}
