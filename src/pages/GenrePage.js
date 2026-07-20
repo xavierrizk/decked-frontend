@@ -2,13 +2,7 @@ import API_URL from '../api';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-
-function getYtThumb(url) {
-  if (!url) return null;
-  let m = url.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
-  if (!m) m = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
-  return m ? `https://img.youtube.com/vi/${m[1]}/mqdefault.jpg` : null;
-}
+import SetThumbnail from '../components/SetThumbnail';
 
 const GENRES = [
   { slug: 'techno',            label: 'Techno',            color: '#FF006E', bg: 'rgba(255,0,110,0.12)'   },
@@ -67,7 +61,6 @@ function GenreTile({ genre, count }) {
 
 // Set card for genre results
 function GenreSetCard({ set }) {
-  const thumb = getYtThumb(set.video_url);
   const avg   = set.avg_rating ? parseFloat(set.avg_rating) : null;
   const venue = set.venue_name || set.festival_name || set.location || null;
 
@@ -75,10 +68,13 @@ function GenreSetCard({ set }) {
     <Link to={`/set/${set.id}`}
       className="group block rounded-xl overflow-hidden border border-white/[0.06] hover:border-white/[0.16] bg-white/[0.02] transition-all duration-200 hover:scale-[1.01]">
       <div className="relative aspect-video bg-white/[0.04] overflow-hidden">
-        {thumb
-          ? <img src={thumb} alt={set.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-          : <div className="w-full h-full flex items-center justify-center text-gray-700 text-3xl">♪</div>
-        }
+        <SetThumbnail
+          setId={set.id}
+          youtubeUrl={set.video_url}
+          performanceType={set.performance_type}
+          alt={set.title}
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
         {avg && (
           <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm rounded-lg px-2 py-0.5 flex items-center gap-1">

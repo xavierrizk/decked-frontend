@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import SetThumbnail from '../SetThumbnail';
 
 const genreGradient = {
   'Techno':       'from-slate-900 via-blue-950 to-black',
@@ -35,18 +36,6 @@ function getYouTubeId(url) {
   return null;
 }
 
-function Thumb({ videoId, alt, className }) {
-  const [src, setSrc] = useState(`https://img.youtube.com/vi/${videoId}/mqdefault.jpg`);
-  return (
-    <img
-      src={src}
-      alt={alt}
-      className={className}
-      onError={() => setSrc(`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`)}
-    />
-  );
-}
-
 export default function SetCard({ set, rank }) {
   const gradient   = getGradient(set.genre);
   const badge      = TYPE_BADGE[set.performance_type] || null;
@@ -60,20 +49,14 @@ export default function SetCard({ set, rank }) {
     <Link to={`/set/${set.id}`} className="group block">
       {/* Thumbnail */}
       <div className={`relative rounded-lg overflow-hidden aspect-video ${!ytId && !artistImg ? `bg-gradient-to-br ${gradient}` : 'bg-black'}`}>
-        {ytId ? (
-          <Thumb videoId={ytId} alt={set.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-        ) : artistImg ? (
-          <img src={artistImg} alt={set.dj_name} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300" />
-        ) : (
-          <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full opacity-[0.06]">
-            <circle cx="50" cy="50" r="48" fill="white" />
-            <circle cx="50" cy="50" r="36" fill="#111" />
-            <circle cx="50" cy="50" r="24" fill="white" />
-            <circle cx="50" cy="50" r="16" fill="#111" />
-            <circle cx="50" cy="50" r="6"  fill="white" />
-            <circle cx="50" cy="50" r="2"  fill="#111" />
-          </svg>
-        )}
+        <SetThumbnail
+          setId={set.id}
+          youtubeUrl={set.video_url}
+          performanceType={set.performance_type}
+          fallbackImage={artistImg}
+          alt={set.title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        />
 
         {/* Type badge */}
         {badge && (

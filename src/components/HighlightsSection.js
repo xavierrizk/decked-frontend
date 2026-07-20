@@ -2,6 +2,7 @@ import API_URL from '../api';
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import SetThumbnail from './SetThumbnail';
 
 /* ── helpers ─────────────────────────────────────────── */
 function getYouTubeId(url) {
@@ -87,22 +88,20 @@ function Section({ label, icon, to, children, loading }) {
 
 /* ── set thumbnail card (horizontal carousel) ─────────── */
 function SetThumb({ set }) {
-  const ytId = getYouTubeId(set.video_url);
-  const thumb = ytId
-    ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`
-    : set.dj_image || null;
-
   return (
     <Link
       to={`/set/${set.set_id}`}
       className="flex-shrink-0 w-36 group"
     >
       <div className="w-36 h-20 rounded-lg overflow-hidden bg-[#111114] mb-1.5 relative">
-        {thumb ? (
-          <img src={thumb} alt={set.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-gray-900 to-black" />
-        )}
+        <SetThumbnail
+          setId={set.set_id}
+          youtubeUrl={set.video_url}
+          performanceType={set.performance_type}
+          fallbackImage={set.dj_image}
+          alt={set.title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        />
         {set.new_ratings_this_week > 0 && (
           <span className="absolute top-1.5 right-1.5 bg-black/70 text-[#00D9FF] text-[9px] font-bold px-1.5 py-0.5 rounded">
             +{set.new_ratings_this_week}
