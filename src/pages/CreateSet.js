@@ -28,6 +28,8 @@ export default function CreateSet() {
   const [loadingDjs, setLoadingDjs] = useState(true);
   const [loading, setLoading]   = useState(false);
   const [error, setError]       = useState('');
+  const [artistMatch, setArtistMatch] = useState(null);
+  const [checkingMatch, setCheckingMatch] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const venueDebounce = useRef(null);
@@ -69,29 +71,57 @@ export default function CreateSet() {
       .catch(() => setLoadingDjs(false));
   }, []); // eslint-disable-line
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const buildPayload = (overrides = {}) => ({
+    performance_type: perfType,
+    title,
+    genre: genre || null,
+    location: location || null,
+    venue_id: venueId || null,
+    duration: duration ? parseInt(duration) : null,
+    video_url: videoUrl || null,
+    ...(isDjSet ? { dj_id: djId } : { artist_name: artistName }),
+    ...overrides,
+  });
+
+  const submitSet = async (overrides = {}) => {
     setLoading(true); setError('');
     try {
-      const payload = {
-        performance_type: perfType,
-        title,
-        genre: genre || null,
-        location: location || null,
-        venue_id: venueId || null,
-        duration: duration ? parseInt(duration) : null,
-        video_url: videoUrl || null,
-      };
-      if (isDjSet) payload.dj_id = djId;
-      else payload.artist_name = artistName;
-
-      const res = await axios.post(`${API_URL}/api/sets`, payload,
+      const res = await axios.post(`${API_URL}/api/sets`, buildPayload(overrides),
         { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } });
       navigate(`/set/${res.data.id}`);
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to create');
       setLoading(false);
     }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (isDjSet || !artistName.trim()) return submitSet();
+
+    setCheckingMatch(true);
+    try {
+      const res = await axios.get(`${API_URL}/api/artists/match?name=${encodeURIComponent(artistName)}`);
+      setCheckingMatch(false);
+      if (res.data.match && !res.data.exact) {
+        setArtistMatch(res.data.match);
+        return;
+      }
+    } catch {
+      setCheckingMatch(false);
+    }
+    submitSet();
+  };
+
+  const confirmMatch = () => {
+    const matched = artistMatch.name;
+    setArtistMatch(null);
+    submitSet({ artist_name: matched });
+  };
+
+  const rejectMatch = () => {
+    setArtistMatch(null);
+    submitSet({ force_new_artist: true });
   };
 
   const inp = "w-full bg-white/[0.04] border border-white/10 focus:border-brand-500 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 text-sm outline-none transition-colors duration-200";
@@ -141,7 +171,8 @@ export default function CreateSet() {
                 )}
               </div>
             ) : (
-              <Field label="Artist / Band Name" inp={inp} value={artistName} onChange={setArtistName}
+              <Field label="Artist / Band Name" inp={inp} value={artistName}
+                onChange={val => { setArtistName(val); setArtistMatch(null); }}
                 placeholder="Taylor Swift" required />
             )}
 
@@ -200,10 +231,26 @@ export default function CreateSet() {
                   Request an Artist Profile
                 </Link>
               </div>
+            ) : artistMatch ? (
+              <div className="px-4 py-3.5 bg-white/[0.04] border border-brand-500/30 rounded-xl">
+                <p className="text-white text-sm mb-3">
+                  Did you mean <span className="font-bold">{artistMatch.name}</span>?
+                </p>
+                <div className="flex gap-2">
+                  <button type="button" onClick={confirmMatch} disabled={loading}
+                    className="flex-1 btn-primary disabled:opacity-40 text-sm font-semibold py-2 rounded-lg transition-all duration-200">
+                    Yes, use that
+                  </button>
+                  <button type="button" onClick={rejectMatch} disabled={loading}
+                    className="flex-1 bg-white/[0.06] border border-white/15 text-white text-sm font-semibold py-2 rounded-lg hover:bg-white/[0.1] transition-all duration-200 disabled:opacity-40">
+                    No, create new
+                  </button>
+                </div>
+              </div>
             ) : (
-              <button type="submit" disabled={loading}
+              <button type="submit" disabled={loading || checkingMatch}
                 className="w-full btn-primary disabled:opacity-40 font-semibold py-2.5 rounded-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-glow">
-                {loading ? 'Creating…' : "Add to DECK'D"}
+                {checkingMatch ? 'Checking…' : loading ? 'Creating…' : "Add to DECK'D"}
               </button>
             )}
           </form>
