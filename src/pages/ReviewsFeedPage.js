@@ -233,7 +233,7 @@ export default function ReviewsFeedPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-10">
+    <div className="max-w-5xl mx-auto px-4 py-10">
       {/* Header */}
       <div className="flex items-end justify-between mb-8">
         <div>
@@ -267,21 +267,23 @@ export default function ReviewsFeedPage() {
       ) : reviews.length === 0 ? (
         <div className="text-center py-20 text-gray-600">No reviews yet.</div>
       ) : (
-        <div className="space-y-4">
-          {reviews.map(r => (
-            <ReviewCard key={r.id} review={r} onLike={handleLike} currentUserId={currentUserId} />
-          ))}
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+            {reviews.map(r => (
+              <ReviewCard key={r.id} review={r} onLike={handleLike} currentUserId={currentUserId} />
+            ))}
+          </div>
 
           {page < totalPages && (
             <button
               onClick={loadMore}
               disabled={loadingMore}
-              className="w-full py-3 mt-2 bg-white/[0.04] hover:bg-white/[0.07] border border-white/[0.08] rounded-xl text-gray-400 hover:text-white text-sm font-semibold transition-all disabled:opacity-50"
+              className="w-full py-3 mt-4 bg-white/[0.04] hover:bg-white/[0.07] border border-white/[0.08] rounded-xl text-gray-400 hover:text-white text-sm font-semibold transition-all disabled:opacity-50"
             >
               {loadingMore ? 'Loading…' : 'Load more'}
             </button>
           )}
-        </div>
+        </>
       )}
     </div>
   );
