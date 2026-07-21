@@ -72,53 +72,57 @@ function SectionLabel({ children, action }) {
 }
 
 const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-const TYPE_ICON = { dj_set: '🎚️', concert: '🎤', festival_set: '🎪', live_band: '🎸', rave: '💿', other: '🎵' };
 
-// DIARY — recent rated shows with calendar date badges
-function DiarySection({ reviews, userId }) {
-  const items = (reviews || []).slice(0, 15);
+// Compact rail section header — small label + optional count, underlined
+function RailHeader({ label, count, action }) {
+  return (
+    <div className="flex items-center justify-between border-b border-white/10 pb-1.5 mb-2.5">
+      <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-gray-400">{label}</span>
+      {action
+        ? <Link to={action.to} className="text-[10px] text-gray-600 hover:text-[#00D9FF] transition-colors uppercase tracking-wider">{action.label}</Link>
+        : (count != null && <span className="text-[11px] text-gray-600 tabular-nums">{count}</span>)}
+    </div>
+  );
+}
+
+function Stars({ rating }) {
+  const full = Math.floor(rating);
+  const half = rating % 1 >= 0.5;
+  return (
+    <span className="text-[#00D9FF] text-[10px] leading-none whitespace-nowrap">
+      {'★'.repeat(full)}{half ? '½' : ''}
+    </span>
+  );
+}
+
+// DIARY rail — month-grouped list of rated shows (Letterboxd style)
+function DiaryRail({ reviews }) {
+  const items = (reviews || []).slice(0, 14);
   if (!items.length) return null;
+  let lastKey = null;
 
   return (
     <div>
-      <SectionLabel action={reviews.length > 15 ? { to: `?tab=reviews`, label: 'Full diary' } : null}>
-        Diary
-      </SectionLabel>
-      <div className="space-y-2.5">
+      <RailHeader label="Diary" count={reviews.length} />
+      <div className="space-y-1.5">
         {items.map(r => {
           const d = new Date(r.created_at);
-          const artist = r.dj_name || r.artist_name || null;
-          const rating = r.rating ? Number(r.rating) : 0;
-          const full = Math.floor(rating);
-          const half = rating % 1 >= 0.5;
+          const key = `${d.getFullYear()}-${d.getMonth()}`;
+          const showMonth = key !== lastKey;
+          lastKey = key;
           return (
-            <Link
-              key={r.id}
-              to={`/set/${r.set_id}`}
-              className="flex items-center gap-4 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-[#00D9FF]/30 hover:bg-white/[0.05] transition-all group"
-            >
-              {/* Date badge */}
-              <div className="relative flex-shrink-0 w-14 h-14 rounded-lg flex flex-col items-center justify-center text-black font-bold"
-                style={{ background: 'linear-gradient(135deg, #00D9FF, #FF006E)' }}>
-                <span className="text-[9px] leading-none tracking-wider">{MONTHS[d.getMonth()]}</span>
-                <span className="text-xl leading-none mt-0.5">{d.getDate()}</span>
-                <span className="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full bg-[#0a0a0a] border border-white/10 flex items-center justify-center text-[11px]">
-                  {TYPE_ICON[r.performance_type] || '🎵'}
-                </span>
-              </div>
-              {/* Content */}
-              <div className="min-w-0 flex-1">
-                <p className="text-white text-sm font-semibold leading-tight truncate group-hover:text-[#00D9FF] transition-colors">{r.set_title}</p>
-                {artist && <p className="text-gray-500 text-xs mt-0.5 truncate">{artist}</p>}
-                {rating > 0 && (
-                  <div className="flex items-center gap-1.5 mt-1">
-                    <span className="text-[#FF006E] text-xs leading-none">
-                      {'★'.repeat(full)}{half ? '½' : ''}
-                    </span>
-                    <span className="text-gray-600 text-[11px] tabular-nums">{rating.toFixed(1)}</span>
+            <Link key={r.id} to={`/set/${r.set_id}`} className="flex items-center gap-2.5 group">
+              <div className="w-8 flex-shrink-0">
+                {showMonth && (
+                  <div className="rounded bg-white/[0.05] border border-white/10 text-center py-0.5">
+                    <span className="block text-[8px] font-bold uppercase tracking-wide text-gray-400 leading-none">{MONTHS[d.getMonth()]}</span>
                   </div>
                 )}
               </div>
+              <span className="text-[11px] text-gray-500 tabular-nums w-4 text-right flex-shrink-0">{d.getDate()}</span>
+              <span className="text-[12px] text-gray-300 group-hover:text-[#00D9FF] truncate transition-colors flex-1 min-w-0">
+                {r.set_title.trim()}
+              </span>
             </Link>
           );
         })}
@@ -127,89 +131,88 @@ function DiarySection({ reviews, userId }) {
   );
 }
 
-// RATINGS — distribution bar graph across half-star buckets
-function RatingsGraph({ reviews }) {
+// RATINGS rail — compact distribution bar graph with star ends
+function RatingsRail({ reviews }) {
   const rated = (reviews || []).filter(r => r.rating > 0);
   if (!rated.length) return null;
-
   const buckets = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
   const counts = buckets.map(b => rated.filter(r => Math.round(Number(r.rating) * 2) / 2 === b).length);
   const max = Math.max(...counts, 1);
-  const total = rated.length;
 
   return (
     <div>
-      <SectionLabel>Ratings <span className="text-gray-700 normal-case tracking-normal font-normal ml-1">{total}</span></SectionLabel>
-      <div className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-4">
-        <div className="flex items-end gap-1.5 h-28">
-          {buckets.map((b, i) => {
-            // interpolate pink (low) → cyan (high)
-            const t = (b - 0.5) / 4.5;
-            const color = `rgb(${Math.round(255 - t * 255)}, ${Math.round(0 + t * 217)}, ${Math.round(110 + t * 145)})`;
-            return (
-              <div key={b} className="flex-1 flex flex-col items-center justify-end h-full group/bar" title={`${b}★ — ${counts[i]} rating${counts[i] !== 1 ? 's' : ''}`}>
-                <span className="text-[9px] text-gray-500 mb-1 tabular-nums opacity-0 group-hover/bar:opacity-100 transition-opacity">{counts[i]}</span>
-                <div
-                  className="w-full rounded-sm transition-all duration-200 group-hover/bar:brightness-125"
-                  style={{ height: `${Math.max((counts[i] / max) * 100, counts[i] > 0 ? 6 : 2)}%`, background: counts[i] > 0 ? color : 'rgba(255,255,255,0.06)' }}
-                />
-              </div>
-            );
-          })}
+      <RailHeader label="Ratings" count={rated.length} />
+      <div className="flex items-end gap-2">
+        <span className="text-[#00D9FF] text-[11px] leading-none pb-0.5">★</span>
+        <div className="flex-1 flex items-end gap-[3px] h-12">
+          {buckets.map((b, i) => (
+            <div
+              key={b}
+              className="flex-1 rounded-sm transition-all duration-200 hover:brightness-125"
+              title={`${b}★ — ${counts[i]} rating${counts[i] !== 1 ? 's' : ''}`}
+              style={{
+                height: `${Math.max((counts[i] / max) * 100, counts[i] > 0 ? 8 : 3)}%`,
+                background: counts[i] > 0 ? '#00D9FF' : 'rgba(255,255,255,0.07)',
+              }}
+            />
+          ))}
         </div>
-        <div className="flex items-center justify-between mt-2 px-0.5 text-[10px] text-gray-600">
-          <span>½★</span>
-          <span>★★★★★</span>
-        </div>
+        <span className="text-[#00D9FF] text-[11px] leading-none pb-0.5 whitespace-nowrap">★★★★★</span>
       </div>
     </div>
   );
 }
 
-// ACTIVITY — last 31 days heatmap of rating activity
-function ActivityHeatmap({ reviews }) {
-  const days = [];
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  for (let i = 30; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
-    days.push(d);
-  }
-  const countByKey = {};
-  (reviews || []).forEach(r => {
-    const d = new Date(r.created_at);
-    d.setHours(0, 0, 0, 0);
-    const key = d.getTime();
-    countByKey[key] = (countByKey[key] || 0) + 1;
-  });
-  const dayCounts = days.map(d => countByKey[d.getTime()] || 0);
-  const max = Math.max(...dayCounts, 1);
-  const total = dayCounts.reduce((a, b) => a + b, 0);
+// ACTIVITY rail — recent-activity timeline (Letterboxd style)
+function ActivityRail({ activity, isOwn, username }) {
+  const items = (activity || []).slice(0, 6);
+  if (!items.length) return null;
+  const who = isOwn ? 'You' : (username || 'They');
 
   return (
     <div>
-      <SectionLabel>Activity</SectionLabel>
-      <div className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-4">
-        <div className="grid grid-cols-[repeat(16,minmax(0,1fr))] gap-1.5">
-          {days.map((d, i) => {
-            const c = dayCounts[i];
-            const alpha = c > 0 ? 0.35 + (c / max) * 0.65 : 0;
-            return (
-              <div
-                key={i}
-                title={`${d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}: ${c} rating${c !== 1 ? 's' : ''}`}
-                className="aspect-square rounded-[3px] border border-white/[0.04]"
-                style={{ background: c > 0 ? `rgba(0,217,255,${alpha})` : 'rgba(255,255,255,0.03)' }}
-              />
+      <RailHeader label="Activity" />
+      <div className="space-y-3">
+        {items.map((a, i) => {
+          const when = relativeTime(a.ts);
+          let body;
+          if (a.type === 'rating') {
+            body = (
+              <>
+                {who} {a.has_review ? 'reviewed and rated' : 'rated'}{' '}
+                <Link to={`/set/${a.set_id}`} className="text-gray-200 hover:text-[#00D9FF] font-medium transition-colors">{(a.set_title || '').trim()}</Link>
+                {a.rating ? <> <Stars rating={Number(a.rating)} /></> : null}
+              </>
             );
-          })}
-        </div>
-        <p className="text-gray-500 text-xs mt-3">
-          <span className="text-white font-semibold">{total}</span> rating{total !== 1 ? 's' : ''} in the last 31 days
-        </p>
+          } else if (a.type === 'follow') {
+            body = <>{who} followed <Link to={`/artist/${a.dj_id}`} className="text-gray-200 hover:text-[#00D9FF] font-medium transition-colors">{a.dj_name}</Link></>;
+          } else {
+            body = <>{who} became friends with <Link to={`/profile/${a.friend_id}`} className="text-gray-200 hover:text-[#00D9FF] font-medium transition-colors">{a.friend_name}</Link></>;
+          }
+          return (
+            <div key={i} className="flex gap-2.5">
+              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#FF006E]/70 flex-shrink-0" />
+              <p className="text-[12px] text-gray-500 leading-snug">
+                {body}
+                {when && <span className="text-gray-700"> · {when}</span>}
+              </p>
+            </div>
+          );
+        })}
       </div>
     </div>
+  );
+}
+
+// Right-hand rail combining Diary / Ratings / Activity
+function ProfileSidebar({ reviews, activity, isOwn, username }) {
+  if (!reviews.length && !activity.length) return null;
+  return (
+    <aside className="w-full lg:w-60 flex-shrink-0 space-y-7">
+      <DiaryRail reviews={reviews} />
+      <RatingsRail reviews={reviews} />
+      <ActivityRail activity={activity} isOwn={isOwn} username={username} />
+    </aside>
   );
 }
 
@@ -284,17 +287,6 @@ function ProfileDashboard({ featuredSets, activity, actLoading, reviews, reviews
           <RecentActivityGrid activity={activity} loading={actLoading} />
         </div>
       )}
-
-      {/* Ratings distribution + Activity heatmap */}
-      {reviews.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <RatingsGraph reviews={reviews} />
-          <ActivityHeatmap reviews={reviews} />
-        </div>
-      )}
-
-      {/* Diary */}
-      <DiarySection reviews={reviews} userId={userId} />
 
       {/* Recent Reviews */}
       {(reviewsLoading || recentReviews.length > 0) && (
@@ -482,7 +474,7 @@ export default function ProfilePage() {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
+    <div className="max-w-5xl mx-auto px-4 py-6">
       <Toast message={toast} />
       <ReportModal
         open={reportOpen}
@@ -517,17 +509,27 @@ export default function ProfilePage() {
       <ProfileTabs tabs={tabs} active={activeTab} onChange={handleTab} />
 
       {activeTab === 'profile' && (
-        <ProfileDashboard
-          featuredSets={featuredSets}
-          activity={activity}
-          actLoading={actState === 'loading'}
-          reviews={reviews}
-          reviewsLoading={reviewsLoading}
-          onOpenReview={openReview}
-          isOwn={isOwn}
-          userId={userId}
-          bucketList={bucketList}
-        />
+        <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex-1 min-w-0">
+            <ProfileDashboard
+              featuredSets={featuredSets}
+              activity={activity}
+              actLoading={actState === 'loading'}
+              reviews={reviews}
+              reviewsLoading={reviewsLoading}
+              onOpenReview={openReview}
+              isOwn={isOwn}
+              userId={userId}
+              bucketList={bucketList}
+            />
+          </div>
+          <ProfileSidebar
+            reviews={reviews}
+            activity={activity}
+            isOwn={isOwn}
+            username={profile.username}
+          />
+        </div>
       )}
 
       {activeTab === 'reviews' && (
