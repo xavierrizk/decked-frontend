@@ -146,15 +146,16 @@ function ArtistPill({ artist }) {
 /* ── review card (Letterboxd style) ─────────────────── */
 function SetThumbSmall({ review }) {
   const ytId = getYouTubeId(review.video_url);
-  const src  = ytId
-    ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`
-    : review.dj_image || null;
+  const ytThumb = ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : null;
   return (
     <div className="w-14 h-20 rounded flex-shrink-0 overflow-hidden bg-[#1a1a1f]">
-      {src
-        ? <img src={src} alt={review.set_title} className="w-full h-full object-cover" />
-        : <div className="w-full h-full bg-gradient-to-b from-gray-800 to-black" />
-      }
+      <SetThumbnail
+        setId={review.set_id}
+        performanceType={review.performance_type}
+        fallbackImage={ytThumb || review.dj_image || null}
+        alt={review.set_title}
+        className="w-full h-full object-cover"
+      />
     </div>
   );
 }
