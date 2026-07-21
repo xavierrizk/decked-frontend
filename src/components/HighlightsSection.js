@@ -224,16 +224,20 @@ function FriendRow({ item, last }) {
 
 /* ── main export ─────────────────────────────────────── */
 export default function HighlightsSection({ isLoggedIn }) {
+  const [newSets,     setNewSets]      = useState([]);
   const [trendSets,    setTrendSets]    = useState([]);
   const [risingArt,   setRisingArt]    = useState([]);
   const [hotRevs,     setHotRevs]      = useState([]);
   const [friendAct,   setFriendAct]    = useState([]);
+  const [loadingNs,   setLoadingNs]    = useState(true);
   const [loadingTs,   setLoadingTs]    = useState(true);
   const [loadingRa,   setLoadingRa]    = useState(true);
   const [loadingHr,   setLoadingHr]    = useState(true);
   const [loadingFa,   setLoadingFa]    = useState(true);
 
   useEffect(() => {
+    axios.get(`${API_URL}/api/highlights/new-sets`)
+      .then(r => setNewSets(r.data)).catch(() => {}).finally(() => setLoadingNs(false));
     axios.get(`${API_URL}/api/highlights/trending-sets`)
       .then(r => setTrendSets(r.data)).catch(() => {}).finally(() => setLoadingTs(false));
     axios.get(`${API_URL}/api/highlights/rising-artists`)
@@ -250,8 +254,8 @@ export default function HighlightsSection({ isLoggedIn }) {
     }).then(r => setFriendAct(r.data)).catch(() => {}).finally(() => setLoadingFa(false));
   }, [isLoggedIn]);
 
-  const hasAnything = trendSets.length > 0 || risingArt.length > 0 || hotRevs.length > 0;
-  if (!loadingTs && !loadingRa && !loadingHr && !hasAnything) return null;
+  const hasAnything = newSets.length > 0 || trendSets.length > 0 || risingArt.length > 0 || hotRevs.length > 0;
+  if (!loadingNs && !loadingTs && !loadingRa && !loadingHr && !hasAnything) return null;
 
   return (
     <div className="mb-4">
@@ -261,6 +265,17 @@ export default function HighlightsSection({ isLoggedIn }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10">
         {/* LEFT column: carousels */}
         <div>
+          {/* Just added */}
+          <Section label="Just Added" icon="✨" to="/sets" loading={loadingNs}>
+            {newSets.length > 0 ? (
+              <ScrollRow>
+                {newSets.map(s => <SetThumb key={s.set_id} set={s} />)}
+              </ScrollRow>
+            ) : (
+              <p className="text-gray-700 text-xs">No sets yet.</p>
+            )}
+          </Section>
+
           {/* Trending sets */}
           <Section label="Trending This Week" icon="🔥" to="/trending" loading={loadingTs}>
             {trendSets.length > 0 ? (
