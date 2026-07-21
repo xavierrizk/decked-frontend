@@ -71,6 +71,148 @@ function SectionLabel({ children, action }) {
   );
 }
 
+const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+const TYPE_ICON = { dj_set: '🎚️', concert: '🎤', festival_set: '🎪', live_band: '🎸', rave: '💿', other: '🎵' };
+
+// DIARY — recent rated shows with calendar date badges
+function DiarySection({ reviews, userId }) {
+  const items = (reviews || []).slice(0, 15);
+  if (!items.length) return null;
+
+  return (
+    <div>
+      <SectionLabel action={reviews.length > 15 ? { to: `?tab=reviews`, label: 'Full diary' } : null}>
+        Diary
+      </SectionLabel>
+      <div className="space-y-2.5">
+        {items.map(r => {
+          const d = new Date(r.created_at);
+          const artist = r.dj_name || r.artist_name || null;
+          const rating = r.rating ? Number(r.rating) : 0;
+          const full = Math.floor(rating);
+          const half = rating % 1 >= 0.5;
+          return (
+            <Link
+              key={r.id}
+              to={`/set/${r.set_id}`}
+              className="flex items-center gap-4 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-[#00D9FF]/30 hover:bg-white/[0.05] transition-all group"
+            >
+              {/* Date badge */}
+              <div className="relative flex-shrink-0 w-14 h-14 rounded-lg flex flex-col items-center justify-center text-black font-bold"
+                style={{ background: 'linear-gradient(135deg, #00D9FF, #FF006E)' }}>
+                <span className="text-[9px] leading-none tracking-wider">{MONTHS[d.getMonth()]}</span>
+                <span className="text-xl leading-none mt-0.5">{d.getDate()}</span>
+                <span className="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full bg-[#0a0a0a] border border-white/10 flex items-center justify-center text-[11px]">
+                  {TYPE_ICON[r.performance_type] || '🎵'}
+                </span>
+              </div>
+              {/* Content */}
+              <div className="min-w-0 flex-1">
+                <p className="text-white text-sm font-semibold leading-tight truncate group-hover:text-[#00D9FF] transition-colors">{r.set_title}</p>
+                {artist && <p className="text-gray-500 text-xs mt-0.5 truncate">{artist}</p>}
+                {rating > 0 && (
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <span className="text-[#FF006E] text-xs leading-none">
+                      {'★'.repeat(full)}{half ? '½' : ''}
+                    </span>
+                    <span className="text-gray-600 text-[11px] tabular-nums">{rating.toFixed(1)}</span>
+                  </div>
+                )}
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// RATINGS — distribution bar graph across half-star buckets
+function RatingsGraph({ reviews }) {
+  const rated = (reviews || []).filter(r => r.rating > 0);
+  if (!rated.length) return null;
+
+  const buckets = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
+  const counts = buckets.map(b => rated.filter(r => Math.round(Number(r.rating) * 2) / 2 === b).length);
+  const max = Math.max(...counts, 1);
+  const total = rated.length;
+
+  return (
+    <div>
+      <SectionLabel>Ratings <span className="text-gray-700 normal-case tracking-normal font-normal ml-1">{total}</span></SectionLabel>
+      <div className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-4">
+        <div className="flex items-end gap-1.5 h-28">
+          {buckets.map((b, i) => {
+            // interpolate pink (low) → cyan (high)
+            const t = (b - 0.5) / 4.5;
+            const color = `rgb(${Math.round(255 - t * 255)}, ${Math.round(0 + t * 217)}, ${Math.round(110 + t * 145)})`;
+            return (
+              <div key={b} className="flex-1 flex flex-col items-center justify-end h-full group/bar" title={`${b}★ — ${counts[i]} rating${counts[i] !== 1 ? 's' : ''}`}>
+                <span className="text-[9px] text-gray-500 mb-1 tabular-nums opacity-0 group-hover/bar:opacity-100 transition-opacity">{counts[i]}</span>
+                <div
+                  className="w-full rounded-sm transition-all duration-200 group-hover/bar:brightness-125"
+                  style={{ height: `${Math.max((counts[i] / max) * 100, counts[i] > 0 ? 6 : 2)}%`, background: counts[i] > 0 ? color : 'rgba(255,255,255,0.06)' }}
+                />
+              </div>
+            );
+          })}
+        </div>
+        <div className="flex items-center justify-between mt-2 px-0.5 text-[10px] text-gray-600">
+          <span>½★</span>
+          <span>★★★★★</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ACTIVITY — last 31 days heatmap of rating activity
+function ActivityHeatmap({ reviews }) {
+  const days = [];
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  for (let i = 30; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    days.push(d);
+  }
+  const countByKey = {};
+  (reviews || []).forEach(r => {
+    const d = new Date(r.created_at);
+    d.setHours(0, 0, 0, 0);
+    const key = d.getTime();
+    countByKey[key] = (countByKey[key] || 0) + 1;
+  });
+  const dayCounts = days.map(d => countByKey[d.getTime()] || 0);
+  const max = Math.max(...dayCounts, 1);
+  const total = dayCounts.reduce((a, b) => a + b, 0);
+
+  return (
+    <div>
+      <SectionLabel>Activity</SectionLabel>
+      <div className="rounded-xl bg-white/[0.03] border border-white/[0.06] p-4">
+        <div className="grid grid-cols-[repeat(16,minmax(0,1fr))] gap-1.5">
+          {days.map((d, i) => {
+            const c = dayCounts[i];
+            const alpha = c > 0 ? 0.35 + (c / max) * 0.65 : 0;
+            return (
+              <div
+                key={i}
+                title={`${d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}: ${c} rating${c !== 1 ? 's' : ''}`}
+                className="aspect-square rounded-[3px] border border-white/[0.04]"
+                style={{ background: c > 0 ? `rgba(0,217,255,${alpha})` : 'rgba(255,255,255,0.03)' }}
+              />
+            );
+          })}
+        </div>
+        <p className="text-gray-500 text-xs mt-3">
+          <span className="text-white font-semibold">{total}</span> rating{total !== 1 ? 's' : ''} in the last 31 days
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // Bucket List preview strip
 function BucketListPreview({ bucketList, userId }) {
   if (!bucketList.length) return null;
@@ -142,6 +284,17 @@ function ProfileDashboard({ featuredSets, activity, actLoading, reviews, reviews
           <RecentActivityGrid activity={activity} loading={actLoading} />
         </div>
       )}
+
+      {/* Ratings distribution + Activity heatmap */}
+      {reviews.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <RatingsGraph reviews={reviews} />
+          <ActivityHeatmap reviews={reviews} />
+        </div>
+      )}
+
+      {/* Diary */}
+      <DiarySection reviews={reviews} userId={userId} />
 
       {/* Recent Reviews */}
       {(reviewsLoading || recentReviews.length > 0) && (
