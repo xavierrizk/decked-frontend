@@ -13,11 +13,13 @@ import AnnouncementsManager from './AnnouncementsManager';
 import CommentModerationQueue from './CommentModerationQueue';
 import AdminSubmissionsPage from './AdminSubmissionsPage';
 import AdminDuplicateArtistsPage from './AdminDuplicateArtistsPage';
+import AdminVenuesPage from './AdminVenuesPage';
 
 const STATUS_TABS = ['pending', 'approved', 'rejected'];
 const NAV = [
   { id: 'overview',      icon: '📊', label: 'Overview' },
   { id: 'submissions',   icon: '📝', label: 'Set Submissions' },
+  { id: 'venue-requests',icon: '📍', label: 'Venue Requests' },
   { id: 'dj-requests',   icon: '🎧', label: 'Artist Requests' },
   { id: 'verifications', icon: '✅', label: 'Verifications' },
   { id: 'manage-djs',    icon: '🗑️', label: 'Manage Artists' },
@@ -205,6 +207,8 @@ export default function AdminDashboard() {
 
         {/* Duplicate Artists */}
         {section === 'duplicate-artists' && <AdminDuplicateArtistsPage />}
+
+        {section === 'venue-requests' && <AdminVenuesPage />}
 
         {/* Reports & Moderation */}
         {section === 'reports' && <ReportsModeration />}
