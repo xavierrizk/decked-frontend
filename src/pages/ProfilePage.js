@@ -12,6 +12,7 @@ import ReviewSection from '../components/profile/ReviewSection';
 import ArtistGrid from '../components/profile/DJGrid';
 import NetworkGrid from '../components/profile/NetworkGrid';
 import ProfileReviewCard from '../components/profile/ProfileReviewCard';
+import SetThumbnail from '../components/SetThumbnail';
 import { relativeTime } from '../components/profile/helpers';
 
 function getYtThumb(url) {
@@ -245,6 +246,61 @@ function BucketListPreview({ bucketList, userId }) {
   );
 }
 
+// Favorite Sets — auto-curated grid of the user's highest-rated sets (4.5★+)
+function FavoriteSetsGrid({ reviews, isOwn }) {
+  const favorites = (reviews || [])
+    .filter(r => Number(r.rating) >= 4.5)
+    .sort((a, b) => Number(b.rating) - Number(a.rating))
+    .slice(0, 8);
+
+  if (!favorites.length) {
+    if (!isOwn) return null;
+    return (
+      <div>
+        <SectionLabel>Favorite Sets</SectionLabel>
+        <div className="text-center py-8 border border-white/[0.05] rounded-xl text-gray-600 text-sm">
+          Rate a set 4.5★ or higher and it lands here.
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <SectionLabel action={favorites.length >= 8 ? { to: `?tab=reviews`, label: 'All ratings' } : null}>
+        Favorite Sets
+      </SectionLabel>
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+        {favorites.map(r => {
+          const artist = r.dj_name || r.artist_name || null;
+          return (
+            <Link key={r.set_id} to={`/set/${r.set_id}`} className="group">
+              <div className="relative aspect-[3/4] rounded-lg overflow-hidden bg-white/[0.04] border border-white/[0.06]">
+                <SetThumbnail
+                  setId={r.set_id}
+                  performanceType={r.performance_type}
+                  fallbackImage={r.dj_image}
+                  alt={r.set_title}
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
+                <div className="absolute top-1.5 right-1.5 bg-black/70 backdrop-blur-sm rounded px-1.5 py-0.5 flex items-center gap-1">
+                  <span className="text-[#FF006E] text-[10px] leading-none">★</span>
+                  <span className="text-white text-[10px] font-bold tabular-nums leading-none">{Number(r.rating).toFixed(1)}</span>
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 p-2">
+                  <p className="text-white text-[11px] font-semibold leading-tight line-clamp-2 group-hover:text-[#00D9FF] transition-colors">{r.set_title.trim()}</p>
+                  {artist && <p className="text-gray-400 text-[10px] line-clamp-1 mt-0.5">{artist}</p>}
+                </div>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // Dashboard — the default profile tab
 function ProfileDashboard({ featuredSets, activity, actLoading, reviews, reviewsLoading, onOpenReview, isOwn, userId, bucketList }) {
   const hasActivity = activity.filter(a => a.type === 'rating').length > 0;
@@ -252,10 +308,10 @@ function ProfileDashboard({ featuredSets, activity, actLoading, reviews, reviews
 
   return (
     <div className="space-y-8">
-      {/* Favorite Sets */}
+      {/* Featured Sets (user-curated) */}
       {featuredSets.length > 0 && (
         <div>
-          <SectionLabel>Favorite Sets</SectionLabel>
+          <SectionLabel>Featured Sets</SectionLabel>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {featuredSets.slice(0, 4).map(s => {
               const thumb = getYtThumb(s.video_url) || s.dj_image || null;
@@ -276,6 +332,9 @@ function ProfileDashboard({ featuredSets, activity, actLoading, reviews, reviews
           </div>
         </div>
       )}
+
+      {/* Favorite Sets (auto: 4.5★+) */}
+      {!reviewsLoading && <FavoriteSetsGrid reviews={reviews} isOwn={isOwn} />}
 
       {/* Bucket List */}
       <BucketListPreview bucketList={bucketList} userId={userId} />
