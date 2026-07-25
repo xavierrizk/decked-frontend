@@ -311,16 +311,16 @@ export default function SetDetail() {
                   className="w-full h-full"
                 />
                 {reviewsWithVideos.length > 1 && (
-                  <div className="absolute inset-0 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute inset-x-0 top-0 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                     <button
                       onClick={() => setCurrentVideoIndex((i) => (i - 1 + reviewsWithVideos.length) % reviewsWithVideos.length)}
-                      className="ml-2 px-3 py-2 bg-black/70 rounded-lg text-white hover:bg-black transition"
+                      className="ml-2 mt-2 px-3 py-2 bg-black/70 rounded-lg text-white hover:bg-black transition pointer-events-auto"
                     >
                       ← Prev
                     </button>
                     <button
                       onClick={() => setCurrentVideoIndex((i) => (i + 1) % reviewsWithVideos.length)}
-                      className="mr-2 px-3 py-2 bg-black/70 rounded-lg text-white hover:bg-black transition"
+                      className="mr-2 mt-2 px-3 py-2 bg-black/70 rounded-lg text-white hover:bg-black transition pointer-events-auto"
                     >
                       Next →
                     </button>
